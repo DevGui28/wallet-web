@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { urls, cookies } from '@/constants'
+import { urls, cookiesName } from '@/constants'
 import { jwtDecode } from 'jwt-decode'
 import { Jwt } from '@/app/common/interfaces/jwt'
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
-  console.log('token', token);
   
   if (!token) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
@@ -17,12 +16,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
   
-  const response = NextResponse.redirect(`${urls.walletWeb}`)
+  const response = NextResponse.redirect(new URL('/dashboard', request.url))
 
-  response.cookies.set(cookies.token, token, {
+  response.cookies.set(cookiesName.token, token, {
     path: '/',
     maxAge: 2592000,
   })
-
+    
   return response
 }

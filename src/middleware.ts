@@ -1,5 +1,5 @@
 import { Jwt } from "@/app/common/interfaces/jwt";
-import { cookies } from "@/constants";
+import { cookiesName } from "@/constants";
 import { jwtDecode } from "jwt-decode";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,10 +7,11 @@ export default async function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl
     if (pathname === "/sign-in" || pathname === "/sign-up" || pathname.includes('auth')) {
+      request.cookies.delete(cookiesName.token);
       return NextResponse.next();
     }
 
-    const authToken = request.cookies.get(cookies.token)?.value;
+    const authToken = request.cookies.get(cookiesName.token)?.value;
     if (!authToken) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }

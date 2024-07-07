@@ -3,6 +3,6 @@ export const urls = {
   walletWeb: "localhost:3000",
 };
 
-export const cookies = {
+export const cookiesName = {
   token: "wallet-token",
 }
