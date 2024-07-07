@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { urls, cookiesName } from '@/constants'
+import {  cookiesName } from '@/constants'
 import { jwtDecode } from 'jwt-decode'
 import { Jwt } from '@/app/common/interfaces/jwt'
+import axiosInstance from '@/api/axiosInstance'
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')

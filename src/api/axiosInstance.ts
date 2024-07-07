@@ -2,7 +2,7 @@ import { cookiesName, urls } from '@/constants';
 import axios from 'axios';
 import { cookies } from 'next/headers';
 
-const token = cookies().get(cookiesName.token)
+const token = cookies().get(cookiesName.token)?.value
 
 const axiosInstance = axios.create({
   baseURL: urls.walletApi, 
