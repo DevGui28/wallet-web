@@ -1,21 +1,28 @@
-import axiosInstance from "@/api/axiosInstance";
+'use client';
 
-export default async function Dashboard() {
-  const installments = await axiosInstance.get("/installments");
-  console.log(installments.data);
-  
+import axiosInstance from "@/api/axiosInstance";
+import BasicTable from "@/components/TableInstallments";
+import { useEffect, useState } from "react";
+
+export default function Dashboard() {
+  const [installments, setInstallments] = useState();
+
+  useEffect(() => {
+    async function fetchInstallments() {
+      const {data} = await axiosInstance.get("/installments");
+      setInstallments(data);
+    }
+    fetchInstallments();
+  }, []);
+
+  if (!installments) {
+    return <h1>Loading</h1>;
+  }
+
   return (
     <div>
       <h1>Dashboard</h1>
-      {installments.data.map((installment: any) => (
-        <div key={installment.id} className="flex flex-col mb-5">
-          <p>{installment.expense.description}</p>
-          <p>{installment.amount}</p>
-          <p>{installment.dueDate}</p>
-          <p>{installment.paid ? 'Pago' : 'A pagar'}</p>
-          <p>{`Parcela: ${installment.currentInstallment}/${installment.expense.recurring}`}</p>
-        </div>
-        ))}
+      <BasicTable installments={installments} />
     </div>
   );
 }

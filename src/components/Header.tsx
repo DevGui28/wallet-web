@@ -1,13 +1,10 @@
 import axiosInstance from "@/api/axiosInstance";
 import Image from "next/image";
 
-export default async function Header() {
-  const {name} = await (await axiosInstance.get('/auth/name')).data
-
+export default function Header() {
   return (
-    <header className="flex flex-col">
-      <Image src="/wallet-logo.png" alt="Logo" width={300} height={100}/>
-      <h1>Bem vindo(a), {name}</h1>
+    <header className="flex flex-col bg-[#28DDDD] h-[70px] justify-center">
+      <Image src="/wallet-logo.png" alt="Logo" width={350} height={71}/>
     </header>
   );
 }
