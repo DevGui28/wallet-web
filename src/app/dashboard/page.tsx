@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import RowInstallments from "@/components/RowInstallments";
-import { useInstallments } from "@/hooks/useInstallments";
-import { calculateTotal, months, filterInstallments } from "@/lib/utils";
-import { withAuth } from "@/lib/with-auth";
-import clsx from "clsx";
-import { useEffect, useState } from "react";
+import RowInstallments from '@/components/RowInstallments'
+import { useInstallments } from '@/hooks/useInstallments'
+import { calculateTotal, filterInstallments, months } from '@/lib/utils'
+import { withAuth } from '@/lib/with-auth'
+import clsx from 'clsx'
+import { useEffect, useState } from 'react'
 
 function Dashboard() {
   const {
@@ -13,15 +13,15 @@ function Dashboard() {
     filteredInstallments,
     setFilteredInstallments,
     salaries,
-  } = useInstallments();
+  } = useInstallments()
 
   const [monthCurrent, setMonthCurrent] = useState(
-    months[new Date().getMonth()],
-  );
+    months[new Date().getMonth()]
+  )
 
   useEffect(() => {
-    setFilteredInstallments(filterInstallments(installments, monthCurrent));
-  }, [monthCurrent]);
+    setFilteredInstallments(filterInstallments(installments, monthCurrent))
+  }, [monthCurrent])
 
   return (
     <div className="flex flex-col items-center">
@@ -48,15 +48,15 @@ function Dashboard() {
               key={month}
               value={month}
               className={clsx(
-                "p-2",
-                "border",
-                "border-gray-300",
-                "rounded-md",
-                "m-1",
-                "cursor-pointer",
+                'p-2',
+                'border',
+                'border-gray-300',
+                'rounded-md',
+                'm-1',
+                'cursor-pointer',
                 {
-                  "bg-gray-300": month === monthCurrent,
-                },
+                  'bg-gray-300': month === monthCurrent,
+                }
               )}
               onClick={() => setMonthCurrent(month)}
             >
@@ -67,7 +67,7 @@ function Dashboard() {
       </div>
       <RowInstallments installments={filteredInstallments} />
     </div>
-  );
+  )
 }
 
-export default withAuth(Dashboard);
+export default withAuth(Dashboard)

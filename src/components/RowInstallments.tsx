@@ -1,14 +1,14 @@
-import { Installments } from "@/types/installments";
-import clsx from "clsx";
+import { Installments } from '@/app/common/interfaces/installments'
+import clsx from 'clsx'
 
 export default function RowInstallments({
   installments,
 }: {
-  installments: Installments[];
+  installments: Installments[]
 }) {
   return (
-    <div className="flex flex-col items-center w-[100vw]">
-      <div className="grid grid-cols-3 items-center w-[100%]">
+    <div className="flex w-[100vw] flex-col items-center">
+      <div className="grid w-[100%] grid-cols-3 items-center">
         <p className="p-2 text-center">Descrição</p>
         <p className="p-2 text-center">Valor</p>
         <p className="p-2 text-center">Parcela</p>
@@ -16,20 +16,22 @@ export default function RowInstallments({
       {installments.map((installment, index) => (
         <div
           key={installment.id}
-          className={clsx("grid grid-cols-3 cursor-pointer items-center w-[100%]", {
-            "bg-gray-100": index % 2 === 0,
-          })}
+          className={clsx(
+            'grid w-[100%] cursor-pointer grid-cols-3 items-center',
+            {
+              'bg-gray-100': index % 2 === 0,
+            }
+          )}
         >
           <p className="p-2 text-center">{installment.expense.description}</p>
           <p className="p-2 text-center">{installment.amount}</p>
-          <p className="p-2 text-center">{
-            installment.isRecurring
-              ? "Recorrente"
-              : `${installment.currentInstallment}/${installment.expense.recurring}`
-            }
+          <p className="p-2 text-center">
+            {installment.isRecurring
+              ? 'Recorrente'
+              : `${installment.currentInstallment}/${installment.expense.recurring}`}
           </p>
         </div>
       ))}
     </div>
-  );
+  )
 }

@@ -1,8 +1,8 @@
 export interface JwtPayload {
-  id: string;
+  id: string
 }
 
-export interface Jwt extends JwtPayload{
-  iat: number;
-  exp: number;
+export interface Jwt extends JwtPayload {
+  iat: number
+  exp: number
 }

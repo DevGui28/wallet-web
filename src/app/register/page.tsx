@@ -1,33 +1,33 @@
-"use client";
+'use client'
 
-import axiosInstance from "@/api/axiosInstance";
-import { useAuth } from "@/hooks/useAuth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
-import { z } from "zod";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import axiosInstance from '@/api/axiosInstance'
+import { useAuth } from '@/hooks/useAuth'
+import { zodResolver } from '@hookform/resolvers/zod'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import { AxiosError } from 'axios'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const loginSchema = z.object({
-  name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
-  email: z.string().email({ message: "E-mail inválido" }),
+  name: z.string().min(3, { message: 'Nome deve ter no mínimo 3 caracteres' }),
+  email: z.string().email({ message: 'E-mail inválido' }),
   password: z
     .string()
-    .min(6, { message: "Senha deve ter no mínimo 6 caracteres" }),
-});
+    .min(6, { message: 'Senha deve ter no mínimo 6 caracteres' }),
+})
 
-type Login = z.infer<typeof loginSchema>;
+type Login = z.infer<typeof loginSchema>
 
 export default function SignIn() {
-  const [error, setError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const { updateToken } = useAuth();
-  const router = useRouter();
+  const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const { updateToken } = useAuth()
+  const router = useRouter()
 
   const {
     register,
@@ -35,24 +35,24 @@ export default function SignIn() {
     formState: { errors },
   } = useForm<Login>({
     resolver: zodResolver(loginSchema),
-  });
+  })
 
   async function onSubmit(data: Login) {
     try {
-      setError(null);
-      const { data: res } = await axiosInstance.post("/auth/sign-in", data);
-      updateToken(res.token);
-      router.push("/dashboard");
+      setError(null)
+      const { data: res } = await axiosInstance.post('/auth/sign-in', data)
+      updateToken(res.token)
+      router.push('/dashboard')
     } catch (error: any) {
       if (error instanceof AxiosError) {
-        setError(error.response?.data.message || "Ocorreu um erro inesperado");
+        setError(error.response?.data.message || 'Ocorreu um erro inesperado')
       }
     }
   }
 
-  const classError = "my-1 text-center text-sm font-semibold text-yellow-200";
+  const classError = 'my-1 text-center text-sm font-semibold text-yellow-200'
   const classInput =
-    "my-1 rounded-md border border-gray-300 p-2 focus-visible:outline-1 focus-visible:outline-gray-100";
+    'my-1 rounded-md border border-gray-300 p-2 focus-visible:outline-1 focus-visible:outline-gray-100'
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
@@ -72,7 +72,7 @@ export default function SignIn() {
               type="text"
               placeholder="Nome"
               className={classInput}
-              {...register("name")}
+              {...register('name')}
             />
           </label>
           {errors.name && <p className={classError}>{errors.name.message}</p>}
@@ -81,7 +81,7 @@ export default function SignIn() {
               type="text"
               placeholder="E-mail"
               className={classInput}
-              {...register("email")}
+              {...register('email')}
             />
           </label>
 
@@ -89,10 +89,10 @@ export default function SignIn() {
           <label htmlFor="password" className="relative flex justify-center">
             <input
               id="password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Senha"
               className={classInput}
-              {...register("password")}
+              {...register('password')}
             />
             {showPassword ? (
               <VisibilityOffIcon
@@ -116,7 +116,7 @@ export default function SignIn() {
             className="mt-3 text-center text-sm text-gray-100"
             href="/login"
           >
-            Já tem uma conta?{" "}
+            Já tem uma conta?{' '}
             <span className="text-yellow-200">Faça o login</span>
           </Link>
           <button className="mt-5 rounded-md bg-blue-900 p-2 text-white">
@@ -126,5 +126,5 @@ export default function SignIn() {
         </form>
       </div>
     </div>
-  );
+  )
 }

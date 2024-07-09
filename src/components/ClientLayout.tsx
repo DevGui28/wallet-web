@@ -1,22 +1,23 @@
-"use client";
+'use client'
 
-import { usePathname } from "next/navigation";
-import Header from "./Header";
-import { AuthProvider } from "@/hooks/useAuth";
-import { InstallmentsProvider } from "@/context/InstallmentsContext";
+import { InstallmentsProvider } from '@/context/InstallmentsContext'
+import { AuthProvider } from '@/hooks/useAuth'
+import { usePathname } from 'next/navigation'
+
+import Header from './Header'
 
 export default function ClientLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
-  const noHeaderPaths = ["/login", "/register"];
+  const noHeaderPaths = ['/login', '/register']
 
   const shouldRenderHeader = !noHeaderPaths.some((path) =>
-    pathname.includes(path),
-  );
+    pathname.includes(path)
+  )
 
   return (
     <AuthProvider>
@@ -25,5 +26,5 @@ export default function ClientLayout({
         {children}
       </InstallmentsProvider>
     </AuthProvider>
-  );
+  )
 }

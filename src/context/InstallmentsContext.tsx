@@ -1,53 +1,49 @@
-"use client";
+'use client'
 
-import axiosInstance from "@/api/axiosInstance";
-import { Installments } from "@/app/common/interfaces/installments";
-import { Salaries } from "@/app/common/interfaces/salaries";
-import { months, filterInstallments } from "@/lib/utils";
-import { redirect, usePathname } from "next/navigation";
-import React, { createContext, useEffect, useState } from "react";
+import axiosInstance from '@/api/axiosInstance'
+import { Installments } from '@/app/common/interfaces/installments'
+import { Salaries } from '@/app/common/interfaces/salaries'
+import { filterInstallments, months } from '@/lib/utils'
+import { redirect, usePathname } from 'next/navigation'
+import React, { createContext, useEffect, useState } from 'react'
 
 interface MyContextProps {
-  installments: Installments[];
-  filteredInstallments: Installments[];
-  setFilteredInstallments: React.Dispatch<React.SetStateAction<Installments[]>>;
-  salaries: Salaries[];
+  installments: Installments[]
+  filteredInstallments: Installments[]
+  setFilteredInstallments: React.Dispatch<React.SetStateAction<Installments[]>>
+  salaries: Salaries[]
 }
 
-const InstallmentsContext = createContext<MyContextProps>({} as MyContextProps);
+const InstallmentsContext = createContext<MyContextProps>({} as MyContextProps)
 
 const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
-  const [installments, setInstallments] = useState<Installments[]>([]);
-  const [filteredInstallments, setFilteredInstallments] =
-    useState(installments);
-  const [salaries, setSalaries] = useState([]);
-  const pathname = usePathname();
+  const [installments, setInstallments] = useState<Installments[]>([])
+  const [filteredInstallments, setFilteredInstallments] = useState(installments)
+  const [salaries, setSalaries] = useState([])
+  const pathname = usePathname()
 
   useEffect(() => {
-    if (pathname === "/login" || pathname === "/register") {
-      return;
+    if (pathname === '/login' || pathname === '/register') {
+      return
     }
     async function fetch() {
       try {
-        const installments = await axiosInstance.get("/installments");
-        const salary = await axiosInstance.get("/salary");
-        setInstallments(installments.data);
+        const installments = await axiosInstance.get('/installments')
+        const salary = await axiosInstance.get('/salary')
+        setInstallments(installments.data)
         setFilteredInstallments(
-          filterInstallments(
-            installments.data,
-            months[new Date().getMonth()],
-          ),
-        );
-        setSalaries(salary.data);
+          filterInstallments(installments.data, months[new Date().getMonth()])
+        )
+        setSalaries(salary.data)
       } catch (error: any) {
         if (error.response.data.statusCode === 401) {
-          redirect("/login");
-        }        
+          redirect('/login')
+        }
       }
     }
 
-    fetch();
-  }, [pathname]);
+    fetch()
+  }, [pathname])
 
   return (
     <InstallmentsContext.Provider
@@ -60,7 +56,7 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
     >
       {children}
     </InstallmentsContext.Provider>
-  );
-};
+  )
+}
 
-export { InstallmentsContext, InstallmentsProvider };
+export { InstallmentsContext, InstallmentsProvider }
