@@ -1,52 +1,38 @@
 "use client";
 
 import RowInstallments from "@/components/RowInstallments";
-import { InstallmentsContext } from "@/context/InstallmentsContext";
-import { Installments } from "@/types/installments";
-import {
-  calculateTotalExpenses,
-  calculateTotalIncomes,
-  months,
-} from "@/utils/dashboard";
-import { filterInstallments } from "@/utils/filterInstallments";
+import { useInstallments } from "@/hooks/useInstallments";
+import { calculateTotal, months, filterInstallments } from "@/lib/utils";
+import { withAuth } from "@/lib/with-auth";
 import clsx from "clsx";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Dashboard() {
+function Dashboard() {
   const {
     installments,
-    isLoading,
     filteredInstallments,
     setFilteredInstallments,
     salaries,
-  } = useContext(InstallmentsContext);
+  } = useInstallments();
 
   const [monthCurrent, setMonthCurrent] = useState(
     months[new Date().getMonth()],
   );
 
   useEffect(() => {
-    setFilteredInstallments(
-      filterInstallments(installments, monthCurrent),
-    );
+    setFilteredInstallments(filterInstallments(installments, monthCurrent));
   }, [monthCurrent]);
-
-  if (isLoading) {
-    return <h1>Loading</h1>;
-  }
 
   return (
     <div className="flex flex-col items-center">
       <p className="w-[100%] bg-green-700 py-3 text-center text-green-400">
         Total de Receitas
-        <span className="ml-2 font-bold">
-          R$:{calculateTotalIncomes(salaries)}
-        </span>
+        <span className="ml-2 font-bold">R$:{calculateTotal(salaries)}</span>
       </p>
       <p className="w-[100%] bg-red-700 py-3 text-center text-red-400">
         Total de Despesas
         <span className="ml-2 font-bold">
-          R$:{calculateTotalExpenses(filteredInstallments)}
+          R$:{calculateTotal(filteredInstallments)}
         </span>
       </p>
       <div className="mt-3 flex w-[100%] items-center justify-center">
@@ -83,3 +69,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default withAuth(Dashboard);
