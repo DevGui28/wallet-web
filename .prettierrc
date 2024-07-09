@@ -1,8 +1,5 @@
 {
-  "plugins": [
-    "prettier-plugin-tailwindcss",
-    "@ianvs/prettier-plugin-sort-imports"
-  ],
+  "plugins": ["prettier-plugin-tailwindcss"],
   "printWidth": 80,
   "tabWidth": 2,
   "useTabs": false,
@@ -14,16 +11,5 @@
   "bracketSpacing": true,
   "arrowParens": "always",
   "endOfLine": "auto",
-  "bracketSameLine": false,
-  "importOrder": [
-    "^@core/(.*)$",
-    "",
-    "^@server/(.*)$",
-    "",
-    "^@ui/(.*)$",
-    "",
-    "^[./]"
-  ],
-  "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
-  "importOrderTypeScriptVersion": "5.0.0"
+  "bracketSameLine": false
 }
