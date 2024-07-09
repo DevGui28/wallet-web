@@ -12,7 +12,7 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
 
-  const noHeaderPaths = ["/login", "/sign-up"];
+  const noHeaderPaths = ["/login", "/register"];
 
   const shouldRenderHeader = !noHeaderPaths.some((path) =>
     pathname.includes(path),
