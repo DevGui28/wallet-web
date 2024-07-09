@@ -1,0 +1,42 @@
+import { Jwt } from "@/app/common/interfaces/jwt";
+import { cookiesName } from "@/constants";
+import { jwtDecode } from "jwt-decode";
+import { NextRequest, NextResponse } from "next/server";
+
+export default async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Permitir acesso às rotas de login e registro
+  if (
+    pathname.startsWith("/sign-in") ||
+    pathname.startsWith("/sign-up") ||
+    pathname.includes("auth")
+  ) {
+    return NextResponse.next();
+  }
+
+  const authToken = request.cookies.get(cookiesName.token)?.value;
+
+  // Redirecionar para login se o token de autenticação não estiver presente
+  if (!authToken) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
+
+  try {
+    const decodedJWT = jwtDecode<Jwt>(authToken);
+
+    // Verificar se o token expirou
+    if (decodedJWT.exp < Date.now() / 1000) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    // Redirecionar para login se houver erro ao decodificar o token
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
+}
+
+export const config = {
+  matcher: "/((?!sign-in|sign-up|auth).*)",
+};
