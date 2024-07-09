@@ -2,6 +2,9 @@
 
 import axiosInstance from "@/api/axiosInstance";
 import { Installments } from "@/types/installments";
+import { Salaries } from "@/types/salaries";
+import { months } from "@/utils/dashboard";
+import { filterInstallments } from "@/utils/filterInstallments";
 import React, { createContext, useEffect, useState } from "react";
 
 interface MyContextProps {
@@ -10,6 +13,7 @@ interface MyContextProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   filteredInstallments: Installments[];
   setFilteredInstallments: React.Dispatch<React.SetStateAction<Installments[]>>;
+  salaries: Salaries[];
 }
 
 const InstallmentsContext = createContext<MyContextProps>({
@@ -18,6 +22,7 @@ const InstallmentsContext = createContext<MyContextProps>({
   setIsLoading: () => {},
   filteredInstallments: [],
   setFilteredInstallments: () => {},
+  salaries: [],
 });
 
 const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
@@ -25,15 +30,25 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
   const [filteredInstallments, setFilteredInstallments] =
     useState(installments);
   const [isLoading, setIsLoading] = useState(true);
+  const [salaries, setSalaries] = useState([]);
 
   useEffect(() => {
-    async function fetchInstallments() {
+    async function fetch() {
       setIsLoading(true);
-      const { data } = await axiosInstance.get("/installments");
-      setInstallments(data);
+      const installments = await axiosInstance.get("/installments");
+      const salary = await axiosInstance.get("/salary");
+      setInstallments(installments.data);
+      setFilteredInstallments(
+        filterInstallments(
+          installments.data,
+          months[new Date().getMonth()],
+        ),
+      );
+      setSalaries(salary.data);
       setIsLoading(false);
     }
-    fetchInstallments();
+
+    fetch();
   }, []);
 
   return (
@@ -44,6 +59,7 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading,
         filteredInstallments,
         setFilteredInstallments,
+        salaries,
       }}
     >
       {children}

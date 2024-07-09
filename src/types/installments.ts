@@ -3,6 +3,7 @@ export type Installments = {
   amount: number;
   dueDate: string;
   currentInstallment: number;
+  isRecurring: boolean;
   paid: boolean;
   expense: {
     description: string;
