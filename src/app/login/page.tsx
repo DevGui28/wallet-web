@@ -4,6 +4,8 @@ import axiosInstance from "@/api/axiosInstance";
 import { useAuth } from "@/hooks/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,14 +14,17 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  email: z.string().email({message: "E-mail inválido"}),
-  password: z.string().min(6, {message: "Senha deve ter no mínimo 6 caracteres"})
+  email: z.string().email({ message: "E-mail inválido" }),
+  password: z
+    .string()
+    .min(6, { message: "Senha deve ter no mínimo 6 caracteres" }),
 });
 
 type Login = z.infer<typeof loginSchema>;
 
 export default function SignIn() {
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const { updateToken } = useAuth();
   const router = useRouter();
 
@@ -48,9 +53,13 @@ export default function SignIn() {
     }
   }
 
+  const classError = "my-1 text-center text-sm font-semibold text-yellow-200";
+  const classInput =
+    "my-1 rounded-md border border-gray-300 p-2 focus-visible:outline-1 focus-visible:outline-gray-100";
+
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
-      <div className="flex max-w-xl flex-col items-center justify-center bg-[#15d1d1] rounded-xl border border-[#9e9e9e] m-6 shadow-xl p-16 md:p-20">
+      <div className="m-6 flex flex-col items-center justify-center rounded-xl border border-[#9e9e9e] bg-[#15d1d1] p-16 shadow-xl md:p-20">
         <Image
           src="/wallet-horizontal.png"
           alt="Logo"
@@ -58,38 +67,55 @@ export default function SignIn() {
           height={200}
         />
         <form
-          className="mt-5 flex w-full max-w-xs flex-col justify-center"
+          className="mt-5 flex max-w-xs flex-col justify-center"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <input
-            type="text"
-            placeholder="E-mail"
-            className="mb-2 rounded-md border border-gray-300 p-2"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-center text-sm text-red-500">
-              {errors.email.message}
-            </p>
-          )}
-          <input
-            type="password"
-            placeholder="Senha"
-            className="mb-2 rounded-md border border-gray-300 p-2"
-            {...register("password")}
-          />
+          <label className="flex justify-center">
+            <input
+              type="text"
+              placeholder="E-mail"
+              className={classInput}
+              {...register("email")}
+            />
+          </label>
+          {errors.email && <p className={classError}>{errors.email.message}</p>}
+          <label htmlFor="password" className="relative flex justify-center">
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Senha"
+              className={classInput}
+              {...register("password")}
+            />
+            {showPassword ? (
+              <VisibilityOffIcon
+                className="absolute right-2 top-3.5 transform cursor-pointer md:right-14"
+                color="disabled"
+                onClick={() => setShowPassword(false)}
+              />
+            ) : (
+              <VisibilityIcon
+                className="absolute right-2 top-3.5 cursor-pointer md:right-14"
+                color="disabled"
+                onClick={() => setShowPassword(true)}
+              />
+            )}
+          </label>
+
           {errors.password && (
-            <p className="text-center text-sm text-red-500">
-              {errors.password.message}
-            </p>
+            <p className={classError}>{errors.password.message}</p>
           )}
-          <Link className="mt-3 text-center text-sm text-gray-100" href="/register">
-            Não tem conta? <span className="text-yellow-200">Crie sua conta</span>
+          <Link
+            className="mt-3 text-center text-sm text-gray-100"
+            href="/login"
+          >
+            Já tem uma conta?{" "}
+            <span className="text-yellow-200">Faça o login</span>
           </Link>
           <button className="mt-5 rounded-md bg-blue-900 p-2 text-white">
             Entrar
           </button>
-          {error && <p className="text-center text-sm text-red-500">{error}</p>}
+          {error && <p className={classError}>{error}</p>}
         </form>
       </div>
     </div>

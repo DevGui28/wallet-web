@@ -4,6 +4,7 @@ import axiosInstance from "@/api/axiosInstance";
 import { useAuth } from "@/hooks/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,7 +12,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { z } from "zod";
 
 const loginSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -50,6 +50,10 @@ export default function SignIn() {
     }
   }
 
+  const classError = "my-1 text-center text-sm font-semibold text-yellow-200";
+  const classInput =
+    "my-1 rounded-md border border-gray-300 p-2 focus-visible:outline-1 focus-visible:outline-gray-100";
+
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
       <div className="m-6 flex max-w-xl flex-col items-center justify-center rounded-xl border border-[#9e9e9e] bg-[#15d1d1] p-16 shadow-xl md:p-20">
@@ -63,44 +67,42 @@ export default function SignIn() {
           className="mt-5 flex w-full max-w-xs flex-col justify-center"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <input
-            type="text"
-            placeholder="Nome"
-            className="my-1 rounded-md border border-gray-300 p-2"
-            {...register("name")}
-          />
-          {errors.name && (
-            <p className="my-1 text-center text-sm font-semibold text-yellow-200">
-              {errors.name.message}
-            </p>
-          )}
-          <input
-            type="text"
-            placeholder="E-mail"
-            className="my-1 rounded-md border border-gray-300 p-2"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="my-1 text-center text-sm font-semibold text-yellow-200">
-              {errors.email.message}
-            </p>
-          )}
-          <label className="flex relative">
+          <label className="flex justify-center">
             <input
+              type="text"
+              placeholder="Nome"
+              className={classInput}
+              {...register("name")}
+            />
+          </label>
+          {errors.name && <p className={classError}>{errors.name.message}</p>}
+          <label className="flex justify-center">
+            <input
+              type="text"
+              placeholder="E-mail"
+              className={classInput}
+              {...register("email")}
+            />
+          </label>
+
+          {errors.email && <p className={classError}>{errors.email.message}</p>}
+          <label htmlFor="password" className="relative flex justify-center">
+            <input
+              id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Senha"
-              className="my-1 rounded-md border border-gray-300 p-2"
+              className={classInput}
               {...register("password")}
             />
             {showPassword ? (
               <VisibilityOffIcon
-                className="absolute right-2 top-3 transform cursor-pointer"
+                className="absolute right-14 top-3.5 transform cursor-pointer"
                 color="disabled"
                 onClick={() => setShowPassword(false)}
-                />
-              ) : (
-                <VisibilityIcon
-                className="absolute right-2 top-3 cursor-pointer"
+              />
+            ) : (
+              <VisibilityIcon
+                className="absolute right-14 top-3.5 cursor-pointer"
                 color="disabled"
                 onClick={() => setShowPassword(true)}
               />
@@ -108,9 +110,7 @@ export default function SignIn() {
           </label>
 
           {errors.password && (
-            <p className="my-1 text-center text-sm font-semibold text-yellow-200">
-              {errors.password.message}
-            </p>
+            <p className={classError}>{errors.password.message}</p>
           )}
           <Link
             className="mt-3 text-center text-sm text-gray-100"
@@ -122,11 +122,7 @@ export default function SignIn() {
           <button className="mt-5 rounded-md bg-blue-900 p-2 text-white">
             Criar conta
           </button>
-          {error && (
-            <p className="my-1 text-center text-sm font-semibold text-yellow-200">
-              {error}
-            </p>
-          )}
+          {error && <p className={classError}>{error}</p>}
         </form>
       </div>
     </div>
