@@ -79,6 +79,7 @@ export default function SignIn() {
             />
           </label>
           {errors.email && <p className={classError}>{errors.email.message}</p>}
+
           <label htmlFor="password" className="relative flex justify-center">
             <input
               id="password"
@@ -107,10 +108,10 @@ export default function SignIn() {
           )}
           <Link
             className="mt-3 text-center text-sm text-gray-100"
-            href="/login"
+            href="/register"
           >
-            Já tem uma conta?{' '}
-            <span className="text-yellow-200">Faça o login</span>
+            Não tem uma conta?{' '}
+            <span className="text-yellow-200">Crie sua conta</span>
           </Link>
           <button className="mt-5 rounded-md bg-blue-900 p-2 text-white">
             Entrar
