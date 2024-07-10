@@ -1,6 +1,6 @@
 'use client'
 
-import axiosInstance from '@/app/api/axiosInstance'
+import axiosInstance from '@/api/axiosInstance'
 import { Installments } from '@/app/common/interfaces/installments'
 import { Salaries } from '@/app/common/interfaces/salaries'
 import { filterInstallments, months } from '@/lib/utils'
