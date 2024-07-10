@@ -5,7 +5,9 @@ import { useAuth } from '@/hooks/useAuth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import { CircularProgress } from '@mui/material'
 import { AxiosError } from 'axios'
+import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -25,6 +27,7 @@ type Login = z.infer<typeof loginSchema>
 
 export default function SignIn() {
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const { updateToken } = useAuth()
   const router = useRouter()
@@ -39,18 +42,21 @@ export default function SignIn() {
 
   async function onSubmit(data: Login) {
     try {
+      setIsLoading(true)
       setError(null)
       const { data: res } = await axiosInstance.post('/auth/sign-in', data)
       updateToken(res.token)
+      setIsLoading(false)
       router.push('/dashboard')
     } catch (error: any) {
       if (error instanceof AxiosError) {
         setError(error.response?.data.message || 'Ocorreu um erro inesperado')
       }
+      setIsLoading(false)
     }
   }
 
-  const classError = 'my-1 text-center text-sm font-semibold text-yellow-200'
+  const classError = 'my-1 text-center text-xs font-semibold text-text-blue-900'
   const classInput =
     'my-1 rounded-md border border-gray-300 p-2 focus-visible:outline-1 focus-visible:outline-gray-100'
 
@@ -113,14 +119,30 @@ export default function SignIn() {
             <p className={classError}>{errors.password.message}</p>
           )}
           <Link
-            className="mt-3 text-center text-sm text-gray-100"
+            className="mt-3 text-center text-xs text-gray-100"
             href="/login"
           >
-            Já tem uma conta?{' '}
-            <span className="text-yellow-200">Faça o login</span>
+            Já possui uma conta?{' '}
+            <span className="font-bold text-blue-900">Faça o login</span>
           </Link>
-          <button className="mt-5 rounded-md bg-blue-900 p-2 text-white">
-            Criar conta
+          <button
+            className={clsx(
+              'mt-5 flex items-center justify-center rounded-md p-2 text-white',
+              isLoading
+                ? 'cursor-not-allowed bg-blue-400'
+                : 'cursor-pointer bg-blue-900'
+            )}
+            disabled={isLoading}
+            type="submit"
+          >
+            {isLoading && (
+              <CircularProgress
+                color="inherit"
+                size={15}
+                className="mr-2 h-1 w-1 animate-spin"
+              />
+            )}
+            {isLoading ? 'Carregando...' : 'Entrar'}
           </button>
           {error && <p className={classError}>{error}</p>}
         </form>
