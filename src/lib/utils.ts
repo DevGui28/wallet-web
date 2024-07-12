@@ -35,9 +35,9 @@ export function filterInstallments(
 }
 
 export function formatDate(date: string) {
-  const [year, month, day] = date.split('-')
+  const [, month, day] = date.split('-')
   const dayFormatted = day.split('T')[0]
-  return `${dayFormatted} de ${months[Number(month) - 1]} de ${year}`
+  return `${dayFormatted} de ${months[Number(month) - 1]}`
 }
 
 export function welcomePerson(date: Date) {
