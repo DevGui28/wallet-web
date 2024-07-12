@@ -16,9 +16,12 @@ export const months = [
 ]
 
 export const calculateTotal = (installmentOrSalary: { amount: number }[]) => {
-  return installmentOrSalary
-    .reduce((acc, cur) => acc + cur.amount, 0)
-    .toFixed(2)
+  return Number(
+    installmentOrSalary.reduce((acc, cur) => acc + cur.amount, 0).toFixed(2)
+  ).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  })
 }
 
 export function filterInstallments(
@@ -31,8 +34,19 @@ export function filterInstallments(
   })
 }
 
-export default function formatDate(date: string) {
+export function formatDate(date: string) {
   const [year, month, day] = date.split('-')
   const dayFormatted = day.split('T')[0]
   return `${dayFormatted} de ${months[Number(month) - 1]} de ${year}`
+}
+
+export function welcomePerson(date: Date) {
+  const hour = date.getHours()
+  if (hour >= 6 && hour < 12) {
+    return 'Bom dia'
+  } else if (hour >= 12 && hour < 18) {
+    return 'Boa tarde'
+  } else {
+    return 'Boa noite'
+  }
 }
