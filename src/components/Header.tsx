@@ -1,4 +1,4 @@
-import { welcomePerson } from '@/lib/utils'
+import { welcomePerson } from '@/lib/useful'
 import Image from 'next/image'
 
 export default function Header() {
@@ -12,7 +12,7 @@ export default function Header() {
           {welcomePerson(new Date())}
         </p>
       </div>
-      <Image src="/profile-icon.svg" alt="profile" width={40} height={40} />
+      <Image src="/profile-icon.svg" alt="profile" width={35} height={35} />
     </header>
   )
 }

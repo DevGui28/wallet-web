@@ -3,7 +3,7 @@
 import axiosInstance from '@/api/axiosInstance'
 import { Installments } from '@/app/common/interfaces/installments'
 import { Salaries } from '@/app/common/interfaces/salaries'
-import { filterInstallments, months } from '@/lib/utils'
+import { filterInstallments, months } from '@/lib/useful'
 import { redirect, usePathname } from 'next/navigation'
 import React, { createContext, useEffect, useState } from 'react'
 
