@@ -6,13 +6,17 @@ import {
   filterInstallments,
   formatDate,
   months,
-  welcomePerson,
 } from '@/lib/utils'
 import { withAuth } from '@/lib/with-auth'
 import { useEffect, useState } from 'react'
 
 function Dashboard() {
-  const { installments, setFilteredInstallments, salaries } = useInstallments()
+  const {
+    installments,
+    setFilteredInstallments,
+    filteredInstallments,
+    salaries,
+  } = useInstallments()
 
   const [monthCurrent, setMonthCurrent] = useState(
     months[new Date().getMonth()]
@@ -20,19 +24,20 @@ function Dashboard() {
 
   useEffect(() => {
     setFilteredInstallments(filterInstallments(installments, monthCurrent))
+    console.log()
   }, [monthCurrent])
 
   return (
     <>
       <div className="-mt-0.5 flex flex-col items-center bg-blue-600 pb-24">
-        <div className="flex w-full flex-col p-5">
+        {/* <div className="flex w-full flex-col p-5">
           <h1 className="poppins-bold text-gray-900">
             Ei, Bem vindo(a) devolta!
           </h1>
           <p className="-mt-1.5 text-sm font-medium text-gray-900">
             {welcomePerson(new Date())}
           </p>
-        </div>
+        </div> */}
         <div className="flex w-4/5 items-center justify-around bg-blue-600 text-gray-900">
           <div className="flex w-2/5 flex-col">
             <p className="poppins-regular text-xs">Total de Salários</p>
@@ -44,7 +49,7 @@ function Dashboard() {
           <div className="flex w-2/5 flex-col items-end">
             <p className="poppins-regular text-xs">Total de Despesas</p>
             <p className="poppins-extrabold text-xl text-gray-300">
-              {calculateTotal(installments)}
+              {calculateTotal(filteredInstallments)}
             </p>
           </div>
         </div>
@@ -65,8 +70,8 @@ function Dashboard() {
           </select>
         </div>
         <div className="flex w-4/5 flex-col items-center rounded-lg bg-white">
-          {installments.length > 0 ? (
-            installments.map((installment) => (
+          {filteredInstallments.length > 0 ? (
+            filteredInstallments.map((installment) => (
               <div
                 key={installment.id}
                 className="flex w-full items-center justify-between border-b border-gray-100 p-5"

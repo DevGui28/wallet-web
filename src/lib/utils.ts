@@ -28,10 +28,15 @@ export function filterInstallments(
   installment: Installments[],
   month: string
 ): Installments[] {
-  return installment.filter((installment: Installments) => {
-    const date = new Date(installment.dueDate)
-    return installment.isRecurring || months[date.getMonth()] === month
-  })
+  return installment
+    .filter((installment: Installments) => {
+      const date = new Date(installment.dueDate)
+      return installment.isRecurring || months[date.getMonth()] === month
+    })
+    .sort((a, b) => {
+      if (a.isRecurring) return -1
+      return new Date(a.dueDate).getDate() - new Date(b.dueDate).getDate()
+    })
 }
 
 export function formatDate(date: string) {
