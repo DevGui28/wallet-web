@@ -10,7 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Roboto', 'sans-serif'],
+        sans: ['Poppins', 'Roboto', 'sans-serif'],
       },
       animation: {
         'bounce-slow': 'bounce 2s infinite',
