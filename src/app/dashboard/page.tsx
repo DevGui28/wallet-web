@@ -80,8 +80,8 @@ function Dashboard() {
                   </p>
                 </div>
                 <div className="flex flex-col items-end">
-                  <p className="poppins-bold text-gray-900">
-                    R${installment.amount.toFixed(2)}
+                  <p className="poppins-bold text-red-500">
+                    - R${installment.amount.toFixed(2)}
                   </p>
                   <p className="poppins-regular text-right text-xs text-gray-400">
                     {installment.isRecurring
