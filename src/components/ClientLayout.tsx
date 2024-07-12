@@ -4,6 +4,7 @@ import { InstallmentsProvider } from '@/context/InstallmentsContext'
 import { AuthProvider } from '@/hooks/useAuth'
 import { usePathname } from 'next/navigation'
 
+import BottomNavigation from './BottomNavigation'
 import Header from './Header'
 
 export default function ClientLayout({
@@ -24,6 +25,7 @@ export default function ClientLayout({
       <InstallmentsProvider>
         {shouldRenderHeader && <Header />}
         {children}
+        {shouldRenderHeader && <BottomNavigation />}
       </InstallmentsProvider>
     </AuthProvider>
   )

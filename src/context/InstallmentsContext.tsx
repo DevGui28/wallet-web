@@ -12,6 +12,8 @@ interface MyContextProps {
   filteredInstallments: Installments[]
   setFilteredInstallments: React.Dispatch<React.SetStateAction<Installments[]>>
   salaries: Salaries[]
+  setMonthCurrent: React.Dispatch<React.SetStateAction<string>>
+  monthCurrent: string
 }
 
 const InstallmentsContext = createContext<MyContextProps>({} as MyContextProps)
@@ -19,6 +21,9 @@ const InstallmentsContext = createContext<MyContextProps>({} as MyContextProps)
 const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
   const [installments, setInstallments] = useState<Installments[]>([])
   const [filteredInstallments, setFilteredInstallments] = useState(installments)
+  const [monthCurrent, setMonthCurrent] = useState(
+    months[new Date().getMonth()]
+  )
   const [salaries, setSalaries] = useState([])
   const pathname = usePathname()
 
@@ -52,6 +57,8 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
         filteredInstallments,
         setFilteredInstallments,
         salaries,
+        setMonthCurrent,
+        monthCurrent,
       }}
     >
       {children}
