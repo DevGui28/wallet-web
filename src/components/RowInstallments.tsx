@@ -7,8 +7,8 @@ export default function RowInstallments({
   installments: Installments[]
 }) {
   return (
-    <div className="flex w-[100vw] flex-col items-center">
-      <div className="grid w-[100%] grid-cols-3 items-center">
+    <div className="flex w-screen flex-col items-center">
+      <div className="grid w-full grid-cols-3 items-center">
         <p className="p-2 text-center">Descrição</p>
         <p className="p-2 text-center">Valor</p>
         <p className="p-2 text-center">Parcela</p>
@@ -17,7 +17,7 @@ export default function RowInstallments({
         <div
           key={installment.id}
           className={clsx(
-            'grid w-[100%] cursor-pointer grid-cols-3 items-center',
+            'grid w-screen cursor-pointer grid-cols-3 items-center',
             {
               'bg-gray-100': index % 2 === 0,
             }
