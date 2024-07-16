@@ -10,7 +10,6 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import HomeIcon from '@mui/icons-material/Home'
 import PersonIcon from '@mui/icons-material/Person'
 import clsx from 'clsx'
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -29,12 +28,7 @@ export default function BottomNavigation() {
   const [active, setActive] = useState('dashboard')
 
   return (
-    <motion.nav
-      initial={{ y: 100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 1 }}
-      className="fixed bottom-0 flex w-full items-center justify-around rounded-t-2xl bg-white p-3 text-gray-400 shadow-md"
-    >
+    <nav className="fixed bottom-0 flex w-full items-center justify-around rounded-t-2xl bg-white p-3 text-gray-400 shadow-md">
       <Link href="/dashboard">
         <HomeIcon
           sx={{ fontSize: 30 }}
@@ -50,7 +44,8 @@ export default function BottomNavigation() {
         </PopoverTrigger>
         <PopoverContent className="mb-3 w-full">
           {addNewMap.map((item) => (
-            <div
+            <Link
+              href={item.link}
               key={item.title.toLowerCase().split(' ').join('-')}
               className="flex items-center justify-around p-2"
             >
@@ -59,7 +54,7 @@ export default function BottomNavigation() {
                 className="mr-2"
               />
               <p className="poppins-semibold text-sm">Adicionar {item.title}</p>
-            </div>
+            </Link>
           ))}
         </PopoverContent>
       </Popover>
@@ -72,6 +67,6 @@ export default function BottomNavigation() {
           onClick={() => setActive('profile')}
         />
       </Link>
-    </motion.nav>
+    </nav>
   )
 }
