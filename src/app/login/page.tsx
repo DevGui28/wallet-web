@@ -96,13 +96,13 @@ export default function SignIn() {
             />
             {showPassword ? (
               <VisibilityOffIcon
-                className="absolute right-2 top-3.5 transform cursor-pointer md:right-14"
+                className="absolute right-2 top-3.5 transform cursor-pointer"
                 color="disabled"
                 onClick={() => setShowPassword(false)}
               />
             ) : (
               <VisibilityIcon
-                className="absolute right-2 top-3.5 cursor-pointer md:right-14"
+                className="absolute right-2 top-3.5 cursor-pointer"
                 color="disabled"
                 onClick={() => setShowPassword(true)}
               />
