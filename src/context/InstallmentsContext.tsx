@@ -4,7 +4,7 @@ import axiosInstance from '@/api/axiosInstance'
 import { Category } from '@/app/common/interfaces/categories'
 import { Installments } from '@/app/common/interfaces/installments'
 import { Salaries } from '@/app/common/interfaces/salaries'
-import { filterInstallments, months } from '@/lib/useful'
+import { filterInstallments, filterSalaries, months } from '@/lib/useful'
 import { redirect, usePathname } from 'next/navigation'
 import React, { createContext, useEffect, useState } from 'react'
 
@@ -13,6 +13,8 @@ interface MyContextProps {
   filteredInstallments: Installments[]
   setFilteredInstallments: React.Dispatch<React.SetStateAction<Installments[]>>
   salaries: Salaries[]
+  filteredSalaries: Salaries[]
+  setFilteredSalaries: React.Dispatch<React.SetStateAction<Salaries[]>>
   setMonthCurrent: React.Dispatch<React.SetStateAction<string>>
   monthCurrent: string
   categories: Category[]
@@ -23,6 +25,7 @@ const InstallmentsContext = createContext<MyContextProps>({} as MyContextProps)
 const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
   const [installments, setInstallments] = useState<Installments[]>([])
   const [filteredInstallments, setFilteredInstallments] = useState(installments)
+  const [filteredSalaries, setFilteredSalaries] = useState<Salaries[]>([])
   const [monthCurrent, setMonthCurrent] = useState(
     months[new Date().getMonth()]
   )
@@ -43,10 +46,13 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
         setFilteredInstallments(
           filterInstallments(installments.data, months[new Date().getMonth()])
         )
+        setFilteredSalaries(
+          filterSalaries(salary.data, months[new Date().getMonth()])
+        )
         setCategories(category.data)
         setSalaries(salary.data)
       } catch (error: any) {
-        if (error.response.data.statusCode === 401) {
+        if (error.response?.data.statusCode === 401) {
           redirect('/login')
         }
       }
@@ -65,6 +71,8 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
         setMonthCurrent,
         monthCurrent,
         categories,
+        filteredSalaries,
+        setFilteredSalaries,
       }}
     >
       {children}

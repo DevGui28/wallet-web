@@ -1,26 +1,31 @@
 'use client'
 
 import axiosInstance from '@/api/axiosInstance'
+import { useToast } from '@/components/ui/use-toast'
 import { formateCurrencyToNumber, formatNumberToCurrency } from '@/lib/useful'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Box, TextField } from '@mui/material'
+import { Box, CircularProgress, TextField } from '@mui/material'
+import clsx from 'clsx'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+const INITIAL_INPUTS = {
+  description: '',
+  amount: '',
+}
+
 export default function NewSalariesPage() {
-  const [inputValue, setInputValue] = useState({
-    description: '',
-    amount: '',
-  })
-  const [error, setError] = useState<string | null>(null)
-  const [suceess, setSuccess] = useState<string | null>(null)
+  const [inputValue, setInputValue] = useState(INITIAL_INPUTS)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const { toast } = useToast()
 
   const insertNewSalary = z.object({
     description: z
       .string()
       .min(3, { message: 'Descrição deve ser maior que 2 caracteres' }),
-    amount: z.string().min(1, { message: 'Digite um numero' }),
+    amount: z.string().min(8, { message: 'Digite um valor maior que R$:9,99' }),
   })
 
   type NewSalary = z.infer<typeof insertNewSalary>
@@ -45,6 +50,7 @@ export default function NewSalariesPage() {
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<NewSalary>({
@@ -52,19 +58,33 @@ export default function NewSalariesPage() {
   })
 
   async function onSubmit(inputs: NewSalary) {
-    setError(null)
+    setIsLoading(true)
     try {
       const newInputs = {
         ...inputs,
         amount: formateCurrencyToNumber(inputs.amount),
       }
+
+      console.log(newInputs)
+
       const { data } = await axiosInstance.post('/salary', newInputs)
       if (data) {
-        setInputValue({ description: '', amount: '' })
-        setSuccess('Salário adicionado com sucesso')
+        toast({
+          title: 'Sucesso',
+          description: 'Salário adicionado com sucesso',
+        })
+        reset()
+        setInputValue(INITIAL_INPUTS)
       }
     } catch (error: any) {
-      setError(error.response?.data.message || 'Ocorreu um erro inesperado')
+      toast({
+        title: 'Erro',
+        variant: 'destructive',
+        description:
+          error.response?.data.message || 'Ocorreu um erro inesperado',
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -79,6 +99,7 @@ export default function NewSalariesPage() {
         {...register('amount')}
         type="text"
         label="Valor"
+        name="amount"
         value={inputValue.amount}
         onChange={handleChange}
         error={!!errors.amount}
@@ -100,12 +121,25 @@ export default function NewSalariesPage() {
         InputLabelProps={{ shrink: !!inputValue.description }}
       />
 
-      <button type="submit" className="rounded-md bg-blue-500 p-2 text-white">
-        Adicionar Salário
+      <button
+        className={clsx(
+          'mt-5 flex items-center justify-center rounded-md p-2 text-white',
+          isLoading
+            ? 'cursor-not-allowed bg-green-400'
+            : 'cursor-pointer bg-green-600'
+        )}
+        disabled={isLoading}
+        type="submit"
+      >
+        {isLoading && (
+          <CircularProgress
+            color="inherit"
+            size={15}
+            className="mr-2 h-1 w-1 animate-spin"
+          />
+        )}
+        {isLoading ? 'Adicionando Salário' : 'Adicionar Salário'}
       </button>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {suceess && <p className="text-green-500">{suceess}</p>}
     </Box>
   )
 }

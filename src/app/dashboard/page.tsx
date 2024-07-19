@@ -3,7 +3,11 @@
 import TableExpenses from '@/components/TableExpenses'
 import RadialChart from '@/components/ui/RadialChart'
 import { useInstallments } from '@/hooks/useInstallments'
-import { calculateTotal, filterInstallments } from '@/lib/useful'
+import {
+  calculateTotal,
+  filterInstallments,
+  filterSalaries,
+} from '@/lib/useful'
 import { withAuth } from '@/lib/with-auth'
 import { useEffect } from 'react'
 
@@ -12,15 +16,18 @@ function Dashboard() {
     installments,
     setFilteredInstallments,
     filteredInstallments,
-    salaries,
     monthCurrent,
+    salaries,
+    filteredSalaries,
+    setFilteredSalaries,
   } = useInstallments()
 
-  const totalSalaries = calculateTotal(salaries)
+  const totalSalaries = calculateTotal(filteredSalaries)
   const totalInstallments = calculateTotal(filteredInstallments)
 
   useEffect(() => {
     setFilteredInstallments(filterInstallments(installments, monthCurrent))
+    setFilteredSalaries(filterSalaries(salaries, monthCurrent))
   }, [monthCurrent])
 
   return (

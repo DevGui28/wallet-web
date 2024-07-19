@@ -1,4 +1,5 @@
 import { Installments } from '@/app/common/interfaces/installments'
+import { Salaries } from '@/app/common/interfaces/salaries'
 
 export const months = [
   'Janeiro',
@@ -43,6 +44,13 @@ export function filterInstallments(
       if (a.isRecurring) return -1
       return new Date(a.dueDate).getDate() - new Date(b.dueDate).getDate()
     })
+}
+
+export function filterSalaries(salaries: Salaries[], month: string) {
+  return salaries.filter((salary) => {
+    const date = new Date(salary.month)
+    return months[date.getMonth()] === month
+  })
 }
 
 export function formatDate(date: string) {

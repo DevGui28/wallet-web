@@ -3,17 +3,20 @@
 import axiosInstance from '@/api/axiosInstance'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useToast } from '@/components/ui/use-toast'
 import { useInstallments } from '@/hooks/useInstallments'
 import { formateCurrencyToNumber, formatNumberToCurrency } from '@/lib/useful'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Box,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -21,6 +24,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material'
+import clsx from 'clsx'
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -36,11 +40,12 @@ const INITIAL_INPUTS = {
 
 export default function NewSalariesPage() {
   const [inputValue, setInputValue] = useState(INITIAL_INPUTS)
-  const [error, setError] = useState<string | null>(null)
-  const [suceess, setSuccess] = useState<string | null>(null)
+  const [isRecurring, setIsRecurring] = useState(false)
   const [date, setDate] = useState<Date | undefined>(new Date())
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const { categories } = useInstallments()
+  const { toast } = useToast()
 
   const insertNewExpense = z.object({
     description: z
@@ -48,7 +53,8 @@ export default function NewSalariesPage() {
       .min(3, { message: 'Descrição deve ser maior que 2 caracteres' }),
     amount: z.string().min(1, { message: 'Digite um numero' }),
     categoryId: z.string().min(1, { message: 'Selecione uma categoria' }),
-    recurring: z.string().min(1, { message: 'Digite um numero' }),
+    recurring: z.string().default('1').optional(),
+    isRecurring: z.boolean().default(false).optional(),
   })
 
   type NewExpense = z.infer<typeof insertNewExpense>
@@ -71,14 +77,13 @@ export default function NewSalariesPage() {
     }))
   }
 
-  console.log(date)
-
   function handleSelectChange(e: SelectChangeEvent) {
     setInputValue((prev) => ({ ...prev, categoryId: e.target.value as string }))
   }
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<NewExpense>({
@@ -86,19 +91,34 @@ export default function NewSalariesPage() {
   })
 
   async function onSubmit(inputs: NewExpense) {
-    setError(null)
+    setIsLoading(true)
     try {
+      const condition = !isRecurring ? Number(inputs.recurring) : 1
       const newInputs = {
         ...inputs,
+        dueDate: date,
         amount: formateCurrencyToNumber(inputs.amount),
+        recurring: condition === 0 ? 1 : condition,
+        isRecurring,
       }
-      const { data } = await axiosInstance.post('/salary', newInputs)
+      const { data } = await axiosInstance.post('/expense', newInputs)
       if (data) {
+        reset()
         setInputValue(INITIAL_INPUTS)
-        setSuccess('Despesa adicionado com sucesso')
+        toast({
+          title: 'Sucesso',
+          description: 'Despesa adicionada com sucesso',
+        })
       }
     } catch (error: any) {
-      setError(error.response?.data.message || 'Ocorreu um erro inesperado')
+      toast({
+        title: 'Erro',
+        variant: 'destructive',
+        description:
+          error.response?.data.message || 'Ocorreu um erro inesperado',
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -179,26 +199,52 @@ export default function NewSalariesPage() {
         </PopoverContent>
       </Popover>
 
-      <TextField
-        {...register('recurring')}
-        type="number"
-        variant="outlined"
-        placeholder="Parcelas (1 para despesa única)"
-        onChange={handleChange}
-        name="recurring"
-        value={inputValue.recurring}
-        error={!!errors.recurring}
-        helperText={errors.recurring?.message}
-        className="rounded-md border border-gray-300"
-        InputLabelProps={{ shrink: !!inputValue.recurring }}
-      />
+      <FormControl className="flex flex-row items-center gap-3">
+        <Checkbox
+          checked={isRecurring}
+          onCheckedChange={() => setIsRecurring(!isRecurring)}
+        />
+        <span>É uma conta recorrente?</span>
+      </FormControl>
+      <p className="-mt-3 text-xs text-gray-500">
+        Marque se a despesa é recorrente, caso contrário, deixe em branco
+      </p>
 
-      <button type="submit" className="rounded-md bg-red-500 p-2 text-white">
-        Adicionar Despesa
+      {!isRecurring && (
+        <TextField
+          {...register('recurring')}
+          type="number"
+          variant="outlined"
+          placeholder="Parcelas (1 para despesa única)"
+          onChange={handleChange}
+          name="recurring"
+          value={inputValue.recurring}
+          error={!!errors.recurring}
+          helperText={errors.recurring?.message}
+          className="rounded-md border border-gray-300"
+          InputLabelProps={{ shrink: !!inputValue.recurring }}
+        />
+      )}
+
+      <button
+        className={clsx(
+          'mt-5 flex items-center justify-center rounded-md p-2 text-white',
+          isLoading
+            ? 'cursor-not-allowed bg-red-300'
+            : 'cursor-pointer bg-red-500'
+        )}
+        disabled={isLoading}
+        type="submit"
+      >
+        {isLoading && (
+          <CircularProgress
+            color="inherit"
+            size={15}
+            className="mr-2 h-1 w-1 animate-spin"
+          />
+        )}
+        {isLoading ? 'Adicionando Despesa' : 'Adicionar Despesa'}
       </button>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {suceess && <p className="text-green-500">{suceess}</p>}
     </Box>
   )
 }

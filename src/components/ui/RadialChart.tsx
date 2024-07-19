@@ -120,14 +120,18 @@ export default function Component({
               <RadialBar
                 dataKey="salary"
                 stackId="a"
-                fill="var(--color-salary)"
+                fill={
+                  totalExpenses.includes('-')
+                    ? 'var(--color-installment)'
+                    : 'var(--color-salary)'
+                }
                 className="stroke-transparent stroke-2"
               />
             </RadialBarChart>
           </ChartContainer>
         </CardContent>
         <CardFooter className="-mt-28 flex-col gap-2 text-sm">
-          <div className="text-muted-foreground leading-none">
+          <div className="leading-none text-muted-foreground">
             Monstrando as despesas e salários do mês
           </div>
         </CardFooter>

@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/toaster'
 import type { Metadata } from 'next'
 
 import './globals.css'
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-gray-100">
         <ClientLayout>{children}</ClientLayout>
+        <Toaster />
       </body>
     </html>
   )
