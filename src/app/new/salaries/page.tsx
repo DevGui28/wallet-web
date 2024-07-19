@@ -76,6 +76,17 @@ export default function NewSalariesPage() {
       className="flex flex-col gap-4 p-4"
     >
       <TextField
+        {...register('amount')}
+        type="text"
+        label="Valor"
+        value={inputValue.amount}
+        onChange={handleChange}
+        error={!!errors.amount}
+        helperText={errors.amount?.message}
+        InputLabelProps={{ shrink: !!inputValue.amount }}
+        className="rounded-md border border-gray-300"
+      />
+      <TextField
         {...register('description')}
         type="text"
         variant="outlined"
@@ -88,20 +99,9 @@ export default function NewSalariesPage() {
         className="rounded-md border border-gray-300"
         InputLabelProps={{ shrink: !!inputValue.description }}
       />
-      <TextField
-        {...register('amount')}
-        type="text"
-        label="Valor"
-        value={inputValue.amount}
-        onChange={handleChange}
-        error={!!errors.amount}
-        helperText={errors.amount?.message}
-        InputLabelProps={{ shrink: !!inputValue.amount }}
-        className="rounded-md border border-gray-300"
-      />
 
       <button type="submit" className="rounded-md bg-blue-500 p-2 text-white">
-        Adicionar
+        Adicionar Salário
       </button>
 
       {error && <p className="text-red-500">{error}</p>}
