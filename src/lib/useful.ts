@@ -33,12 +33,18 @@ export function formatNumberToCurrency(value: number) {
 
 export function filterInstallments(
   installment: Installments[],
-  month: string
+  month: string,
+  year: number
 ): Installments[] {
   return installment
     .filter((installment: Installments) => {
       const date = new Date(installment.dueDate)
-      return installment.isRecurring || months[date.getMonth()] === month
+      console.log('🚀 ~ file: useful.ts:42 ~ .filter ~ date:', date)
+
+      return (
+        installment.isRecurring ||
+        (months[date.getMonth()] === month && date.getFullYear() === year)
+      )
     })
     .sort((a, b) => {
       if (a.isRecurring) return -1
@@ -49,7 +55,10 @@ export function filterInstallments(
 export function filterSalaries(salaries: Salaries[], month: string) {
   return salaries.filter((salary) => {
     const date = new Date(salary.month)
-    return months[date.getMonth()] === month
+    return (
+      months[date.getMonth()] === month &&
+      date.getFullYear() === new Date().getFullYear()
+    )
   })
 }
 
@@ -57,6 +66,15 @@ export function formatDate(date: string) {
   const [, month, day] = date.split('-')
   const dayFormatted = day.split('T')[0]
   return `${dayFormatted} de ${months[Number(month) - 1]}`
+}
+
+export function getNextFiveYears() {
+  const currentYear = new Date().getFullYear()
+  const years = []
+  for (let i = 0; i < 5; i++) {
+    years.push(currentYear + i)
+  }
+  return years
 }
 
 export function welcomePerson(date: Date) {

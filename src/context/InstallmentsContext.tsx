@@ -18,6 +18,8 @@ interface MyContextProps {
   setMonthCurrent: React.Dispatch<React.SetStateAction<string>>
   monthCurrent: string
   categories: Category[]
+  setYearCurrent: React.Dispatch<React.SetStateAction<number>>
+  yearCurrent: number
 }
 
 const InstallmentsContext = createContext<MyContextProps>({} as MyContextProps)
@@ -29,6 +31,7 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
   const [monthCurrent, setMonthCurrent] = useState(
     months[new Date().getMonth()]
   )
+  const [yearCurrent, setYearCurrent] = useState(new Date().getFullYear())
   const [salaries, setSalaries] = useState([])
   const [categories, setCategories] = useState([])
   const pathname = usePathname()
@@ -44,7 +47,11 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
         const category = await axiosInstance.get('/category')
         setInstallments(installments.data)
         setFilteredInstallments(
-          filterInstallments(installments.data, months[new Date().getMonth()])
+          filterInstallments(
+            installments.data,
+            months[new Date().getMonth()],
+            yearCurrent
+          )
         )
         setFilteredSalaries(
           filterSalaries(salary.data, months[new Date().getMonth()])
@@ -73,6 +80,8 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
         categories,
         filteredSalaries,
         setFilteredSalaries,
+        setYearCurrent,
+        yearCurrent,
       }}
     >
       {children}

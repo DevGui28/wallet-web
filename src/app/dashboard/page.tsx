@@ -20,15 +20,18 @@ function Dashboard() {
     salaries,
     filteredSalaries,
     setFilteredSalaries,
+    yearCurrent,
   } = useInstallments()
 
   const totalSalaries = calculateTotal(filteredSalaries)
   const totalInstallments = calculateTotal(filteredInstallments)
 
   useEffect(() => {
-    setFilteredInstallments(filterInstallments(installments, monthCurrent))
+    setFilteredInstallments(
+      filterInstallments(installments, monthCurrent, yearCurrent)
+    )
     setFilteredSalaries(filterSalaries(salaries, monthCurrent))
-  }, [monthCurrent])
+  }, [monthCurrent, yearCurrent])
 
   return (
     <>
@@ -51,7 +54,6 @@ function Dashboard() {
         <RadialChart
           totalInstallments={totalInstallments}
           totalSalaries={totalSalaries}
-          monthCurrent={monthCurrent}
         />
       </div>
       <TableExpenses />

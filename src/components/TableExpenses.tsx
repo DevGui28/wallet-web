@@ -1,10 +1,15 @@
 import { useInstallments } from '@/hooks/useInstallments'
-import { formatDate, months } from '@/lib/useful'
+import { formatDate, getNextFiveYears, months } from '@/lib/useful'
 import { motion } from 'framer-motion'
 
 export default function TableExpenses() {
-  const { monthCurrent, setMonthCurrent, filteredInstallments } =
-    useInstallments()
+  const {
+    monthCurrent,
+    setMonthCurrent,
+    filteredInstallments,
+    setYearCurrent,
+    yearCurrent,
+  } = useInstallments()
   return (
     <div className="-mt-16 mb-16 flex min-h-full flex-col items-center rounded-t-[4rem] bg-gray-100 pb-4">
       <div className="mt-5 flex w-4/5 items-center justify-between p-5">
@@ -17,6 +22,17 @@ export default function TableExpenses() {
           {months.map((month) => (
             <option key={month} value={month}>
               {month}
+            </option>
+          ))}
+        </select>
+        <select
+          value={yearCurrent}
+          onChange={(e) => setYearCurrent(Number(e.target.value))}
+          className="poppins-regular rounded-md border-2 border-gray-200 bg-gray-100 px-2 py-1 text-sm text-gray-900"
+        >
+          {getNextFiveYears().map((year) => (
+            <option key={year} value={year}>
+              {year}
             </option>
           ))}
         </select>

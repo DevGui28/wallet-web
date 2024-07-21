@@ -16,6 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
+import { useInstallments } from '@/hooks/useInstallments'
 import { formateCurrencyToNumber, formatNumberToCurrency } from '@/lib/useful'
 import { motion } from 'framer-motion'
 
@@ -33,17 +34,12 @@ const chartConfig = {
 type Props = {
   totalInstallments: string
   totalSalaries: string
-  monthCurrent: string
 }
 
-export default function Component({
-  totalInstallments,
-  totalSalaries,
-  monthCurrent,
-}: Props) {
+export default function Component({ totalInstallments, totalSalaries }: Props) {
   const salary = formateCurrencyToNumber(totalSalaries)
   const installment = formateCurrencyToNumber(totalInstallments)
-
+  const { monthCurrent, yearCurrent } = useInstallments()
   const chartData = [
     { month: monthCurrent, salary: salary - installment, installment },
   ]
@@ -67,7 +63,7 @@ export default function Component({
       <Card className="flex flex-col">
         <CardHeader className="items-center pb-0">
           <CardTitle>Resumo</CardTitle>
-          <CardDescription>{monthCurrent}</CardDescription>
+          <CardDescription>{`${monthCurrent} de ${yearCurrent}`}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-1 items-center pb-0">
           <ChartContainer
