@@ -39,8 +39,6 @@ export function filterInstallments(
   return installment
     .filter((installment: Installments) => {
       const date = new Date(installment.dueDate)
-      console.log('🚀 ~ file: useful.ts:42 ~ .filter ~ date:', date)
-
       return (
         installment.isRecurring ||
         (months[date.getMonth()] === month && date.getFullYear() === year)

@@ -65,8 +65,6 @@ export default function NewSalariesPage() {
         amount: formateCurrencyToNumber(inputs.amount),
       }
 
-      console.log(newInputs)
-
       const { data } = await axiosInstance.post('/salary', newInputs)
       if (data) {
         toast({
