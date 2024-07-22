@@ -63,7 +63,7 @@ export function filterSalaries(salaries: Salaries[], month: string) {
 export function formatDate(date: string) {
   const [, month, day] = date.split('-')
   const dayFormatted = day.split('T')[0]
-  return `${dayFormatted} de ${months[Number(month) - 1]}`
+  return `${dayFormatted} de ${months[Number(month) - 1]} de ${new Date().getFullYear()}`
 }
 
 export function getNextFiveYears() {
