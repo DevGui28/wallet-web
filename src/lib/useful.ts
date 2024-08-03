@@ -66,6 +66,11 @@ export function formatDate(date: string) {
   return `${dayFormatted} de ${months[Number(month) - 1]} de ${new Date().getFullYear()}`
 }
 
+export const formatSalarieDate = (date: string) => {
+  const [year, month] = date.split('-')
+  return `${months[Number(month) - 1]} de ${year}`
+}
+
 export function getNextFiveYears() {
   const currentYear = new Date().getFullYear()
   const years = []

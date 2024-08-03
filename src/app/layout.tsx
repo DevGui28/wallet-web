@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 import ClientLayout from '@/components/ClientLayout'
+import QueryProvider from '@/components/shared/QueryProvider'
 
 export const metadata: Metadata = {
   title: 'Sábio Financeiro',
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gray-100">
-        <ClientLayout>{children}</ClientLayout>
+        <QueryProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </QueryProvider>
         <Toaster />
       </body>
     </html>
