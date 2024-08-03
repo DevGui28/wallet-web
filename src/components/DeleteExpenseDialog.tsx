@@ -1,3 +1,4 @@
+import axiosInstance from '@/api/axiosInstance'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,18 +11,34 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { useQueryClient } from 'react-query'
+import { useToast } from './ui/use-toast'
 
-type AlertDeleteProps = {
+type DeleteExpenseDialogProps = {
   id: string
 }
 
-export function AlertDelete({ id }: AlertDeleteProps) {
+export function DeleteExpenseDialog({ id }: DeleteExpenseDialogProps) {
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
+
   const handleDelete = async () => {
     try {
-      // await axiosInstance.delete(`/expense/${id}`)
-      console.log(`Deleted ${id}`)
-    } catch (error) {
-      console.error(error)
+      await axiosInstance.delete(`/expense/${id}`)
+      toast({
+        title: 'Sucesso',
+        description: 'Despesa deletada com sucesso',
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['expense'],
+      })
+    } catch (error: any) {
+      toast({
+        title: 'Erro',
+        variant: 'destructive',
+        description:
+          error.response?.data.message || 'Ocorreu um erro inesperado',
+      })
     }
   }
 
@@ -39,7 +56,7 @@ export function AlertDelete({ id }: AlertDeleteProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>
+          <AlertDialogAction className="bg-red-500" onClick={handleDelete}>
             Confirmar
           </AlertDialogAction>
         </AlertDialogFooter>

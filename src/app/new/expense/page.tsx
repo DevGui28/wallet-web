@@ -29,6 +29,7 @@ import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useQueryClient } from 'react-query'
 import { z } from 'zod'
 
 const INITIAL_INPUTS = {
@@ -36,13 +37,15 @@ const INITIAL_INPUTS = {
   amount: '',
   categoryId: '',
   recurring: '',
+  isRecurring: false,
 }
 
-export default function NewSalariesPage() {
+export default function NewExpensePage() {
   const [inputValue, setInputValue] = useState(INITIAL_INPUTS)
   const [isRecurring, setIsRecurring] = useState(false)
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const queryClient = useQueryClient()
 
   const { categories } = useInstallments()
   const { toast } = useToast()
@@ -110,6 +113,9 @@ export default function NewSalariesPage() {
           description: 'Despesa adicionada com sucesso',
         })
       }
+      queryClient.invalidateQueries({
+        queryKey: ['expense'],
+      })
     } catch (error: any) {
       toast({
         title: 'Erro',

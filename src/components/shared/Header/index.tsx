@@ -1,11 +1,12 @@
 import { welcomePerson } from '@/lib/useful'
+import { withAuth } from '@/lib/with-auth'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function Header() {
+function Header() {
   return (
-    <header className="flex h-20 w-screen items-center justify-center bg-blue-600 px-5">
-      <div className="flex w-3/5 flex-col">
+    <header className="max-w-screen flex h-20 items-center justify-center gap-5 bg-blue-600">
+      <div className="flex flex-col">
         <h1 className="poppins-bold text-gray-900">
           Ei, Bem vindo(a) devolta!
         </h1>
@@ -13,7 +14,7 @@ export default function Header() {
           {welcomePerson(new Date())}
         </p>
       </div>
-      <div className="flex w-2/5 items-center justify-end gap-3">
+      <div className="flex items-center justify-end gap-3">
         <Link href="/api/loggout">
           <button className="rounded-md bg-red-500 px-3 py-1 text-white">
             Deslogar
@@ -24,3 +25,5 @@ export default function Header() {
     </header>
   )
 }
+
+export default withAuth(Header)
