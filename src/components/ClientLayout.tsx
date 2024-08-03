@@ -4,8 +4,8 @@ import { InstallmentsProvider } from '@/context/InstallmentsContext'
 import { AuthProvider } from '@/hooks/useAuth'
 import { usePathname } from 'next/navigation'
 
-import BottomNavigation from './BottomNavigation'
-import Header from './Header'
+import BottomNavigation from './shared/BottomNavigation'
+import Header from './shared/Header'
 
 export default function ClientLayout({
   children,
