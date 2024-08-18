@@ -39,13 +39,9 @@ export function filterInstallments(
   return installment
     .filter((installment: Installments) => {
       const date = new Date(installment.dueDate)
-      return (
-        installment.isRecurring ||
-        (months[date.getMonth()] === month && date.getFullYear() === year)
-      )
+      return months[date.getMonth()] === month && date.getFullYear() === year
     })
     .sort((a, b) => {
-      if (a.isRecurring) return -1
       return new Date(a.dueDate).getDate() - new Date(b.dueDate).getDate()
     })
 }

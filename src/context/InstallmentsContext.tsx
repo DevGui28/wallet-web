@@ -4,9 +4,11 @@ import axiosInstance from '@/api/axiosInstance'
 import { Category } from '@/app/common/interfaces/categories'
 import { Installments } from '@/app/common/interfaces/installments'
 import { Salaries } from '@/app/common/interfaces/salaries'
+import { handleGetInstallments, handleGetSalaries } from '@/lib/requests'
 import { filterInstallments, filterSalaries, months } from '@/lib/useful'
 import { redirect, usePathname } from 'next/navigation'
 import React, { createContext, useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 
 interface MyContextProps {
   installments: Installments[]
@@ -36,37 +38,50 @@ const InstallmentsProvider = ({ children }: { children: React.ReactNode }) => {
   const [categories, setCategories] = useState([])
   const pathname = usePathname()
 
+  const { data: installmentsData, isLoading: loadingInstallments } = useQuery({
+    queryKey: ['installments'],
+    queryFn: handleGetInstallments,
+  })
+
+  const { data: salariesData, isLoading: loadingSalaries } = useQuery({
+    queryKey: ['salaries'],
+    queryFn: handleGetSalaries,
+  })
+
   useEffect(() => {
     if (pathname === '/login' || pathname === '/register') {
       return
     }
+
     async function fetch() {
+      if (loadingInstallments || loadingSalaries) {
+        return
+      }
+
       try {
-        const installments = await axiosInstance.get('/installments')
-        const salary = await axiosInstance.get('/salary')
         const category = await axiosInstance.get('/category')
-        setInstallments(installments.data)
+        setInstallments(installmentsData)
         setFilteredInstallments(
           filterInstallments(
-            installments.data,
+            installmentsData,
             months[new Date().getMonth()],
             yearCurrent
           )
         )
         setFilteredSalaries(
-          filterSalaries(salary.data, months[new Date().getMonth()])
+          filterSalaries(salariesData, months[new Date().getMonth()])
         )
         setCategories(category.data)
-        setSalaries(salary.data)
+        setSalaries(salariesData)
       } catch (error: any) {
         if (error.response?.data.statusCode === 401) {
-          redirect('/login')
+          redirect('/auth')
         }
       }
     }
 
     fetch()
-  }, [pathname])
+  }, [installmentsData, salariesData])
 
   return (
     <InstallmentsContext.Provider

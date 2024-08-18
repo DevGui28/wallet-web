@@ -31,7 +31,7 @@ function Dashboard() {
       filterInstallments(installments, monthCurrent, yearCurrent)
     )
     setFilteredSalaries(filterSalaries(salaries, monthCurrent))
-  }, [monthCurrent, yearCurrent])
+  }, [monthCurrent, yearCurrent, installments, salaries])
 
   return (
     <>

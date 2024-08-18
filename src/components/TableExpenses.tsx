@@ -1,6 +1,9 @@
 import { useInstallments } from '@/hooks/useInstallments'
+import { handleUpdatePaidInstallments } from '@/lib/requests'
 import { formatDate, getNextFiveYears, months } from '@/lib/useful'
+import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
+import { useMutation, useQueryClient } from 'react-query'
 
 export default function TableExpenses() {
   const {
@@ -10,6 +13,23 @@ export default function TableExpenses() {
     setYearCurrent,
     yearCurrent,
   } = useInstallments()
+
+  const queryClient = useQueryClient()
+
+  const mutate = useMutation({
+    mutationFn: handleUpdatePaidInstallments,
+    onSuccess: () => {
+      queryClient.invalidateQueries('installments')
+    },
+    onError: (error) => {
+      console.error(error)
+    },
+  })
+
+  const handleUpdatePaid = async (id: string) => {
+    await mutate.mutateAsync(id)
+  }
+
   return (
     <div className="-mt-16 mb-16 flex min-h-full flex-col items-center rounded-t-[4rem] bg-gray-100 pb-4">
       <div className="mt-5 flex w-4/5 items-center justify-between p-5">
@@ -53,30 +73,48 @@ export default function TableExpenses() {
           filteredInstallments.map((installment) => (
             <div
               key={installment.id}
-              className="flex w-full items-center justify-between border-b border-gray-100 p-5"
+              className="flex w-full items-center justify-between gap-2 border-b border-gray-100 p-5"
             >
-              <div className="flex flex-col">
-                <p className="poppins-semibold text-sm text-gray-900">
+              <div className="flex flex-col items-start">
+                <p
+                  className={cn('poppins-semibold text-sm text-gray-900', {
+                    'line-through': installment.paid,
+                  })}
+                >
                   {installment.expense.description}
                 </p>
                 <p className="poppins-regular text-xs text-gray-400">
                   {installment.expense.category.name}
-                </p>
-              </div>
-              <div className="flex flex-col items-end">
-                <p className="poppins-bold text-sm text-red-600">
-                  -R${installment.amount.toFixed(2)}
-                </p>
-                <p className="poppins-regular text-right text-xs text-gray-400">
-                  {installment.isRecurring
-                    ? 'Recorrente'
-                    : formatDate(installment.dueDate)}
                 </p>
                 <p className="poppins-regular text-right text-xs text-gray-400">
                   {!installment.isRecurring &&
                     installment.expense.recurring > 1 &&
                     `${installment.currentInstallment} de ${installment.expense.recurring} parcelas`}
                 </p>
+              </div>
+              <div className="flex flex-row items-center gap-3">
+                <div className="flex flex-col items-end">
+                  <p className="poppins-bold text-sm text-red-600">
+                    -R${installment.amount.toFixed(2)}
+                  </p>
+                  <p className="poppins-regular text-right text-xs text-gray-400">
+                    {installment.isRecurring
+                      ? 'Recorrente'
+                      : formatDate(installment.dueDate)}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className={cn(
+                    'poppins-regular rounded-md bg-green-500 p-1 text-xs text-slate-50',
+                    {
+                      'bg-gray-300': installment.paid,
+                    }
+                  )}
+                  onClick={() => handleUpdatePaid(installment.id)}
+                >
+                  {installment.paid ? 'Pago' : 'Pagar'}
+                </button>
               </div>
             </div>
           ))

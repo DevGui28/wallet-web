@@ -51,7 +51,9 @@ export default function ViewExpensesPage() {
                   -{formatNumberToCurrency(expense.amount)}
                 </p>
                 <p className="poppins-regular text-xs text-gray-400">
-                  {formatDate(`${expense.dueDate}`)}
+                  {expense.isRecurring
+                    ? 'Recorrente'
+                    : formatDate(`${expense.dueDate}`)}
                 </p>
               </div>
               <div className="flex w-1/6 justify-center gap-3">

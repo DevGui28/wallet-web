@@ -7,4 +7,5 @@ export type Expense = {
   dueDate: Date
   category: Category
   recurring: number
+  isRecurring: boolean
 }

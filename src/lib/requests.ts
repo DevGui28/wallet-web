@@ -14,3 +14,7 @@ export const handleGetInstallments = async () => {
   const { data } = await axiosInstance.get('/installments')
   return data
 }
+
+export const handleUpdatePaidInstallments = async (id: string) => {
+  await axiosInstance.patch(`/installments/${id}/paid`)
+}
