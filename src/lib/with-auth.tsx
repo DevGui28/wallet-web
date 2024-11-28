@@ -1,6 +1,5 @@
 'use client'
 
-import Loading from '@/components/LoadingGlobal'
 import { useAuth } from '@/hooks/useAuth'
 import { redirect } from 'next/navigation'
 
@@ -13,7 +12,7 @@ export function withAuth(Component: any) {
     }
 
     if (isLoading) {
-      return <Loading />
+      return <div>Loading...</div>
     }
 
     return <Component {...props} />
