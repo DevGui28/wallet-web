@@ -2,13 +2,13 @@
 const nextConfig = {
   async redirects() {
     return [
-      {
-        source: '/',
-        destination: '/dashboard',
-        permanent: false,
-      },
+      // {
+      //   source: '/',
+      //   destination: '/',
+      //   permanent: false,
+      // },
     ]
-  }
-};
+  },
+}
 
-export default nextConfig;
+export default nextConfig

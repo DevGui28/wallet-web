@@ -12,7 +12,11 @@ export function withAuth(Component: any) {
     }
 
     if (isLoading) {
-      return <div>Loading...</div>
+      return (
+        <div className="flex h-full w-full items-center justify-center bg-primary text-center">
+          Loading...
+        </div>
+      )
     }
 
     return <Component {...props} />
