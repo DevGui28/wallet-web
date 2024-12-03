@@ -4,7 +4,6 @@ import { ThemeProvider } from 'next-themes'
 
 import './globals.css'
 
-import { Header } from '@/components/app/Header'
 import QueryProvider from '@/components/shared/QueryProvider'
 
 export const metadata: Metadata = {
@@ -21,7 +20,6 @@ export default function RootLayout({
     <html lang="en">
       <ThemeProvider>
         <body className="inter-300 bg-background">
-          <Header />
           <QueryProvider>{children}</QueryProvider>
           <Toaster />
         </body>
