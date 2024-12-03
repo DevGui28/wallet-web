@@ -1,7 +1,7 @@
 'use client'
 
-import { SideNav } from '@/components/app/SideNav'
-import TopNav from '@/components/app/TopNav'
+import { SideNav } from '@/components/app/Header/SideNav'
+import TopNav from '@/components/app/Header/TopNav'
 
 export default function DashboardLayout({
   children,
@@ -11,7 +11,7 @@ export default function DashboardLayout({
   return (
     <div className="flex items-center">
       <SideNav />
-      <main className="ml-80 flex min-h-screen w-full flex-col bg-background">
+      <main className="my-5 ml-60 mr-4 flex min-h-screen w-full flex-col rounded-3xl bg-card">
         <TopNav title="Dashboard" />
         {children}
       </main>

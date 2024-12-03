@@ -1,20 +1,31 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 
-import { Bell } from '@phosphor-icons/react'
-import { Search } from 'lucide-react'
+import { Bell, Moon, Sun } from '@phosphor-icons/react'
+import { useTheme } from 'next-themes'
 
 export default function TopNav({ title }: { title: string }) {
+  const { theme, setTheme } = useTheme()
   const name = 'John Doe'
-  const img = null
-  // 'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2023/12/13/istock-1331962950-1iemnjv7a6ng6.jpg'
-  return (
-    <div className="flex w-full items-center justify-between bg-card p-8">
-      <h1 className="inter-700 text-3xl">{title}</h1>
-      <div className="flex items-center space-x-4">
-        <Search size={20} />
-        <Bell size={20} weight="fill" />
+  let img
 
+  return (
+    <div className="flex w-full items-center justify-between p-8">
+      <h1 className="inter-700 text-3xl">{title}</h1>
+      <div className="flex items-center justify-center space-x-4">
+        <Bell size={20} weight="fill" />
+        <button
+          className="cursor-pointer"
+          onClick={() =>
+            setTheme((theme) => (theme === 'dark' ? 'light' : 'dark'))
+          }
+        >
+          {theme === 'dark' ? (
+            <Sun weight="fill" size={20} />
+          ) : (
+            <Moon weight="fill" size={20} />
+          )}
+        </button>
         {img ? (
           <img src={img} alt="profile-image" className="h-8 w-8 rounded-full" />
         ) : (
