@@ -77,7 +77,7 @@ export function SideNav() {
                 href={`/${item.id}`}
                 key={item.id}
                 className={cn(
-                  'group/item flex h-12 w-full items-center justify-between rounded-md px-4 text-muted-foreground hover:bg-secondary hover:text-secondary-foreground',
+                  'group/item flex h-12 w-full items-center justify-between rounded-md bg-muted px-4 text-muted-foreground hover:bg-secondary hover:text-secondary-foreground',
                   {
                     'bg-secondary text-secondary-foreground':
                       pageName === item.id,
@@ -107,7 +107,7 @@ export function SideNav() {
           <Separator />
         </nav>
       </div>
-      <div className="flex h-12 w-full cursor-pointer items-center justify-center rounded-md bg-muted text-muted-foreground">
+      <div className="flex h-12 w-full cursor-pointer items-center justify-center rounded-md bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground">
         <SignOut size={18} />
         <span className="text-xs">Sair</span>
       </div>
