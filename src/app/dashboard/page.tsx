@@ -17,12 +17,18 @@ export default function Page() {
       </div>
 
       {/* Botão Primário */}
-      <button className="rounded bg-primary px-4 py-2 text-primary-foreground">
+      <button
+        type="button"
+        className="rounded bg-primary px-4 py-2 text-primary-foreground"
+      >
         Botão Primário
       </button>
 
       {/* Botão Secundário */}
-      <button className="rounded bg-secondary px-4 py-2 text-secondary-foreground">
+      <button
+        type="button"
+        className="rounded bg-secondary px-4 py-2 text-secondary-foreground"
+      >
         Botão Secundário
       </button>
 
@@ -37,7 +43,10 @@ export default function Page() {
       </span>
 
       {/* Botão Destrutivo */}
-      <button className="rounded bg-destructive px-4 py-2 text-destructive-foreground">
+      <button
+        type="button"
+        className="rounded bg-destructive px-4 py-2 text-destructive-foreground"
+      >
         Deletar
       </button>
     </div>

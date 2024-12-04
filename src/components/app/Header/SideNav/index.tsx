@@ -3,13 +3,7 @@
 
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import {
-  ArrowsLeftRight,
-  CreditCard,
-  Gear,
-  House,
-  SignOut,
-} from '@phosphor-icons/react'
+import { ChartPie, Crown, SignOut } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -23,23 +17,43 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     id: 'dashboard',
-    icon: <House weight="fill" size={18} />,
+    icon: <ChartPie weight="fill" size={18} />,
     label: 'Painel',
   },
+  // {
+  //   id: 'transactions',
+  //   icon: <ArrowsLeftRight weight="fill" size={18} />,
+  //   label: 'Transações',
+  // },
+  // {
+  //   id: 'installments',
+  //   icon: <Stack weight="fill" size={18} />,
+  //   label: 'Parcelamentos',
+  // },
+  // {
+  //   id: 'bills',
+  //   icon: <Receipt weight="fill" size={18} />,
+  //   label: 'Contas e Boletos',
+  // },
+  // {
+  //   id: 'credit-cards',
+  //   icon: <Cardholder size={18} weight="fill" />,
+  //   label: 'Cartões de Crédito',
+  // },
+  // {
+  //   id: 'reports',
+  //   icon: <ChartBar weight="fill" size={18} />,
+  //   label: 'Relatórios',
+  // },
+  // {
+  //   id: 'settings',
+  //   icon: <Gear weight="fill" size={18} />,
+  //   label: 'Configurações',
+  // },
   {
-    id: 'transactions',
-    icon: <ArrowsLeftRight weight="fill" size={18} />,
-    label: 'Transações',
-  },
-  {
-    id: 'credit-cards',
-    icon: <CreditCard size={18} weight="fill" />,
-    label: 'Cartões de Crédito',
-  },
-  {
-    id: 'settings',
-    icon: <Gear weight="fill" size={18} />,
-    label: 'Configurações',
+    id: 'subscriptions',
+    icon: <Crown size={18} weight="fill" />,
+    label: 'Assinaturas',
   },
 ]
 
