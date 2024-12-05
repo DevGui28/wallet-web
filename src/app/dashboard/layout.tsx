@@ -1,5 +1,3 @@
-'use client'
-
 import { SideNav } from '@/components/app/Header/SideNav'
 import TopNav from '@/components/app/Header/TopNav'
 

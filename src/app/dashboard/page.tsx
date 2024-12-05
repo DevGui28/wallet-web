@@ -1,4 +1,4 @@
-export default function Page() {
+function Page() {
   const componente = (
     <div className="m-6 flex flex-col gap-4 space-y-6 rounded-lg bg-card text-center">
       {/* Fundo Principal */}
@@ -60,3 +60,5 @@ export default function Page() {
     </div>
   )
 }
+
+export default Page

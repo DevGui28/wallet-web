@@ -1,11 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-'use client'
 
-import { Bell, Moon, Sun } from '@phosphor-icons/react'
-import { useTheme } from 'next-themes'
+import ChangeTheme from '@/components/shared/ChangeTheme'
+import { Bell } from '@phosphor-icons/react'
 
 export default function TopNav({ title }: { title: string }) {
-  const { theme, setTheme } = useTheme()
   const name = 'John Doe'
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let img
@@ -24,19 +22,7 @@ export default function TopNav({ title }: { title: string }) {
             3
           </span>
         </div>
-        <button
-          type="button"
-          className="cursor-pointer"
-          onClick={() =>
-            setTheme((theme) => (theme === 'dark' ? 'light' : 'dark'))
-          }
-        >
-          {theme === 'dark' ? (
-            <Sun weight="fill" size={20} />
-          ) : (
-            <Moon weight="fill" size={20} />
-          )}
-        </button>
+        <ChangeTheme />
         {img ? (
           <img src={img} alt="profile-image" className="h-8 w-8 rounded-full" />
         ) : (

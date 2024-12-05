@@ -1,8 +1,8 @@
 'use client'
 
-import { cookiesName } from '@/constants'
-import Cookies from 'js-cookie'
+import { parseCookies, setCookie } from 'nookies'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { tokenName } from '../constants/cookies'
 
 type AuthContextType = {
   isLoading: boolean
@@ -17,7 +17,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState('')
 
   useEffect(() => {
-    const getToken = Cookies.get(cookiesName.token)
+    const cookies = parseCookies()
+    const getToken = cookies[tokenName]
     if (getToken) {
       setToken(getToken)
     }
@@ -25,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   function updateToken(token: string) {
-    Cookies.set(cookiesName.token, token)
+    setCookie(null, tokenName, token)
     setToken(token)
   }
 
