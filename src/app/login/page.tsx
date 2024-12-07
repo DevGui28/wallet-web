@@ -15,6 +15,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { handleLogin } from '../../api'
+import { LoadingGlobal } from '../../components/app/common/Loading/global-loading'
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'E-mail inválido' }),
@@ -27,8 +28,8 @@ export type Login = z.infer<typeof loginSchema>
 
 export default function SignIn() {
   const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { updateToken } = useAuth()
+  const [loading, setLoading] = useState<boolean>(false)
+  const { updateToken, isLoading, isLogged } = useAuth()
   const router = useRouter()
 
   const form = useForm<Login>({
@@ -37,7 +38,7 @@ export default function SignIn() {
 
   async function onSubmit(data: Login) {
     try {
-      setIsLoading(true)
+      setLoading(true)
       const token = await handleLogin(data)
       updateToken(token)
       router.push('/dashboard')
@@ -54,8 +55,16 @@ export default function SignIn() {
         setError('Ocorreu um erro inesperado')
       }
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
+  }
+
+  if (isLoading) {
+    return <LoadingGlobal />
+  }
+
+  if (isLogged && !isLoading) {
+    return router.push('/dashboard')
   }
 
   return (
@@ -100,20 +109,20 @@ export default function SignIn() {
             <button
               className={cn(
                 'mt-5 flex items-center justify-center rounded-md p-2 font-medium text-accent-foreground',
-                isLoading
+                loading
                   ? 'cursor-not-allowed bg-accent/50 text-foreground/50'
                   : 'cursor-pointer bg-accent'
               )}
-              disabled={isLoading}
+              disabled={loading}
               type="submit"
             >
-              {isLoading && (
+              {loading && (
                 <CircularProgress
                   size={20}
                   className="mr-2 h-1 w-1 animate-spin text-foreground"
                 />
               )}
-              {isLoading ? 'Carregando...' : 'Entrar'}
+              {loading ? 'Carregando...' : 'Entrar'}
             </button>
           </form>
           {error && (

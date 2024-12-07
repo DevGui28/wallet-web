@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/hooks/useAuth'
 import { redirect } from 'next/navigation'
+import { LoadingGlobal } from '../components/app/common/Loading/global-loading'
 
 export function withAuth(Component: any) {
   return function AuthComponent(props: any) {
@@ -12,11 +13,7 @@ export function withAuth(Component: any) {
     }
 
     if (isLoading) {
-      return (
-        <div className="flex h-full w-full items-center justify-center bg-primary text-center">
-          Loading...
-        </div>
-      )
+      return <LoadingGlobal />
     }
 
     return <Component {...props} />

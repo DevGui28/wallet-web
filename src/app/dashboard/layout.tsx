@@ -1,11 +1,10 @@
+'use client'
+
 import { SideNav } from '@/components/app/Header/SideNav'
 import TopNav from '@/components/app/Header/TopNav'
+import { withAuth } from '../../lib/with-auth'
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center">
       <SideNav />
@@ -16,3 +15,5 @@ export default function DashboardLayout({
     </div>
   )
 }
+
+export default withAuth(DashboardLayout)
