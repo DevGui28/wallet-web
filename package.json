@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prestart": "next build",
     "start": "next start",
+    "start:wallet-api": "cd ../wallet-api && docker compose up -d && yarn start:dev",
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\""
   },

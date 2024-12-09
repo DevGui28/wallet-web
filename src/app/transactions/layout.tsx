@@ -8,7 +8,7 @@ import { JwtPayload } from '../../components/app/common/interfaces/jwt'
 import { tokenName } from '../../constants/cookies'
 import { withAuth } from '../../lib/with-auth'
 
-function DashboardLayout({ children }: { children: React.ReactNode }) {
+function TransactionsLayout({ children }: { children: React.ReactNode }) {
   const cookies = parseCookies()
   const getToken = cookies[tokenName]
   const payload = jwtDecode<JwtPayload>(getToken)
@@ -19,7 +19,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
     <div className="flex items-center">
       <SideNav />
       <main className="my-5 ml-60 mr-4 flex min-h-screen w-full flex-col rounded-3xl bg-card">
-        <TopNav title="Dashboard" name={name} />
+        <TopNav title="Transactions" name={name} />
         <div className="flex w-full items-center justify-between px-8">
           {children}
         </div>
@@ -28,4 +28,4 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default withAuth(DashboardLayout)
+export default withAuth(TransactionsLayout)

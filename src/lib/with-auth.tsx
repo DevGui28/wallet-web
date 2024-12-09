@@ -12,6 +12,8 @@ export function withAuth(Component: any) {
       redirect('/login')
     }
 
+    console.log({ isLoading, isLogged })
+
     if (isLoading) {
       return <LoadingGlobal />
     }

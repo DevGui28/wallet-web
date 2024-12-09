@@ -1,7 +1,6 @@
 import { Toaster } from '@/components/ui/toaster'
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
-
 import './globals.css'
 
 import QueryProvider from '@/components/shared/QueryProvider'
