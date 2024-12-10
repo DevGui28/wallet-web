@@ -31,6 +31,7 @@ type Props<T extends FieldValues> = {
   readonly className?: string
   readonly isLoading?: boolean
   readonly disabled?: boolean
+  readonly isOptional?: boolean
   readonly type?: HTMLInputTypeAttribute
   readonly description?: string
 }
@@ -50,6 +51,7 @@ export default function FormInput<T extends FieldValues>({
   placeholder = label ?? '',
   isLoading = false,
   disabled = false,
+  isOptional = false,
   description,
   fixedDecimalScale = false,
 }: Props<T>) {
@@ -63,7 +65,18 @@ export default function FormInput<T extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem className={cn('w-full', className)}>
-          {label && <FormLabel>{label}</FormLabel>}
+          {label && (
+            <FormLabel>
+              {label}
+              <span
+                className={cn('text-card-foreground/50', {
+                  'ml-1': isOptional,
+                })}
+              >
+                {isOptional && '(opcional)'}
+              </span>
+            </FormLabel>
+          )}
           <FormControl>
             {withMask ? (
               !numeric ? (

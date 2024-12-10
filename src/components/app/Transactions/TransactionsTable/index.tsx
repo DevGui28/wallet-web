@@ -8,8 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { setDefaultOptions } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 import { useQuery } from 'react-query'
 import { handleGetTransactions } from '../../../../api'
 import {
@@ -29,20 +27,18 @@ export default function TransactionsTable() {
     queryFn: handleGetTransactions,
   })
 
-  console.log({ transactions })
-  setDefaultOptions({ locale: ptBR })
   return (
     <Table>
       <TableHeader className="sticky top-0 z-10 cursor-default">
         <TableRow className="text-xs font-bold text-card-foreground">
-          <TableHead className="text-left">Nome</TableHead>
-          <TableHead className="text-center">Descrição</TableHead>
-          <TableHead className="text-center">Tipo</TableHead>
-          <TableHead className="text-center">Valor</TableHead>
-          <TableHead className="text-center">Categoria</TableHead>
-          <TableHead className="text-center">Data</TableHead>
-          <TableHead className="text-center">Método de Pagamento</TableHead>
-          <TableHead className="text-center">Cartão de Crédito</TableHead>
+          <TableHead>Nome</TableHead>
+          <TableHead>Descrição</TableHead>
+          <TableHead>Tipo</TableHead>
+          <TableHead>Valor</TableHead>
+          <TableHead>Categoria</TableHead>
+          <TableHead>Data</TableHead>
+          <TableHead>Método de Pagamento</TableHead>
+          <TableHead>Cartão de Crédito</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="overflow-auto">
@@ -50,7 +46,7 @@ export default function TransactionsTable() {
           <TableRow
             key={transactions.id}
             className={cn(
-              'cursor-pointer text-center text-xs font-medium text-card-foreground'
+              'cursor-default text-xs font-medium text-card-foreground'
             )}
           >
             <TableCell className="text-left font-medium text-card-foreground">
@@ -73,7 +69,7 @@ export default function TransactionsTable() {
                 {transactionTypeMapper[transactions.type]}
               </span>
             </TableCell>
-            <TableCell className="text-center font-semibold text-card-foreground">
+            <TableCell className="font-semibold text-card-foreground">
               {transactions.type === 'INCOME' ? '+' : '-'}
               {formatCurrency(transactions.totalAmount)}
             </TableCell>

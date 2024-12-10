@@ -32,3 +32,9 @@ export type TransactionResponse = {
     cardName: string
   }
 }
+
+export type CategoriesResponse = {
+  id: string
+  name: string
+  type: TransactionType
+}

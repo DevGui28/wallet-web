@@ -1,7 +1,7 @@
 'use client'
 
 import ChangeTheme from '@/components/shared/ChangeTheme'
-import FormInput from '@/components/shared/FormInput'
+import FormInput from '@/components/shared/Form/FormInput'
 import { Form } from '@/components/ui/form'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'

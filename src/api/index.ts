@@ -1,7 +1,11 @@
-import { Login } from '@/app/login/page'
-import { urls } from '@/constants/urls'
 import axios, { Axios } from 'axios'
-import { TransactionResponse } from '../components/app/Transactions/interfaces'
+import { Login } from '../app/login/page'
+import {
+  CategoriesResponse,
+  TransactionResponse,
+  TransactionType,
+} from '../components/app/Transactions/interfaces'
+import { urls } from '../constants/urls'
 import { authorizationInterceptor } from './interceptors/authorization'
 import { tokenInterceptor } from './interceptors/response'
 
@@ -29,5 +33,12 @@ export const handleLogin = async (data: Login) => {
 
 export const handleGetTransactions = async () => {
   const { data } = await apiWallet.get<TransactionResponse[]>(`/transactions/`)
+  return data
+}
+
+export const handleGetCategories = async (type: TransactionType) => {
+  const { data } = await apiWallet.get<CategoriesResponse[]>(
+    `/categories?type=${type}`
+  )
   return data
 }
