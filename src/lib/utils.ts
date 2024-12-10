@@ -18,7 +18,7 @@ export function transformToCammelCase(str: string) {
 
 export function formatDateToString(date: Date | string) {
   return transformToCammelCase(
-    formatDate(add(new Date(date), { days: 1 }), 'EEE - dd/MM/yyyy ')
+    formatDate(add(new Date(date), { days: 1 }), 'dd/MM/yyyy')
   )
 }
 

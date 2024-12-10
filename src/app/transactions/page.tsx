@@ -2,7 +2,7 @@ import TransactionsTable from '../../components/app/Transactions/TransactionsTab
 
 function Page() {
   return (
-    <div>
+    <div className="mb-6 w-full">
       <TransactionsTable />
     </div>
   )

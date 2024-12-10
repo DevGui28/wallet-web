@@ -36,6 +36,14 @@ const config = {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
+        expense: {
+          DEFAULT: 'hsl(var(--expense))',
+          foreground: 'hsl(var(--expense-foreground))',
+        },
+        income: {
+          DEFAULT: 'hsl(var(--income))',
+          foreground: 'hsl(var(--income-foreground))',
+        },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',

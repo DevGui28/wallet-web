@@ -70,6 +70,22 @@
   }
 }
 
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.1);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.2);
+  }
+}
+
 /* Fonte Inter */
 .inter-100 {
   font-family: 'Inter', serif;

@@ -3,9 +3,7 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -22,10 +20,8 @@ import {
   cn,
   formatCurrency,
   formatDateToString,
-  sumTotal,
   transformToCammelCase,
 } from '../../../../lib/utils'
-import { Badge } from '../../../ui/badge'
 
 export default function TransactionsTable() {
   const { data: transactions } = useQuery({
@@ -37,55 +33,49 @@ export default function TransactionsTable() {
   setDefaultOptions({ locale: ptBR })
   return (
     <Table>
-      <TableCaption>Uma lista com todas suas transações</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="font-bold text-muted-foreground">
-            Nome
-          </TableHead>
-          <TableHead className="w-36 font-bold text-muted-foreground">
-            Descrição
-          </TableHead>
-          <TableHead className="font-bold text-muted-foreground">
-            Tipo
-          </TableHead>
-          <TableHead className="font-bold text-muted-foreground">
-            Categoria
-          </TableHead>
-          <TableHead className="font-bold text-muted-foreground">
-            Data
-          </TableHead>
-          <TableHead className="font-bold text-muted-foreground">
-            Método de Pagamento
-          </TableHead>
-          <TableHead className="font-bold text-muted-foreground">
-            Cartão de Crédito
-          </TableHead>
-          <TableHead className="font-bold text-muted-foreground">
-            Valor
-          </TableHead>
+      <TableHeader className="sticky top-0 z-10 cursor-default">
+        <TableRow className="text-xs font-bold text-card-foreground">
+          <TableHead className="text-left">Nome</TableHead>
+          <TableHead className="text-center">Descrição</TableHead>
+          <TableHead className="text-center">Tipo</TableHead>
+          <TableHead className="text-center">Valor</TableHead>
+          <TableHead className="text-center">Categoria</TableHead>
+          <TableHead className="text-center">Data</TableHead>
+          <TableHead className="text-center">Método de Pagamento</TableHead>
+          <TableHead className="text-center">Cartão de Crédito</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="overflow-auto">
         {transactions?.map((transactions) => (
-          <TableRow key={transactions.id}>
-            <TableCell className="font-medium">{transactions.name}</TableCell>
+          <TableRow
+            key={transactions.id}
+            className={cn(
+              'cursor-pointer text-center text-xs font-medium text-card-foreground'
+            )}
+          >
+            <TableCell className="text-left font-medium text-card-foreground">
+              {transactions.name}
+            </TableCell>
             <TableCell>
               {transformToCammelCase(
                 transactions.description || 'Sem descrição'
               )}
             </TableCell>
             <TableCell>
-              <Badge
+              <span
                 className={cn(
-                  'text-sm',
+                  'rounded-sm px-3 py-2 text-center',
                   transactions.type === 'INCOME'
-                    ? 'bg-green-400 text-green-800 hover:bg-green-400/80'
-                    : 'bg-red-400 text-red-800 hover:bg-red-400/80'
+                    ? 'bg-green-500/90 text-green-50'
+                    : 'bg-red-500/90 text-red-50'
                 )}
               >
                 {transactionTypeMapper[transactions.type]}
-              </Badge>
+              </span>
+            </TableCell>
+            <TableCell className="text-center font-semibold text-card-foreground">
+              {transactions.type === 'INCOME' ? '+' : '-'}
+              {formatCurrency(transactions.totalAmount)}
             </TableCell>
             <TableCell>{transactions.category.name}</TableCell>
             <TableCell>{formatDateToString(transactions.date)}</TableCell>
@@ -93,10 +83,6 @@ export default function TransactionsTable() {
               {paymentMethodMapper[transactions.paymentMethod]}
             </TableCell>
             <TableCell>{transactions.creditCard?.cardName || '-'}</TableCell>
-            <TableCell className="text-right">
-              {transactions.type === 'INCOME' ? '+' : '-'}
-              {formatCurrency(transactions.totalAmount)}
-            </TableCell>
           </TableRow>
         ))}
         {!transactions && (
@@ -105,14 +91,6 @@ export default function TransactionsTable() {
           </TableRow>
         )}
       </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={7}>Total</TableCell>
-          <TableCell className="text-right">
-            {sumTotal(transactions || [])}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
     </Table>
   )
 }
