@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-
 import ChangeTheme from '@/components/shared/ChangeTheme'
-import { Bell } from '@phosphor-icons/react'
+import { Bell } from '@phosphor-icons/react/dist/ssr'
 
 type Props = {
   title: string

@@ -4,7 +4,7 @@ import { Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
-import { handleGetCategories } from '../../../../api'
+import { handleGetCategories, handleGetCreditCards } from '../../../../api'
 import FormInput from '../../../shared/Form/FormInput'
 import { Button } from '../../../ui/button'
 import {
@@ -18,7 +18,10 @@ import {
 } from '../../../ui/dialog'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
+import { paymentMethodMapper } from '../../../../lib/mappers'
 import { CustomSelect } from '../../../shared/CustomSelect'
+import FormDatePicker from '../../../shared/Form/FormDatePicker'
 import FormSelect from '../../../shared/Form/FormSelect'
 import { Form } from '../../../ui/form'
 import { TransactionType } from '../interfaces'
@@ -39,18 +42,39 @@ export default function AddTransactionDialog() {
       }))
     },
   })
+
+  const { data: creditCards } = useQuery({
+    queryKey: ['credit-cards'],
+    queryFn: async () => {
+      const data = await handleGetCreditCards()
+      return data.map((creditCard) => ({
+        value: creditCard.id,
+        label: creditCard.cardName,
+      }))
+    },
+  })
+
   const form = useForm<FormAddTransaction>({
     resolver: zodResolver(formAddTransactionSchema),
   })
 
+  console.log({ date: form.watch('date') })
+
   const handleClose = () => {
     setOpen(false)
+    setType(undefined)
+    form.reset()
   }
 
-  console.log({ errors: form.formState?.errors })
+  const paymentMethods = Object.entries(paymentMethodMapper)
+    .filter(([key]) => (type === 'INCOME' ? !key.includes('CARD') : true))
+    .map(([key, value]) => ({
+      value: key,
+      label: value,
+    }))
 
   const onSubmit = (data: FormAddTransaction) => {
-    console.log(data)
+    console.log(data, type)
   }
 
   return (
@@ -79,7 +103,10 @@ export default function AddTransactionDialog() {
         />
         {type && (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
               <FormInput
                 label="Identificação"
                 name="name"
@@ -99,7 +126,56 @@ export default function AddTransactionDialog() {
                 data={categories}
                 label="Categoria"
               />
+              <FormInput
+                label="Valor da transação"
+                name="totalAmount"
+                placeholder="R$ 0,00"
+                prefix="R$ "
+                form={form}
+                withMask
+                numeric
+              />
+              <FormSelect
+                form={form}
+                name="paymentMethod"
+                data={paymentMethods}
+                label="Método de pagamento"
+              />
+              {form.watch('paymentMethod') === 'CREDIT_CARD' &&
+                (creditCards ? (
+                  <>
+                    <FormSelect
+                      form={form}
+                      name="creditCardId"
+                      data={creditCards}
+                      label="Selecione o cartão de crédito"
+                    />
+                    <FormInput
+                      label="Total de parcelas"
+                      name="totalInstallments"
+                      placeholder="1"
+                      form={form}
+                      numeric
+                    />
+                  </>
+                ) : (
+                  <Link
+                    href="/credit-card/create"
+                    className="flex items-center gap-2 text-accent hover:underline"
+                  >
+                    <Plus size={16} weight="bold" />
+                    Adicionar um cartão de crédito
+                  </Link>
+                ))}
 
+              <FormDatePicker
+                form={form}
+                name="date"
+                label="Data da transação"
+                maxDate={new Date('2026-12-31')}
+                minDate={new Date('2021-01-01')}
+                modal
+              />
               <DialogFooter>
                 <Button onClick={handleClose} variant="link">
                   Cancelar

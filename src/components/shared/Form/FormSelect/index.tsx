@@ -46,7 +46,7 @@ export default function FormSelect<T extends FieldValues, K extends Path<T>>({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className={cn('mt-4 w-full', className)}>
+        <FormItem className={cn('w-full', className)}>
           {label && <FormLabel>{label}</FormLabel>}
           <Select
             onValueChange={field.onChange}

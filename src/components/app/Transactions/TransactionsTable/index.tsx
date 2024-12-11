@@ -83,7 +83,9 @@ export default function TransactionsTable() {
         ))}
         {!transactions && (
           <TableRow>
-            <TableCell colSpan={8}>Nenhuma transação encontrada</TableCell>
+            <TableCell colSpan={8} className="text-center font-semibold">
+              Nenhuma transação encontrada
+            </TableCell>
           </TableRow>
         )}
       </TableBody>

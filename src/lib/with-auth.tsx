@@ -1,8 +1,8 @@
 'use client'
 
-import { useAuth } from '@/hooks/useAuth'
 import { redirect } from 'next/navigation'
 import { LoadingGlobal } from '../components/app/common/Loading/global-loading'
+import { useAuth } from '../hooks/useAuth'
 
 export function withAuth(Component: any) {
   return function AuthComponent(props: any) {

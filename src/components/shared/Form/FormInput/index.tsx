@@ -150,7 +150,7 @@ export default function FormInput<T extends FieldValues>({
             )}
           </FormControl>
           <FormMessage />
-          <FormDescription>{description}</FormDescription>
+          {description && <FormDescription>{description}</FormDescription>}
         </FormItem>
       )}
     />

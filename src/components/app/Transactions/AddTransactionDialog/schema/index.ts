@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { PaymentMethod } from '../../interfaces'
 
 export type FormAddTransaction = z.infer<typeof formAddTransactionSchema>
 
@@ -8,26 +7,28 @@ export const formAddTransactionSchema = z
     categoryId: z.string({ message: 'Categoria é obrigatória' }),
     name: z.string({ message: 'Nome é obrigatório' }),
     description: z.string().optional(),
-    paymentMethod: z.nativeEnum(PaymentMethod),
+    paymentMethod: z
+      .string({
+        required_error: 'Metodo de pagamento é obrigatório',
+      })
+      .min(1, 'Metodo de pagamento é obrigatório'),
     creditCardId: z
       .string({ message: 'Credit card ID is required.' })
       .optional(),
-    totalInstallments: z
-      .number()
-      .min(1, 'Total de parcelas deve ser maior que 0.')
-      .optional(),
+    totalInstallments: z.string().optional(),
     isSplitOrRecurring: z.boolean().optional(),
     date: z.preprocess(
       (val) => new Date(val as string),
       z.date().or(z.string())
     ),
-    totalAmount: z.number(),
+    totalAmount: z
+      .string({
+        required_error: 'Valor da transação é obrigatório',
+      })
+      .min(1, 'Valor da transação é obrigatório'),
   })
   .superRefine((data, ctx) => {
-    if (
-      data.paymentMethod === PaymentMethod.CREDIT_CARD &&
-      !data.creditCardId
-    ) {
+    if (data.paymentMethod === 'CREDIT_CARD' && !data.creditCardId) {
       ctx.addIssue({
         path: ['creditCardId'],
         code: 'custom',
@@ -36,10 +37,7 @@ export const formAddTransactionSchema = z
       })
     }
 
-    if (
-      data.paymentMethod === PaymentMethod.CREDIT_CARD &&
-      !data.totalInstallments
-    ) {
+    if (data.paymentMethod === 'CREDIT_CARD' && !data.totalInstallments) {
       ctx.addIssue({
         path: ['totalInstallments'],
         code: 'custom',

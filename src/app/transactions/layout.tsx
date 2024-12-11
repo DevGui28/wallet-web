@@ -19,7 +19,7 @@ function TransactionsLayout({ children }: { children: React.ReactNode }) {
     <div className="flex items-center overflow-hidden">
       <SideNav />
       <main className="my-5 ml-60 mr-4 flex min-h-screen w-full flex-col overflow-auto rounded-3xl bg-card">
-        <TopNav title="Transactions" name={name} />
+        <TopNav title="Transações" name={name} />
         <div className="flex w-full items-center justify-between px-8">
           {children}
         </div>

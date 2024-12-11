@@ -38,3 +38,13 @@ export type CategoriesResponse = {
   name: string
   type: TransactionType
 }
+
+export type CreditCardResponse = {
+  id: string
+  cardName: string
+  limit: string
+  closingDay: number
+  dueDay: number
+  createdAt: string
+  updatedAt: string
+}
