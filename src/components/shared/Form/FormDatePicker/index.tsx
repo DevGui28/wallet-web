@@ -47,8 +47,8 @@ export default function FormDatePicker<
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col">
-          {label && <FormLabel>{label}</FormLabel>}
+        <FormItem className="flex flex-col justify-end">
+          {label && <FormLabel className="mb-1">{label}</FormLabel>}
           <Popover modal={modal}>
             <PopoverTrigger asChild>
               <FormControl>

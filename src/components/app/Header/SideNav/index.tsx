@@ -62,12 +62,21 @@ const menuItems: MenuItem[] = [
   },
 ]
 
-export function SideNav() {
+type Props = {
+  className?: string
+}
+
+export function SideNav({ className }: Props) {
   const pathname = usePathname()
   const pageName = pathname.split('/')[1]
 
   return (
-    <div className="fixed left-0 top-0 flex h-full w-60 flex-col justify-between bg-background px-4 py-8">
+    <div
+      className={cn(
+        'fixed left-0 top-0 flex h-full w-60 flex-col justify-between bg-background px-4 py-8',
+        className
+      )}
+    >
       <div>
         <div className="my-8 flex items-center">
           <img alt="logo" src="/wallet-logo.png" className="mr-2 h-14" />
