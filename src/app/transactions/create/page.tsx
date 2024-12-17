@@ -210,6 +210,13 @@ export default function AddTransactionDialog() {
                           <Plus size={16} weight="bold" />
                           Adicionar um cartão de crédito
                         </Link>
+                        {form.formState.errors.creditCardId && (
+                          <span className="mt-2 text-xs text-destructive">
+                            Você precisa adicionar um cartão de crédito para
+                            poder adicionar uma transação com esse método de
+                            pagamento.
+                          </span>
+                        )}
                       </div>
                     ))}
 
