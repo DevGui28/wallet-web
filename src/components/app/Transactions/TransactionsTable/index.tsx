@@ -85,7 +85,7 @@ export default function TransactionsTable() {
                   transactions.description || 'Sem descrição'
                 )}
               </TableCell>
-              <TableCell className="xr:table-cell hidden">
+              <TableCell className="hidden xr:table-cell">
                 <span
                   className={cn(
                     'rounded-sm px-3 py-2 text-center',

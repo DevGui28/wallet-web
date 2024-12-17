@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import {
   ArrowsLeftRight,
+  Cardholder,
   ChartPie,
   Crown,
   SignOut,
@@ -40,11 +41,11 @@ const menuItems: MenuItem[] = [
   //   icon: <Receipt weight="fill" size={18} />,
   //   label: 'Contas e Boletos',
   // },
-  // {
-  //   id: 'credit-cards',
-  //   icon: <Cardholder size={18} weight="fill" />,
-  //   label: 'Cartões de Crédito',
-  // },
+  {
+    id: 'credit-card',
+    icon: <Cardholder size={18} weight="fill" />,
+    label: 'Cartões de Crédito',
+  },
   // {
   //   id: 'reports',
   //   icon: <ChartBar weight="fill" size={18} />,

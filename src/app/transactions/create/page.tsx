@@ -113,8 +113,8 @@ export default function AddTransactionDialog() {
 
   return (
     <>
-      <TopNav title="Adicionar transações" name={name} />
-      <div className="flex w-full items-center justify-center px-16">
+      <TopNav title="Adicionar uma nova transação" name={name} />
+      <div className="flex w-full items-center justify-center px-8 lg:px-16">
         <div className="mb-6 w-full max-w-4xl">
           <CustomSelect
             className="mb-4"
@@ -131,7 +131,7 @@ export default function AddTransactionDialog() {
             <CustomSelect
               className="mb-4"
               label="Qual o tipo da despesa? (Normal ou Recorrente)"
-              placeholder="Selecione o tipo de despesa"
+              placeholder="Essa despesa é normal ou recorrente?"
               value={typeIncome}
               options={[
                 { value: 'NORMAL', label: 'Normal' },
