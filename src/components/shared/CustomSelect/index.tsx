@@ -15,6 +15,7 @@ interface CustomSelectProps {
   options: { value: string; label: string }[]
   onChange?: (value: string) => void
   className?: string
+  value: string | null
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -23,11 +24,12 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   options,
   onChange,
   className,
+  value,
 }) => {
   return (
     <div className={cn('flex flex-col gap-4', className)}>
       <Label>{label}</Label>
-      <Select onValueChange={onChange}>
+      <Select value={value || ''} onValueChange={onChange}>
         <SelectTrigger>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

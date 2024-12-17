@@ -48,3 +48,16 @@ export type CreditCardResponse = {
   createdAt: string
   updatedAt: string
 }
+
+export interface CreateTransaction {
+  categoryId: string
+  name: string
+  description?: string
+  paymentMethod: string
+  creditCardId?: string
+  totalInstallments?: number
+  isSplitOrRecurring?: boolean
+  date: string | Date
+  totalAmount: number
+  type: TransactionType
+}

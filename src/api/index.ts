@@ -2,6 +2,7 @@ import axios, { Axios } from 'axios'
 import { Login } from '../app/login/page'
 import {
   CategoriesResponse,
+  CreateTransaction,
   CreditCardResponse,
   TransactionResponse,
   TransactionType,
@@ -46,5 +47,10 @@ export const handleGetCategories = async (type: TransactionType) => {
 
 export const handleGetCreditCards = async () => {
   const { data } = await apiWallet.get<CreditCardResponse[]>(`/credit-card`)
+  return data
+}
+
+export const handleCreateTransaction = async (payload: CreateTransaction) => {
+  const { data } = await apiWallet.post('/transactions', payload)
   return data
 }

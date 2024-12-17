@@ -4,7 +4,11 @@ import { Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
-import { handleGetCategories, handleGetCreditCards } from '../../../api'
+import {
+  handleCreateTransaction,
+  handleGetCategories,
+  handleGetCreditCards,
+} from '../../../api'
 import FormInput from '../../../components/shared/Form/FormInput'
 import { Button } from '../../../components/ui/button'
 
@@ -13,10 +17,14 @@ import { addYears } from 'date-fns'
 import { jwtDecode } from 'jwt-decode'
 import Link from 'next/link'
 import { parseCookies } from 'nookies'
+import { toast } from 'sonner'
 import { paymentMethodMapper } from '../../../components/../lib/mappers'
 import { JwtPayload } from '../../../components/app/common/interfaces/jwt'
 import TopNav from '../../../components/app/Header/TopNav'
-import { TransactionType } from '../../../components/app/Transactions/interfaces'
+import {
+  PaymentMethod,
+  TransactionType,
+} from '../../../components/app/Transactions/interfaces'
 import {
   FormAddTransaction,
   formAddTransactionSchema,
@@ -32,7 +40,9 @@ export default function AddTransactionDialog() {
   const token = cookies[tokenName]
   const payload = jwtDecode<JwtPayload>(token)
   const name = payload.user.name
-  const [type, setType] = useState<TransactionType>()
+  const [type, setType] = useState<TransactionType | null>(null)
+  const [typeIncome, setTypeIncome] = useState<string | null>(null)
+  const [isSubmitting, setSubmitting] = useState(false)
 
   const { data: categories } = useQuery({
     queryKey: ['categories', type],
@@ -70,33 +80,73 @@ export default function AddTransactionDialog() {
       label: value,
     }))
 
-  const onSubmit = (data: FormAddTransaction) => {
-    console.log(data, type)
+  function handleResetForm() {
+    form.reset()
+    setType(null)
+    setTypeIncome(null)
+  }
+
+  const onSubmit = async (data: FormAddTransaction) => {
+    if (!type) return
+    const isSplitOrRecurring =
+      (typeIncome === 'RECURRING' && type === TransactionType.EXPENSE) ||
+      data.paymentMethod === PaymentMethod.CREDIT_CARD
+    try {
+      setSubmitting(true)
+      await handleCreateTransaction({
+        ...data,
+        totalAmount: Number(data.totalAmount),
+        totalInstallments: data.totalInstallments
+          ? Number(data.totalInstallments)
+          : undefined,
+        isSplitOrRecurring,
+        type,
+      })
+      handleResetForm()
+      toast.success('Transação adicionada com sucesso!')
+    } catch (error: any) {
+      toast.error('Erro ao adicionar transação!', error.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
     <>
       <TopNav title="Adicionar transações" name={name} />
-      <div className="flex w-full items-center justify-between px-16">
-        <div className="mb-6 w-full">
+      <div className="flex w-full items-center justify-center px-16">
+        <div className="mb-6 w-full max-w-4xl">
           <CustomSelect
             className="mb-4"
             label="Tipo de transação"
             placeholder="Selecione o tipo de transação"
+            value={type}
             options={[
               { value: TransactionType.EXPENSE, label: 'Despesa' },
               { value: TransactionType.INCOME, label: 'Receita' },
             ]}
             onChange={(value) => setType(value as TransactionType)}
           />
-
+          {type === TransactionType.EXPENSE && (
+            <CustomSelect
+              className="mb-4"
+              label="Qual o tipo da despesa? (Normal ou Recorrente)"
+              placeholder="Selecione o tipo de despesa"
+              value={typeIncome}
+              options={[
+                { value: 'NORMAL', label: 'Normal' },
+                { value: 'RECURRING', label: 'Recorrente' },
+              ]}
+              onChange={(value) => setTypeIncome(value)}
+            />
+          )}
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col"
             >
               {type && (
-                <div className="mb-4 grid gap-4 md:grid-cols-2">
+                <div className="mb-4 grid gap-4 lg:grid-cols-2">
                   <FormInput
                     label="Identificação"
                     name="name"
@@ -132,7 +182,7 @@ export default function AddTransactionDialog() {
                     label="Método de pagamento"
                   />
                   {form.watch('paymentMethod') === 'CREDIT_CARD' &&
-                    (creditCards ? (
+                    (creditCards?.length ? (
                       <>
                         <FormSelect
                           form={form}
@@ -149,13 +199,18 @@ export default function AddTransactionDialog() {
                         />
                       </>
                     ) : (
-                      <Link
-                        href="/credit-card/create"
-                        className="flex items-center gap-2 text-accent hover:underline"
-                      >
-                        <Plus size={16} weight="bold" />
-                        Adicionar um cartão de crédito
-                      </Link>
+                      <div className="mt-2 flex w-full flex-col gap-1">
+                        <p className="text-xs text-foreground">
+                          Você não possui nenhum cartão de crédito cadastrado.
+                        </p>
+                        <Link
+                          href="/credit-card/create"
+                          className="flex items-center justify-center gap-2 rounded-md bg-accent p-3 text-sm text-accent-foreground hover:bg-accent/80 hover:text-accent-foreground/80 md:justify-normal"
+                        >
+                          <Plus size={16} weight="bold" />
+                          Adicionar um cartão de crédito
+                        </Link>
+                      </div>
                     ))}
 
                   <FormDatePicker
@@ -172,11 +227,11 @@ export default function AddTransactionDialog() {
               <div className="flex w-full items-center justify-end gap-4">
                 <Link href="/transactions">
                   <span className="text-sm text-foreground hover:text-card-foreground hover:underline">
-                    Cancelar
+                    Voltar
                   </span>
                 </Link>
-                <Button className="px-8" type="submit">
-                  Adicionar
+                <Button className="px-8" type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Adicionando...' : 'Adicionar'}
                 </Button>
               </div>
             </form>

@@ -47,7 +47,7 @@ export default function FormDatePicker<
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col justify-end">
+        <FormItem className="mt-[6px] flex flex-col">
           {label && <FormLabel className="mb-1">{label}</FormLabel>}
           <Popover modal={modal}>
             <PopoverTrigger asChild>
@@ -56,7 +56,7 @@ export default function FormDatePicker<
                   variant={'outline'}
                   className={cn(
                     'w-full pl-3 text-left font-normal',
-                    !field.value && 'text-muted-foreground'
+                    !field.value && 'text-card-foreground'
                   )}
                 >
                   {field.value ? (

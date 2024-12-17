@@ -1,6 +1,6 @@
-import { Toaster } from '@/components/ui/toaster'
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 import QueryProvider from '@/components/shared/QueryProvider'
@@ -22,7 +22,7 @@ export default function RootLayout({
         <ThemeProvider>
           <body className="inter-300 bg-background">
             <QueryProvider>{children}</QueryProvider>
-            <Toaster />
+            <Toaster position="top-right" />
           </body>
         </ThemeProvider>
       </html>
