@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge'
 import {
   TransactionResponse,
   TransactionType,
-} from '../components/app/Transactions/interfaces'
+} from '../types/transactions.interface'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
