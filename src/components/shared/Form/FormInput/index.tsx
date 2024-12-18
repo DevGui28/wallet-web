@@ -34,6 +34,7 @@ type Props<T extends FieldValues> = {
   readonly isOptional?: boolean
   readonly type?: HTMLInputTypeAttribute
   readonly description?: string
+  readonly maxLength?: number
 }
 
 export default function FormInput<T extends FieldValues>({
@@ -54,6 +55,7 @@ export default function FormInput<T extends FieldValues>({
   isOptional = false,
   description,
   fixedDecimalScale = false,
+  maxLength,
 }: Props<T>) {
   const [showPassword, setShowPassword] = useState(false)
 
@@ -86,6 +88,7 @@ export default function FormInput<T extends FieldValues>({
                   value={field.value}
                   customInput={Input}
                   format={maskFormat || ''}
+                  maxLength={maxLength}
                   onValueChange={(values) => {
                     field.onChange({
                       target: {
@@ -107,6 +110,7 @@ export default function FormInput<T extends FieldValues>({
                   suffix={suffix}
                   prefix={prefix}
                   fixedDecimalScale={fixedDecimalScale}
+                  maxLength={maxLength}
                   placeholder={placeholder}
                   onValueChange={(values) => {
                     field.onChange({
@@ -125,6 +129,7 @@ export default function FormInput<T extends FieldValues>({
                   type={showPassword ? 'text' : type}
                   placeholder={placeholder}
                   disabled={disabled}
+                  maxLength={maxLength}
                 />
                 {type === 'password' && (
                   <Button

@@ -16,30 +16,34 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { addYears } from 'date-fns'
 import { jwtDecode } from 'jwt-decode'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { parseCookies } from 'nookies'
 import { toast } from 'sonner'
 import { paymentMethodMapper } from '../../../components/../lib/mappers'
-import { JwtPayload } from '../../../components/app/common/interfaces/jwt'
 import TopNav from '../../../components/app/Header/TopNav'
-import {
-  PaymentMethod,
-  TransactionType,
-} from '../../../components/app/Transactions/interfaces'
-import {
-  FormAddTransaction,
-  formAddTransactionSchema,
-} from '../../../components/app/Transactions/schemas/add-transaction'
 import { CustomSelect } from '../../../components/shared/CustomSelect'
 import FormDatePicker from '../../../components/shared/Form/FormDatePicker'
 import FormSelect from '../../../components/shared/Form/FormSelect'
 import { Form } from '../../../components/ui/form'
 import { tokenName } from '../../../constants/cookies'
+import {
+  FormAddTransaction,
+  formAddTransactionSchema,
+} from '../../../schemas/add-transaction'
+import { JwtPayload } from '../../../types/jwt.interface'
+import {
+  PaymentMethod,
+  TransactionType,
+} from '../../../types/transactions.interface'
 
 export default function AddTransactionDialog() {
   const cookies = parseCookies()
   const token = cookies[tokenName]
   const payload = jwtDecode<JwtPayload>(token)
   const name = payload.user.name
+
+  const router = useRouter()
+
   const [type, setType] = useState<TransactionType | null>(null)
   const [typeIncome, setTypeIncome] = useState<string | null>(null)
   const [isSubmitting, setSubmitting] = useState(false)
@@ -55,7 +59,6 @@ export default function AddTransactionDialog() {
       }))
     },
   })
-
   const { data: creditCards } = useQuery({
     queryKey: ['credit-cards'],
     queryFn: async () => {
@@ -232,11 +235,12 @@ export default function AddTransactionDialog() {
                 </div>
               )}
               <div className="flex w-full items-center justify-end gap-4">
-                <Link href="/transactions">
-                  <span className="text-sm text-foreground hover:text-card-foreground hover:underline">
-                    Voltar
-                  </span>
-                </Link>
+                <span
+                  className="cursor-pointer text-sm text-foreground hover:text-card-foreground hover:underline"
+                  onClick={() => router.back()}
+                >
+                  Voltar
+                </span>
                 <Button className="px-8" type="submit" disabled={isSubmitting}>
                   {isSubmitting ? 'Adicionando...' : 'Adicionar'}
                 </Button>

@@ -1,10 +1,5 @@
 'use client'
 
-import ChangeTheme from '@/components/shared/ChangeTheme'
-import FormInput from '@/components/shared/Form/FormInput'
-import { Form } from '@/components/ui/form'
-import { useAuth } from '@/hooks/useAuth'
-import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircularProgress } from '@mui/material'
 import { AxiosError } from 'axios'
@@ -16,6 +11,11 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { handleLogin } from '../../api'
 import { LoadingGlobal } from '../../components/app/common/Loading/global-loading'
+import ChangeTheme from '../../components/shared/ChangeTheme'
+import FormInput from '../../components/shared/Form/FormInput'
+import { Form } from '../../components/ui/form'
+import { useAuth } from '../../hooks/useAuth'
+import { cn } from '../../lib/utils'
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'E-mail inválido' }),

@@ -1,13 +1,16 @@
 import axios, { Axios } from 'axios'
 import { Login } from '../app/login/page'
+import { urls } from '../constants/urls'
+import { CategoriesResponse } from '../types/categories.interface'
 import {
-  CategoriesResponse,
-  CreateTransaction,
+  CreateCreditCard,
   CreditCardResponse,
+} from '../types/credit-card.interface'
+import {
+  CreateTransaction,
   TransactionResponse,
   TransactionType,
-} from '../components/app/Transactions/interfaces'
-import { urls } from '../constants/urls'
+} from '../types/transactions.interface'
 import { authorizationInterceptor } from './interceptors/authorization'
 import { tokenInterceptor } from './interceptors/response'
 
@@ -52,5 +55,10 @@ export const handleGetCreditCards = async () => {
 
 export const handleCreateTransaction = async (payload: CreateTransaction) => {
   const { data } = await apiWallet.post('/transactions', payload)
+  return data
+}
+
+export const handleCreateCreditCard = async (payload: CreateCreditCard) => {
+  const { data } = await apiWallet.post('/credit-card', payload)
   return data
 }

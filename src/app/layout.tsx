@@ -3,7 +3,7 @@ import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import './globals.css'
 
-import QueryProvider from '@/components/shared/QueryProvider'
+import QueryProvider from '../components/shared/QueryProvider'
 import { AuthProvider } from '../hooks/useAuth'
 
 export const metadata: Metadata = {
@@ -17,15 +17,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <AuthProvider>
-      <html lang="en">
+    <html lang="en">
+      <AuthProvider>
         <ThemeProvider>
           <body className="inter-300 bg-background">
             <QueryProvider>{children}</QueryProvider>
             <Toaster position="top-right" />
           </body>
         </ThemeProvider>
-      </html>
-    </AuthProvider>
+      </AuthProvider>
+    </html>
   )
 }

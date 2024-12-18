@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import ChangeTheme from '@/components/shared/ChangeTheme'
 import { Bell } from '@phosphor-icons/react/dist/ssr'
+import ChangeTheme from '../../../shared/ChangeTheme'
 
 type Props = {
   title: string
@@ -10,8 +10,8 @@ type Props = {
 export default function TopNav({ title, name }: Props) {
   let img
   return (
-    <div className="flex w-full items-center justify-between p-8">
-      <h1 className="inter-700 text-2xl md:text-3xl">{title}</h1>
+    <div className="flex w-full items-center justify-between px-2 py-4 md:px-4 md:py-8">
+      <h1 className="inter-700 mr-3 text-xl md:text-3xl">{title}</h1>
       <div className="flex items-center justify-center space-x-6">
         <div className="relative cursor-pointer">
           <Bell size={20} weight="fill" />
