@@ -59,16 +59,15 @@ export default function AddTransactionPage() {
       }))
     },
   })
-  const { data: creditCards } = useQuery({
+  const { data } = useQuery({
     queryKey: ['credit-cards'],
-    queryFn: async () => {
-      const data = await handleGetCreditCards()
-      return data.map((creditCard) => ({
-        value: creditCard.id,
-        label: creditCard.cardName,
-      }))
-    },
+    queryFn: handleGetCreditCards,
   })
+
+  const creditCards = data?.map((creditCard) => ({
+    value: creditCard.id,
+    label: creditCard.cardName,
+  }))
 
   const form = useForm<FormAddTransaction>({
     resolver: zodResolver(formAddTransactionSchema),
@@ -117,7 +116,7 @@ export default function AddTransactionPage() {
   return (
     <>
       <TopNav title="Adicionar uma nova transação" name={name} />
-      <div className="flex w-full items-center justify-center px-8 lg:px-16">
+      <div className="mt-4 flex w-full items-center justify-center px-4">
         <div className="mb-6 w-full max-w-4xl">
           <CustomSelect
             className="mb-4"

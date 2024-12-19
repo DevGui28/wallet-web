@@ -73,7 +73,7 @@ export default function AddCreditCardPage() {
   return (
     <>
       <TopNav title="Cadastre um novo cartão de crédito" name={name} />
-      <div className="flex w-full items-center justify-center px-16">
+      <div className="mt-4 flex w-full items-center justify-center px-4">
         <div className="mb-6 w-full max-w-4xl">
           <Form {...form}>
             <form

@@ -3,10 +3,11 @@
 import { NotePencil } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { useQuery } from 'react-query'
-import { handleGetCreditCards } from '../../../api'
-import { cn } from '../../../lib/utils'
-import { CreditCardResponse } from '../../../types/credit-card.interface'
-import { Button } from '../../ui/button'
+import { handleGetCreditCards } from '../../../../api'
+import { cn } from '../../../../lib/utils'
+import { CreditCardResponse } from '../../../../types/credit-card.interface'
+import { Button } from '../../../ui/button'
+import { Skeleton } from '../../../ui/skeleton'
 
 export default function CreditCardList() {
   const { data: creditCards, isLoading } = useQuery({
@@ -16,21 +17,34 @@ export default function CreditCardList() {
 
   return (
     <div className="flex w-full items-center justify-center">
-      <div className="grid w-full flex-col gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        {isLoading && <p>Carregando...</p>}
-        {creditCards?.map((creditCard: CreditCardResponse) => (
-          <CreditCard key={creditCard.id} {...creditCard} />
-        ))}
+      <div className="flex w-full flex-col items-center gap-4 lg:flex-row">
+        {isLoading &&
+          Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} className="h-40 w-96" />
+          ))}
+        {creditCards &&
+          creditCards.map((creditCard: CreditCardResponse) => (
+            <CreditCard
+              key={creditCard.id}
+              creditCard={creditCard}
+              edit={true}
+            />
+          ))}
       </div>
     </div>
   )
 }
 
-export function CreditCard(creditCard: CreditCardResponse) {
+type CreditCardProps = {
+  creditCard: CreditCardResponse
+  edit?: boolean
+}
+
+export function CreditCard({ creditCard, edit = false }: CreditCardProps) {
   return (
     <div
       className={cn(
-        'flex min-h-48 w-full flex-col justify-between rounded-lg bg-gradient-to-r from-purple-900 to-purple-950 p-5',
+        'flex min-h-48 w-full max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-purple-900 to-purple-950 p-5',
         {
           'from-purple-900 to-purple-950': creditCard.cardName === 'Nubank',
           'from-orange-500 to-orange-600':
@@ -44,13 +58,15 @@ export function CreditCard(creditCard: CreditCardResponse) {
     >
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-bold text-white">{creditCard.cardName}</h3>
-        <Link
-          href={`/credit-card/${creditCard.id}`}
-          className="flex items-center gap-2 text-xs"
-        >
-          Editar
-          <NotePencil size={20} weight="fill" className="text-white" />
-        </Link>
+        {edit && (
+          <Link
+            href={`/credit-card/${creditCard.id}`}
+            className="flex items-center gap-2 text-xs text-white"
+          >
+            Editar
+            <NotePencil size={20} weight="fill" className="text-white" />
+          </Link>
+        )}
       </div>
 
       <div className="my-6 text-white">

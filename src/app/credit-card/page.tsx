@@ -18,7 +18,7 @@ export default function CreditCardPage() {
   return (
     <>
       <TopNav title="Cartões de Crédito" name={name} />
-      <div className="flex w-full items-center justify-center px-4 md:px-16">
+      <div className="mt-4 flex w-full items-center justify-center px-4">
         <CreditCardList />
       </div>
     </>

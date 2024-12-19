@@ -17,7 +17,7 @@ export default function TransactionsPage() {
   return (
     <>
       <TopNav title="Transações" name={name} />
-      <div className="flex w-full items-center justify-between px-2 md:px-4">
+      <div className="mt-4 flex w-full items-center justify-center px-4">
         <div className="mb-6 w-full">
           <TransactionsTable />
         </div>
