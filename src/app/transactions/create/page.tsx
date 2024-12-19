@@ -36,7 +36,7 @@ import {
   TransactionType,
 } from '../../../types/transactions.interface'
 
-export default function AddTransactionDialog() {
+export default function AddTransactionPage() {
   const cookies = parseCookies()
   const token = cookies[tokenName]
   const payload = jwtDecode<JwtPayload>(token)

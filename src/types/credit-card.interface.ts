@@ -2,6 +2,7 @@ export type CreditCardResponse = {
   id: string
   cardName: string
   limit: string
+  lastFourDigits: string
   closingDay: number
   dueDay: number
   createdAt: string

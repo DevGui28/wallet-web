@@ -19,7 +19,7 @@ import {
 } from '../../../schemas/add-credit-card'
 import { JwtPayload } from '../../../types/jwt.interface'
 
-export default function CreditCardCreatePage() {
+export default function AddCreditCardPage() {
   const cookies = parseCookies()
   const token = cookies[tokenName]
   const payload = jwtDecode<JwtPayload>(token)

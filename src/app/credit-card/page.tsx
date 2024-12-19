@@ -1,12 +1,12 @@
 import { jwtDecode } from 'jwt-decode'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import CreditCardList from '../../components/app/CreditCard/CreditCardList'
 import TopNav from '../../components/app/Header/TopNav'
-import TransactionsTable from '../../components/app/Transactions/TransactionsTable'
 import { tokenName } from '../../constants/cookies'
 import { JwtPayload } from '../../types/jwt.interface'
 
-export default function TransactionsPage() {
+export default function CreditCardPage() {
   const token = cookies().get(tokenName)?.value
   if (!token) {
     return redirect('/login')
@@ -14,13 +14,12 @@ export default function TransactionsPage() {
 
   const payload = jwtDecode<JwtPayload>(token)
   const name = payload.user.name
+
   return (
     <>
-      <TopNav title="Transações" name={name} />
-      <div className="flex w-full items-center justify-between px-2 md:px-4">
-        <div className="mb-6 w-full">
-          <TransactionsTable />
-        </div>
+      <TopNav title="Cartões de Crédito" name={name} />
+      <div className="flex w-full items-center justify-center px-4 md:px-16">
+        <CreditCardList />
       </div>
     </>
   )
