@@ -20,12 +20,13 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
 
   const router = useRouter()
 
-  const { data: creditCards, isLoading } = useQuery({
-    queryKey: ['credit-cards', id],
-    queryFn: handleGetCreditCards,
+  const { data: creditCard, isLoading } = useQuery({
+    queryKey: ['credit-cards-detail', id],
+    queryFn: async () => {
+      const response = await handleGetCreditCards()
+      return response.find((card) => card.id === id)
+    },
   })
-
-  const creditCard = creditCards?.find((card) => card.id === id)
 
   const form = useForm({
     defaultValues: {
