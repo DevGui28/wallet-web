@@ -10,6 +10,7 @@ import { Button } from '../../../ui/button'
 import { Form } from '../../../ui/form'
 import { Skeleton } from '../../../ui/skeleton'
 import { CreditCard } from '../CreditCardList'
+import DeletedCardDialog from '../DeletedCardDialog'
 
 type CreditCardDetailProps = {
   id: string
@@ -84,16 +85,19 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
               withMask
             />
           </div>
-          <div className="mt-4 flex w-full items-center justify-end gap-4">
-            <span
-              className="cursor-pointer text-sm text-foreground hover:text-card-foreground hover:underline"
-              onClick={() => router.back()}
-            >
-              Voltar
-            </span>
-            <Button className="px-8" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Salvando...' : 'Salvar'}
-            </Button>
+          <div className="mt-4 flex w-full items-center justify-between gap-4">
+            <DeletedCardDialog id={id} />
+            <div className="flex items-center justify-center gap-4">
+              <span
+                className="cursor-pointer text-sm text-foreground hover:text-card-foreground hover:underline"
+                onClick={() => router.back()}
+              >
+                Voltar
+              </span>
+              <Button className="px-8" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Salvando...' : 'Salvar'}
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

@@ -44,7 +44,7 @@ export function CreditCard({ creditCard, edit = false }: CreditCardProps) {
   return (
     <div
       className={cn(
-        'flex min-h-48 w-full max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-purple-900 to-purple-950 p-5',
+        'flex min-h-48 w-full max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 p-5',
         {
           'from-purple-900 to-purple-950': creditCard.cardName === 'Nubank',
           'from-orange-500 to-orange-600':
@@ -52,7 +52,7 @@ export function CreditCard({ creditCard, edit = false }: CreditCardProps) {
           'from-red-600 to-red-700':
             creditCard.cardName === 'Santander' ||
             creditCard.cardName === 'Bradesco',
-          'from-blue-500 to-blue-600': creditCard.cardName === 'Caixa',
+          'from-blue-600 to-blue-800': creditCard.cardName === 'Caixa',
         }
       )}
     >

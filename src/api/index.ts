@@ -62,3 +62,8 @@ export const handleCreateCreditCard = async (payload: CreateCreditCard) => {
   const { data } = await apiWallet.post('/credit-card', payload)
   return data
 }
+
+export const handleDeleteCreditCard = async (id: string) => {
+  const { data } = await apiWallet.delete(`/credit-card/${id}`)
+  return data
+}
