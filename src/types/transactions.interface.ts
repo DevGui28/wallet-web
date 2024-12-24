@@ -1,3 +1,5 @@
+import { CreditCardResponse } from './credit-card.interface'
+
 export enum PaymentMethod {
   CREDIT_CARD = 'CREDIT_CARD',
   DEBIT_CARD = 'DEBIT_CARD',
@@ -11,6 +13,26 @@ export enum PaymentMethod {
 export enum TransactionType {
   EXPENSE = 'EXPENSE',
   INCOME = 'INCOME',
+}
+
+export enum RecurrenceType {
+  INSTALLMENT = 'INSTALLMENT',
+  RECURRING = 'RECURRING',
+}
+
+export type SplitsOrRecurrences = {
+  id: string
+  transactionId: string
+  creditCardId: string
+  type: RecurrenceType
+  installmentNumber: number
+  amount: string
+  totalInstallments: number
+  dueDate: string
+  paymentStatus: 'PENDING' | 'PAID'
+  paidAt: string | Date | null
+  createdAt: string
+  updatedAt: string
 }
 
 export type TransactionResponse = {
@@ -28,9 +50,8 @@ export type TransactionResponse = {
   category: {
     name: string
   }
-  creditCard?: {
-    cardName: string
-  }
+  creditCard?: CreditCardResponse
+  splitsOrRecurrences: SplitsOrRecurrences[]
 }
 
 export interface CreateTransaction {

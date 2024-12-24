@@ -12,3 +12,9 @@ export const transactionTypeMapper = {
   EXPENSE: 'Despesa',
   INCOME: 'Receita',
 }
+
+export const transactionStatusMapper = {
+  PENDING: 'Pendente',
+  PAID: 'Pago',
+  CANCELED: 'Cancelado',
+}
