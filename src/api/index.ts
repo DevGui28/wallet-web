@@ -5,6 +5,7 @@ import { CategoriesResponse } from '../types/categories.interface'
 import {
   CreateCreditCard,
   CreditCardResponse,
+  UpdateCreditCard,
 } from '../types/credit-card.interface'
 import {
   CreateTransaction,
@@ -53,6 +54,11 @@ export const handleGetCreditCards = async () => {
   return data
 }
 
+export const handleFindCreditCard = async (id: string) => {
+  const { data } = await apiWallet.get<CreditCardResponse>(`/credit-card/${id}`)
+  return data
+}
+
 export const handleCreateTransaction = async (payload: CreateTransaction) => {
   const { data } = await apiWallet.post('/transactions', payload)
   return data
@@ -60,6 +66,14 @@ export const handleCreateTransaction = async (payload: CreateTransaction) => {
 
 export const handleCreateCreditCard = async (payload: CreateCreditCard) => {
   const { data } = await apiWallet.post('/credit-card', payload)
+  return data
+}
+
+export const handleUpdateCreditCard = async (
+  id: string,
+  payload: UpdateCreditCard
+) => {
+  const { data } = await apiWallet.put(`/credit-card/${id}`, payload)
   return data
 }
 

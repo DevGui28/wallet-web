@@ -3,7 +3,7 @@
 import { Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import {
   handleCreateTransaction,
   handleGetCategories,
@@ -64,6 +64,8 @@ export default function AddTransactionPage() {
     queryFn: handleGetCreditCards,
   })
 
+  const queryClient = useQueryClient()
+
   const creditCards = data?.map((creditCard) => ({
     value: creditCard.id,
     label: creditCard.cardName,
@@ -105,9 +107,10 @@ export default function AddTransactionPage() {
         type,
       })
       handleResetForm()
+      queryClient.invalidateQueries('transactions')
       toast.success('Transação adicionada com sucesso!')
     } catch (error: any) {
-      toast.error('Erro ao adicionar transação!', error.message)
+      toast.error('Erro ao adicionar transação!')
     } finally {
       setSubmitting(false)
     }
@@ -132,13 +135,14 @@ export default function AddTransactionPage() {
           {type === TransactionType.EXPENSE && (
             <CustomSelect
               className="mb-4"
-              label="Qual o tipo da despesa? (Normal ou Recorrente)"
-              placeholder="Essa despesa é normal ou recorrente?"
+              label="Qual o tipo da despesa?"
+              placeholder="Essa despesa é normal ou fixa?"
               value={typeIncome}
               options={[
                 { value: 'NORMAL', label: 'Normal' },
-                { value: 'RECURRING', label: 'Recorrente' },
+                { value: 'RECURRING', label: 'Conta Fixa' },
               ]}
+              description="As despesas fixas serão adicionadas automaticamente todo mês pelo proximo 1 ano."
               onChange={(value) => setTypeIncome(value)}
             />
           )}

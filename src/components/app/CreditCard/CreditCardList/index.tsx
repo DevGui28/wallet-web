@@ -71,7 +71,7 @@ export function CreditCard({ creditCard, edit = false }: CreditCardProps) {
 
       <div className="my-6 text-white">
         <p className="text-end text-lg tracking-widest sm:text-2xl">
-          **** **** **** {creditCard.lastFourDigits || '****'}
+          **** **** **** {creditCard.lastDigits || '****'}
         </p>
       </div>
 

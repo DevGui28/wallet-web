@@ -1,10 +1,12 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery } from 'react-query'
-import { handleGetCreditCards } from '../../../../api'
+import { useQuery, useQueryClient } from 'react-query'
+import { toast } from 'sonner'
+import { handleFindCreditCard, handleUpdateCreditCard } from '../../../../api'
+import { FormAddCreditCard } from '../../../../schemas/add-credit-card'
 import FormInput from '../../../shared/Form/FormInput'
 import { Button } from '../../../ui/button'
 import { Form } from '../../../ui/form'
@@ -18,32 +20,57 @@ type CreditCardDetailProps = {
 
 export default function CreditCardDetail({ id }: CreditCardDetailProps) {
   const [isSubmitting, setSubmitting] = useState(false)
-
+  const queryClient = useQueryClient()
   const router = useRouter()
 
   const { data: creditCard, isLoading } = useQuery({
     queryKey: ['credit-cards-detail', id],
-    queryFn: async () => {
-      const response = await handleGetCreditCards()
-      return response.find((card) => card.id === id)
-    },
+    queryFn: () => handleFindCreditCard(id),
   })
 
-  const form = useForm({
-    defaultValues: {
-      cardName: creditCard?.cardName,
-      limit: creditCard?.limit,
-      closingDay: creditCard?.closingDay,
-      dueDay: creditCard?.dueDay,
-    },
-  })
+  const form = useForm<Partial<FormAddCreditCard>>()
 
-  function onSubmit() {
+  useEffect(() => {
+    if (creditCard) {
+      form.reset({
+        cardName: creditCard.cardName,
+        limit: creditCard.limit,
+        closingDay: creditCard.closingDay.toString(),
+        dueDay: creditCard.dueDay.toString(),
+        lastDigits: creditCard.lastDigits.toString(),
+      })
+    }
+  }, [creditCard])
+
+  async function onSubmit(data: Partial<FormAddCreditCard>) {
     setSubmitting(true)
-    console.log('submit')
-    setTimeout(() => {
+    const payload = {
+      ...(data.cardName === creditCard?.cardName
+        ? {}
+        : { cardName: data.cardName }),
+      ...(data.limit === creditCard?.limit
+        ? {}
+        : { limit: Number(data.limit) }),
+      ...(data.closingDay === creditCard?.closingDay.toString()
+        ? {}
+        : { closingDay: Number(data.closingDay) }),
+      ...(data.dueDay === creditCard?.dueDay.toString()
+        ? {}
+        : { dueDay: Number(data.dueDay) }),
+      ...(data.lastDigits === creditCard?.lastDigits.toString()
+        ? {}
+        : { lastDigits: Number(data.lastDigits) }),
+    }
+
+    try {
+      await handleUpdateCreditCard(id, payload)
+      toast.success('Cartão atualizado com sucesso')
+      queryClient.invalidateQueries('credit-cards-detail')
+    } catch (error) {
+      toast.error('Erro ao atualizar cartão')
+    } finally {
       setSubmitting(false)
-    }, 3000)
+    }
   }
 
   return (
@@ -83,6 +110,15 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
               placeholder="Dia de vencimento"
               numeric
               withMask
+            />
+            <FormInput
+              form={form}
+              name="lastDigits"
+              label="Últimos 4 dígitos"
+              placeholder="Últimos 4 dígitos"
+              numeric
+              maxLength={4}
+              isOptional
             />
           </div>
           <div className="mt-4 flex w-full items-center justify-between gap-4">

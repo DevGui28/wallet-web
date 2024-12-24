@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+import { useQueryClient } from 'react-query'
 import { toast } from 'sonner'
 import { handleDeleteCreditCard } from '../../../../api'
 import {
@@ -18,10 +20,13 @@ type DeletedCardDialogProps = {
 }
 
 export default function DeletedCardDialog({ id }: DeletedCardDialogProps) {
+  const queryClient = useQueryClient()
   const handleDelete = async () => {
     try {
       await handleDeleteCreditCard(id)
       toast.success('Cartão excluído com sucesso')
+      queryClient.invalidateQueries('credit-cards')
+      redirect('/credit-card')
     } catch (error) {
       toast.error('Erro ao excluir cartão')
     }
@@ -40,9 +45,13 @@ export default function DeletedCardDialog({ id }: DeletedCardDialogProps) {
             Você tem certeza que deseja excluir este cartão?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Caso você opte por apagar este cartão, todas as compras associadas a
-            ele serão permanentemente excluídas. Esta ação não pode ser
-            desfeita.
+            <span className="flex flex-col gap-2">
+              Caso você opte por apagar este cartão, todas as compras associadas
+              a ele serão permanentemente excluídas.
+              <span className="font-bold text-destructive">
+                Esta ação não pode ser desfeita.
+              </span>
+            </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

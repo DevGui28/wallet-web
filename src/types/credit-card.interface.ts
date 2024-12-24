@@ -2,7 +2,7 @@ export type CreditCardResponse = {
   id: string
   cardName: string
   limit: string
-  lastFourDigits: string
+  lastDigits: number
   closingDay: number
   dueDay: number
   createdAt: string
@@ -14,4 +14,13 @@ export interface CreateCreditCard {
   limit: number
   closingDay: number
   dueDay: number
+  lastDigits?: number
+}
+
+export interface UpdateCreditCard {
+  cardName?: string
+  limit?: number
+  closingDay?: number
+  dueDay?: number
+  lastDigits?: number
 }

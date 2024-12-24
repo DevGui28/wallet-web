@@ -16,6 +16,7 @@ interface CustomSelectProps {
   onChange?: (value: string) => void
   className?: string
   value: string | null
+  description?: string
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -25,6 +26,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   onChange,
   className,
   value,
+  description,
 }) => {
   return (
     <div className={cn('flex flex-col gap-4', className)}>
@@ -43,6 +45,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           </SelectGroup>
         </SelectContent>
       </Select>
+      {description && (
+        <p className="text-xs text-card-foreground/60">{description}</p>
+      )}
     </div>
   )
 }

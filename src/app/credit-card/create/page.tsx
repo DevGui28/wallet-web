@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { parseCookies } from 'nookies'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useQueryClient } from 'react-query'
 import { toast } from 'sonner'
 import { handleCreateCreditCard } from '../../../api'
 import TopNav from '../../../components/app/Header/TopNav'
@@ -25,6 +26,8 @@ export default function AddCreditCardPage() {
   const payload = jwtDecode<JwtPayload>(token)
   const name = payload.user.name
 
+  const queryClient = useQueryClient()
+
   const router = useRouter()
 
   const [isSubmitting, setSubmitting] = useState(false)
@@ -40,11 +43,13 @@ export default function AddCreditCardPage() {
   })
 
   const onSubmit = async (data: FormAddCreditCard) => {
+    const { cardName, limit, closingDay, dueDay, lastDigits } = data
     const payload = {
-      ...data,
-      limit: Number(data.limit),
-      closingDay: Number(data.closingDay),
-      dueDay: Number(data.dueDay),
+      cardName,
+      limit: Number(limit),
+      closingDay: Number(closingDay),
+      dueDay: Number(dueDay),
+      ...(lastDigits && { lastDigits: Number(lastDigits) }),
     }
 
     if (
@@ -61,6 +66,7 @@ export default function AddCreditCardPage() {
       setSubmitting(true)
       await handleCreateCreditCard(payload)
       toast.success('Cartão de crédito cadastrado com sucesso')
+      queryClient.invalidateQueries('credit-cards')
       form.reset()
       router.push('/credit-card')
     } catch (error) {
@@ -113,6 +119,15 @@ export default function AddCreditCardPage() {
                   withMask
                   maxLength={2}
                   numeric
+                />
+                <FormInput
+                  label="Últimos 4 dígitos"
+                  name="lastDigits"
+                  form={form}
+                  placeholder="Ex: 1234"
+                  maxLength={4}
+                  numeric
+                  isOptional
                 />
               </div>
               <div className="flex w-full items-center justify-end gap-4">
