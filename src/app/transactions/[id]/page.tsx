@@ -60,7 +60,7 @@ export default async function TranscationDetail({
               </span>
             </p>
             <p>
-              Data da compra:
+              Data da transação:
               <span className="ml-1 font-semibold">
                 {formatDateToString(transaction.date)}
               </span>
@@ -89,7 +89,7 @@ export default async function TranscationDetail({
               </p>
             )}
           </div>
-          {transaction.splitsOrRecurrences.length && (
+          {transaction.splitsOrRecurrences.length > 0 && (
             <div className="flex flex-col gap-2 rounded-lg py-4">
               <h2 className="font-semibold">Parcelas</h2>
               <SplitOrRecurrenceTable
