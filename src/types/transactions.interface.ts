@@ -15,6 +15,11 @@ export enum TransactionType {
   INCOME = 'INCOME',
 }
 
+export enum TransactionStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+}
+
 export enum RecurrenceType {
   INSTALLMENT = 'INSTALLMENT',
   RECURRING = 'RECURRING',
@@ -29,7 +34,7 @@ export type SplitsOrRecurrences = {
   amount: string
   totalInstallments: number
   dueDate: string
-  paymentStatus: 'PENDING' | 'PAID'
+  paymentStatus: TransactionStatus
   paidAt: string | Date | null
   createdAt: string
   updatedAt: string

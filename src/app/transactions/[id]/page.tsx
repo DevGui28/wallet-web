@@ -92,9 +92,7 @@ export default async function TranscationDetail({
           {transaction.splitsOrRecurrences.length > 0 && (
             <div className="flex flex-col gap-2 rounded-lg py-4">
               <h2 className="font-semibold">Parcelas</h2>
-              <SplitOrRecurrenceTable
-                splitsOrRecurrences={transaction.splitsOrRecurrences}
-              />
+              <SplitOrRecurrenceTable id={transaction.id} />
             </div>
           )}
         </div>

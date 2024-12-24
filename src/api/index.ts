@@ -37,6 +37,13 @@ export const handleLogin = async (data: Login) => {
   return res.token
 }
 
+export const handleFindTransaction = async (id: string) => {
+  const { data } = await apiWallet.get<TransactionResponse>(
+    `/transactions/${id}`
+  )
+  return data
+}
+
 export const handleGetTransactions = async () => {
   const { data } = await apiWallet.get<TransactionResponse[]>(`/transactions/`)
   return data
@@ -82,7 +89,9 @@ export const handleDeleteCreditCard = async (id: string) => {
   return data
 }
 
-export const handlePaySplitOrRecurrence = async (id: string) => {
-  const { data } = await apiWallet.patch(`/transactions/${id}/pay`)
+export const handlePaySplitOrRecurrence = async (id: string, paidAt: Date) => {
+  const { data } = await apiWallet.patch(`/split-or-recurrence/${id}/pay`, {
+    paidAt,
+  })
   return data
 }

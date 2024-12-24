@@ -8,36 +8,30 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { handlePaySplitOrRecurrence } from '../../../../api'
+import { useQuery } from 'react-query'
+import { handleFindTransaction } from '../../../../api'
 import { transactionStatusMapper } from '../../../../lib/mappers'
 import { formatCurrency, formatDateToString } from '../../../../lib/utils'
 import {
   RecurrenceType,
-  SplitsOrRecurrences,
+  TransactionStatus,
 } from '../../../../types/transactions.interface'
-import { Button } from '../../../ui/button'
+import PayDialog from './PayDialog'
 
 type SplitOrRecurrenceTableProps = {
-  splitsOrRecurrences: SplitsOrRecurrences[]
+  id: string
 }
 
 export default function SplitOrRecurrenceTable({
-  splitsOrRecurrences,
+  id,
 }: SplitOrRecurrenceTableProps) {
-  const [loading, setLoading] = useState(false)
-  async function handlePay(id: string) {
-    setLoading(true)
-    try {
-      await handlePaySplitOrRecurrence(id)
-      toast.success('Parcela paga com sucesso!')
-    } catch (error) {
-      toast.error('Erro ao pagar parcela!')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data: splitsOrRecurrences } = useQuery({
+    queryKey: ['splitsOrRecurrences', id],
+    queryFn: async () => {
+      const transaction = await handleFindTransaction(id)
+      return transaction.splitsOrRecurrences
+    },
+  })
 
   return (
     <Table>
@@ -48,13 +42,13 @@ export default function SplitOrRecurrenceTable({
           <TableHead>Vencimento</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Pago em</TableHead>
-          {splitsOrRecurrences[0].type === RecurrenceType.RECURRING && (
+          {splitsOrRecurrences?.[0].type === RecurrenceType.RECURRING && (
             <TableHead>Pagar</TableHead>
           )}
         </TableRow>
       </TableHeader>
       <TableBody className="overflow-auto">
-        {splitsOrRecurrences.map((splitOrRecurrence) => (
+        {splitsOrRecurrences?.map((splitOrRecurrence) => (
           <TableRow key={splitOrRecurrence.id}>
             <TableCell>{splitOrRecurrence.installmentNumber}</TableCell>
             <TableCell>{formatCurrency(splitOrRecurrence.amount)}</TableCell>
@@ -71,12 +65,12 @@ export default function SplitOrRecurrenceTable({
             </TableCell>
             {splitOrRecurrence.type === RecurrenceType.RECURRING && (
               <TableCell>
-                <Button
-                  disabled={loading}
-                  onClick={() => handlePay(splitOrRecurrence.id)}
-                >
-                  Pagar
-                </Button>
+                <PayDialog
+                  id={splitOrRecurrence.id}
+                  paid={
+                    splitOrRecurrence.paymentStatus === TransactionStatus.PAID
+                  }
+                />
               </TableCell>
             )}
           </TableRow>
