@@ -81,3 +81,8 @@ export const handleDeleteCreditCard = async (id: string) => {
   const { data } = await apiWallet.delete(`/credit-card/${id}`)
   return data
 }
+
+export const handlePaySplitOrRecurrence = async (id: string) => {
+  const { data } = await apiWallet.patch(`/transactions/${id}/pay`)
+  return data
+}
