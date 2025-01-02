@@ -20,7 +20,7 @@ interface MenuItem {
   notifications?: number | string
 }
 
-const menuItems: MenuItem[] = [
+export const menuItems: MenuItem[] = [
   {
     id: 'dashboard',
     icon: <ChartPie weight="fill" size={18} />,
