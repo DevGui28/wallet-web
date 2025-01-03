@@ -25,7 +25,7 @@ import {
 } from '../../../../lib/utils'
 
 export default function TransactionsTable() {
-  const { data: transactions } = useQuery({
+  const { data: transactions, isLoading } = useQuery({
     queryKey: ['transactions'],
     queryFn: handleGetTransactions,
   })
@@ -122,14 +122,12 @@ export default function TransactionsTable() {
               </TableCell>
             </TableRow>
           ))}
-          {!transactions && (
+          {!transactions && !isLoading && (
             <TableRow>
               <TableCell
                 colSpan={
-                  (
-                    columns[screenCurrent as keyof typeof columns] ||
-                    columns.large
-                  ).length
+                  (columns[screenCurrent as keyof typeof columns] || columns.xl)
+                    .length
                 }
                 className="text-center font-semibold"
               >
