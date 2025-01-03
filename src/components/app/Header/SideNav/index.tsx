@@ -34,7 +34,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     id: 'installments',
-    icon: <Stack weight="fill" size={18} />,
+    icon: <Stack size={18} weight="fill" />,
     label: 'Parcelamentos',
   },
   // {
