@@ -23,6 +23,7 @@ import {
   formatDateToString,
   transformToCammelCase,
 } from '../../../../lib/utils'
+import { Skeleton } from '../../../ui/skeleton'
 
 export default function TransactionsTable() {
   const { data: transactions, isLoading } = useQuery({
@@ -72,6 +73,18 @@ export default function TransactionsTable() {
           </TableRow>
         </TableHeader>
         <TableBody className="overflow-auto">
+          {isLoading &&
+            Array.from({ length: 5 }).map((_, index) => (
+              <TableRow key={index} className="cursor-default">
+                {(
+                  columns[screenCurrent as keyof typeof columns] || columns.xl
+                ).map((_, index) => (
+                  <TableCell key={index}>
+                    <Skeleton className="h-4" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
           {transactions?.map((transactions) => (
             <TableRow
               key={transactions.id}
@@ -122,7 +135,7 @@ export default function TransactionsTable() {
               </TableCell>
             </TableRow>
           ))}
-          {!transactions && !isLoading && (
+          {!transactions?.length && !isLoading && (
             <TableRow>
               <TableCell
                 colSpan={
