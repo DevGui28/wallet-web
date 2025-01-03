@@ -4,7 +4,7 @@ import { MobileNav } from '../../components/app/Header/MobileNav'
 import { SideNav } from '../../components/app/Header/SideNav'
 import { withAuth } from '../../lib/with-auth'
 
-function TransactionsLayout({ children }: { children: React.ReactNode }) {
+function InstallmentsLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center overflow-hidden">
       <SideNav className="hidden md:flex" />
@@ -16,4 +16,4 @@ function TransactionsLayout({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default withAuth(TransactionsLayout)
+export default withAuth(InstallmentsLayout)

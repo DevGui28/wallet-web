@@ -5,7 +5,7 @@ import TopNav from '../../components/app/Header/TopNav'
 import { tokenName } from '../../constants/cookies'
 import { JwtPayload } from '../../types/jwt.interface'
 
-export default function TransactionsPage() {
+export default function InstallmentsPage() {
   const token = cookies().get(tokenName)?.value
   if (!token) {
     return redirect('/login')
