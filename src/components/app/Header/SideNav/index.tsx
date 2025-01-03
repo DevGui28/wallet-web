@@ -9,6 +9,7 @@ import {
   ChartPie,
   Crown,
   SignOut,
+  Stack,
 } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -31,11 +32,11 @@ export const menuItems: MenuItem[] = [
     icon: <ArrowsLeftRight weight="fill" size={18} />,
     label: 'Transações',
   },
-  // {
-  //   id: 'installments',
-  //   icon: <Stack weight="fill" size={18} />,
-  //   label: 'Parcelamentos',
-  // },
+  {
+    id: 'installments',
+    icon: <Stack weight="fill" size={18} />,
+    label: 'Parcelamentos',
+  },
   // {
   //   id: 'bills',
   //   icon: <Receipt weight="fill" size={18} />,
