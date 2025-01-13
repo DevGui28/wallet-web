@@ -71,3 +71,8 @@ export interface CreateTransaction {
   totalAmount: number
   type: TransactionType
 }
+
+export type IncomesResponse = {
+  total: number
+  installments: TransactionResponse[]
+}

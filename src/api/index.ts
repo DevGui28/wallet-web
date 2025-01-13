@@ -9,6 +9,7 @@ import {
 } from '../types/credit-card.interface'
 import {
   CreateTransaction,
+  IncomesResponse,
   TransactionResponse,
   TransactionType,
 } from '../types/transactions.interface'
@@ -94,4 +95,23 @@ export const handlePaySplitOrRecurrence = async (id: string, paidAt: Date) => {
     paidAt,
   })
   return data
+}
+
+export const handleGetInstallments = async ({
+  creditcardId,
+  date,
+}: {
+  creditcardId?: string
+  date: string
+}) => {
+  if (!creditcardId) {
+    return
+  }
+
+  const params = new URLSearchParams()
+  params.append('date', date)
+  const { data } = await apiWallet.get<IncomesResponse>(
+    `/credit-card/${creditcardId}/invoices?${params}`
+  )
+  return data.installments
 }
