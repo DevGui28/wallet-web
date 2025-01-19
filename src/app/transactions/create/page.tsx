@@ -108,6 +108,8 @@ export default function AddTransactionPage() {
       })
       handleResetForm()
       queryClient.invalidateQueries('transactions')
+      queryClient.invalidateQueries('bills')
+      queryClient.invalidateQueries('installments')
       toast.success('Transação adicionada com sucesso!')
     } catch (error: any) {
       toast.error('Erro ao adicionar transação!')
