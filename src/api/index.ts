@@ -115,3 +115,12 @@ export const handleGetInstallments = async ({
   )
   return data
 }
+
+export const handleGetBills = async ({ date }: { date: string }) => {
+  const params = new URLSearchParams()
+  params.append('date', date)
+  const { data } = await apiWallet.get<IncomesResponse>(
+    `/split-or-recurrence/bills?${params}`
+  )
+  return data
+}

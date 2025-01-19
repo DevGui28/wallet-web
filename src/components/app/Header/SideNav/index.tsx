@@ -8,6 +8,7 @@ import {
   Cardholder,
   ChartPie,
   Crown,
+  Receipt,
   SignOut,
   Stack,
 } from '@phosphor-icons/react'
@@ -37,11 +38,11 @@ export const menuItems: MenuItem[] = [
     icon: <Stack size={18} weight="fill" />,
     label: 'Parcelamentos',
   },
-  // {
-  //   id: 'bills',
-  //   icon: <Receipt weight="fill" size={18} />,
-  //   label: 'Contas e Boletos',
-  // },
+  {
+    id: 'bills',
+    icon: <Receipt weight="fill" size={18} />,
+    label: 'Contas e Boletos',
+  },
   {
     id: 'credit-card',
     icon: <Cardholder size={18} weight="fill" />,
