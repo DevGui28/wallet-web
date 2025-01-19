@@ -114,7 +114,9 @@ export function BillsTable() {
                     {installment.category.name}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
-                    {formatDateToString(installment.date)}
+                    {split.type === 'RECURRING'
+                      ? 'Recorrente'
+                      : formatDateToString(installment.date)}
                   </TableCell>
                   <TableCell className="font-semibold text-card-foreground">
                     {formatCurrency(split.amount)}
