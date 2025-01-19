@@ -59,7 +59,7 @@ export function BillsTable() {
     xr: ['Nome', 'Valor', 'Detalhes'],
     small: ['Nome', 'Valor', 'Detalhes'],
     medium: ['Nome', 'Valor', 'Detalhes'],
-    large: ['Nome', 'Data da transação', 'Valor', 'Detalhes'],
+    large: ['Nome', 'Data da transação', 'Valor', 'Pagar', 'Detalhes'],
     xl: [
       'Nome',
       'Descrição',
@@ -119,7 +119,7 @@ export function BillsTable() {
                   <TableCell className="font-semibold text-card-foreground">
                     {formatCurrency(split.amount)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <Button
                       className={cn(
                         'rounded-full bg-secondary text-xs font-medium text-secondary-foreground',
