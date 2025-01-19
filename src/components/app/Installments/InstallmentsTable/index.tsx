@@ -97,13 +97,18 @@ export function InstallmentsTable() {
               onMonthChange={(date) => setDate(date.toISOString())}
             />
           </div>
-          <div className="hidden flex-col items-center gap-2 md:flex-row lg:flex">
-            <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              Vencimento da Fatura:{' '}
-              {creditCards.find((card) => card.id === creditCardId)?.closingDay}
-              /{`${date.split('-')[1]}/${date.split('-')[0]}`}
-            </p>
-          </div>
+          {creditCardId && (
+            <div className="hidden flex-col items-center gap-2 md:flex-row lg:flex">
+              <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Vencimento da Fatura:{' '}
+                {
+                  creditCards.find((card) => card.id === creditCardId)
+                    ?.closingDay
+                }
+                /{`${date.split('-')[1]}/${date.split('-')[0]}`}
+              </p>
+            </div>
+          )}
         </div>
       )}
       <Table>
