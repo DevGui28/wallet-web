@@ -111,7 +111,7 @@ export const handleGetInstallments = async ({
   const params = new URLSearchParams()
   params.append('date', date)
   const { data } = await apiWallet.get<IncomesResponse>(
-    `/credit-card/${creditcardId}/invoices?${params}`
+    `/split-or-recurrence/${creditcardId}/invoices?${params}`
   )
-  return data.installments
+  return data
 }

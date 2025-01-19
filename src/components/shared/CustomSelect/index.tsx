@@ -17,6 +17,7 @@ interface CustomSelectProps {
   className?: string
   value: string | null
   description?: string
+  classinput?: string
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -27,12 +28,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   className,
   value,
   description,
+  classinput,
 }) => {
   return (
     <div className={cn('flex flex-col gap-4', className)}>
       <Label>{label}</Label>
       <Select value={value || ''} onValueChange={onChange}>
-        <SelectTrigger>
+        <SelectTrigger className={classinput}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
