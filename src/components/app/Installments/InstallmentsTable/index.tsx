@@ -182,7 +182,7 @@ export function InstallmentsTable() {
             </TableRow>
           )}
           {data && (
-            <TableRow>
+            <TableRow className="bg-card-foreground/5 hover:bg-card-foreground/10">
               <TableCell
                 colSpan={(
                   columns[screenCurrent as keyof typeof columns] || columns.xl
@@ -194,6 +194,7 @@ export function InstallmentsTable() {
               <TableCell className="font-bold">
                 {formatCurrency(data.total)}
               </TableCell>
+              <TableCell />
             </TableRow>
           )}
         </TableBody>
