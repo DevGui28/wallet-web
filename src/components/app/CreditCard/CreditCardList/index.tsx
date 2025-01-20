@@ -36,7 +36,7 @@ export default function CreditCardList() {
 }
 
 type CreditCardProps = {
-  key: string
+  key?: string
   creditCard: CreditCardResponse
   edit?: boolean
 }
