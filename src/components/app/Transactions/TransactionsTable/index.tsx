@@ -12,7 +12,11 @@ import { CaretRight, Plus } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { handleGetCreditCards, handleGetTransactions } from '../../../../api'
+import {
+  handleGetCategories,
+  handleGetCreditCards,
+  handleGetTransactions,
+} from '../../../../api'
 import useMediaQuery from '../../../../hooks/useMediaQuery'
 import {
   paymentMethodMapper,
@@ -53,6 +57,17 @@ export default function TransactionsTable() {
       filters.year,
     ],
     queryFn: () => handleGetTransactions(filters),
+  })
+
+  const { data: categories } = useQuery({
+    queryKey: ['categories', filters.type],
+    queryFn: async () => {
+      const data = await handleGetCategories((filters.type as any) || 'EXPENSE')
+      return data.map((category) => ({
+        value: category.id,
+        label: category.name,
+      }))
+    },
   })
 
   const { data: creditCards } = useQuery({
@@ -102,6 +117,7 @@ export default function TransactionsTable() {
         filters={filters}
         showFilters={showFilters}
         creditCards={creditCards}
+        categories={categories}
       />
       <Table>
         <TableHeader className="sticky top-0 z-10 cursor-default">
@@ -200,6 +216,7 @@ type FiltersProps = {
   filters: TransactionFilters
   showFilters: boolean
   creditCards?: { value: string; label: string }[]
+  categories?: { value: string; label: string }[]
 }
 
 function Filters(props: FiltersProps) {
@@ -252,6 +269,18 @@ function Filters(props: FiltersProps) {
           }}
         />
         <CustomSelect
+          label="Categoria"
+          options={props.categories || []}
+          placeholder="Selecione a categoria"
+          value={filters.categoryId || ''}
+          onChange={(e) => {
+            setFilters({
+              ...filters,
+              categoryId: e,
+            })
+          }}
+        />
+        <CustomSelect
           label="Método de Pagamento"
           options={paymentMethods}
           placeholder="Selecione o método de pagamento"
@@ -277,21 +306,26 @@ function Filters(props: FiltersProps) {
             }}
           />
         )}
-        <MonthPicker
-          currentMonth={
-            new Date(
-              filters.year || new Date().getFullYear(),
-              filters.month || new Date().getMonth()
-            )
-          }
-          onMonthChange={(date) =>
-            setFilters({
-              ...filters,
-              year: date.getFullYear(),
-              month: date.getMonth(),
-            })
-          }
-        />
+        <div className="flex flex-col gap-4">
+          <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Selecione o mês
+          </p>
+          <MonthPicker
+            currentMonth={
+              new Date(
+                filters.year || new Date().getFullYear(),
+                filters.month || new Date().getMonth()
+              )
+            }
+            onMonthChange={(date) =>
+              setFilters({
+                ...filters,
+                year: date.getFullYear(),
+                month: date.getMonth(),
+              })
+            }
+          />
+        </div>
       </div>
     </>
   )

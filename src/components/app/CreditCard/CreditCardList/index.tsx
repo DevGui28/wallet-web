@@ -36,23 +36,27 @@ export default function CreditCardList() {
 }
 
 type CreditCardProps = {
+  key: string
   creditCard: CreditCardResponse
   edit?: boolean
 }
 
-export function CreditCard({ creditCard, edit = false }: CreditCardProps) {
+export function CreditCard({ key, creditCard, edit = false }: CreditCardProps) {
   return (
     <div
+      key={key}
       className={cn(
         'flex min-h-48 w-full max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 p-5',
         {
-          'from-purple-900 to-purple-950': creditCard.cardName === 'Nubank',
+          'from-purple-900 to-purple-950':
+            creditCard.cardName.includes('Nubank'),
           'from-orange-500 to-orange-600':
-            creditCard.cardName === 'Inter' || creditCard.cardName === 'Itaú',
+            creditCard.cardName.includes('Inter') ||
+            creditCard.cardName.includes('Itaú'),
           'from-red-600 to-red-700':
-            creditCard.cardName === 'Santander' ||
-            creditCard.cardName === 'Bradesco',
-          'from-blue-600 to-blue-800': creditCard.cardName === 'Caixa',
+            creditCard.cardName.includes('Santander') ||
+            creditCard.cardName.includes('Bradesco'),
+          'from-blue-600 to-blue-800': creditCard.cardName.includes('Caixa'),
         }
       )}
     >
