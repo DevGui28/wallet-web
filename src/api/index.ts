@@ -1,5 +1,6 @@
 import axios, { Axios } from 'axios'
 import { Login } from '../app/login/page'
+import { TransactionFilters } from '../components/app/Transactions/TransactionsTable'
 import { urls } from '../constants/urls'
 import { CategoriesResponse } from '../types/categories.interface'
 import {
@@ -45,8 +46,24 @@ export const handleFindTransaction = async (id: string) => {
   return data
 }
 
-export const handleGetTransactions = async () => {
-  const { data } = await apiWallet.get<TransactionResponse[]>(`/transactions/`)
+export const handleGetTransactions = async (filters: TransactionFilters) => {
+  const params = new URLSearchParams({
+    ...(filters.categoryId && { categoryId: filters.categoryId }),
+    ...(filters.paymentMethod && { paymentMethod: filters.paymentMethod }),
+    ...(filters.creditCardId && { creditCardId: filters.creditCardId }),
+    ...(filters.type && { type: filters.type !== 'ALL' ? filters.type : '' }),
+    ...(filters.month !== undefined && { month: filters.month.toString() }),
+    ...(filters.year && { year: filters.year.toString() }),
+  })
+
+  const { data } = await apiWallet.get<TransactionResponse[]>(
+    `/transactions?${params}`
+  )
+
+  console.log({ params: `/transactions?${params}` })
+
+  console.log({ data })
+
   return data
 }
 

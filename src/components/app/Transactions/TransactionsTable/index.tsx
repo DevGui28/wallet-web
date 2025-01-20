@@ -12,7 +12,7 @@ import { CaretRight, Plus } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { handleGetTransactions } from '../../../../api'
+import { handleGetCreditCards, handleGetTransactions } from '../../../../api'
 import useMediaQuery from '../../../../hooks/useMediaQuery'
 import {
   paymentMethodMapper,
@@ -24,26 +24,46 @@ import {
   formatDateToString,
   transformToCammelCase,
 } from '../../../../lib/utils'
-import {
-  PaymentMethod,
-  TransactionType,
-} from '../../../../types/transactions.interface'
+import { PaymentMethod } from '../../../../types/transactions.interface'
+import { CustomSelect } from '../../../shared/CustomSelect'
+import MonthPicker from '../../../shared/MonthPicker'
+import { Button } from '../../../ui/button'
 import { Skeleton } from '../../../ui/skeleton'
 
 export type TransactionFilters = {
   categoryId?: string
   paymentMethod?: PaymentMethod
   creditCardId?: string
-  type?: TransactionType
+  type?: string
   month?: number
   year?: number
 }
 
 export default function TransactionsTable() {
   const [filters, setFilters] = useState<TransactionFilters>({})
+  const [showFilters, setShowFilters] = useState(false)
   const { data: transactions, isLoading } = useQuery({
-    queryKey: ['transactions'],
+    queryKey: [
+      'transactions',
+      filters.type,
+      filters.paymentMethod,
+      filters.creditCardId,
+      filters.categoryId,
+      filters.month,
+      filters.year,
+    ],
     queryFn: () => handleGetTransactions(filters),
+  })
+
+  const { data: creditCards } = useQuery({
+    queryKey: ['credit-cards'],
+    queryFn: async () => {
+      const data = await handleGetCreditCards()
+      return data.map((creditCard) => ({
+        value: creditCard.id,
+        label: creditCard.cardName,
+      }))
+    },
   })
 
   const screen = {
@@ -76,8 +96,13 @@ export default function TransactionsTable() {
 
   return (
     <>
-      <Header />
-      <Filters setFilters={setFilters} filters={filters} />
+      <Header setShowFilters={setShowFilters} showFilters={showFilters} />
+      <Filters
+        setFilters={setFilters}
+        filters={filters}
+        showFilters={showFilters}
+        creditCards={creditCards}
+      />
       <Table>
         <TableHeader className="sticky top-0 z-10 cursor-default">
           <TableRow className="text-xs font-bold text-card-foreground">
@@ -173,61 +198,129 @@ export default function TransactionsTable() {
 type FiltersProps = {
   setFilters: (filters: TransactionFilters) => void
   filters: TransactionFilters
+  showFilters: boolean
+  creditCards?: { value: string; label: string }[]
 }
 
 function Filters(props: FiltersProps) {
-  const { setFilters, filters } = props
+  const { setFilters, filters, showFilters, creditCards } = props
+
+  const transactionType = [
+    {
+      label: 'Todos',
+      value: 'ALL',
+    },
+    {
+      label: 'Receita',
+      value: 'INCOME',
+    },
+    {
+      label: 'Despesa',
+      value: 'EXPENSE',
+    },
+  ]
+
+  const paymentMethods = Object.entries(paymentMethodMapper)
+    .filter(([key]) =>
+      filters.type === 'INCOME'
+        ? !key.includes('CARD') && !key.includes('SLIP')
+        : true
+    )
+    .map(([key, value]) => ({
+      value: key,
+      label: value,
+    }))
 
   return (
-    <div className="mb-4 flex gap-4">
-      <div className="flex flex-col gap-2">
-        <label htmlFor="type" className="text-sm text-card-foreground">
-          Tipo
-        </label>
-        <select
-          id="type"
-          name="type"
-          value={filters.type}
-          onChange={(e) =>
-            setFilters({ ...filters, type: e.target.value as TransactionType })
-          }
-          className="rounded-md bg-card/90 px-2 py-1 text-sm text-card-foreground"
-        >
-          <option value="">Todos</option>
-          <option value="INCOME">Receita</option>
-          <option value="EXPENSE">Despesa</option>
-        </select>
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="paymentMethod" className="text-sm text-card-foreground">
-          Método de Pagamento
-        </label>
-        <select
-          id="paymentMethod"
-          name="paymentMethod"
-          value={filters.paymentMethod}
-          onChange={(e) =>
+    <>
+      <div
+        className={cn(
+          'mb-6 gap-4 duration-1000 animate-in slide-in-from-top',
+          showFilters ? 'flex' : 'hidden'
+        )}
+      >
+        <CustomSelect
+          label="Tipo da Transação"
+          options={transactionType}
+          placeholder="Selecione o tipo da transação"
+          value={filters.type || ''}
+          onChange={(e) => {
             setFilters({
               ...filters,
-              paymentMethod: e.target.value as PaymentMethod,
+              type: e,
+            })
+          }}
+        />
+        <CustomSelect
+          label="Método de Pagamento"
+          options={paymentMethods}
+          placeholder="Selecione o método de pagamento"
+          value={filters.paymentMethod || ''}
+          onChange={(e) => {
+            setFilters({
+              ...filters,
+              paymentMethod: e as PaymentMethod,
+            })
+          }}
+        />
+        {filters.paymentMethod === 'CREDIT_CARD' && creditCards && (
+          <CustomSelect
+            label="Cartão de Crédito"
+            options={creditCards || []}
+            placeholder="Selecione o cartão de crédito"
+            value={filters.creditCardId || ''}
+            onChange={(e) => {
+              setFilters({
+                ...filters,
+                creditCardId: e,
+              })
+            }}
+          />
+        )}
+        <MonthPicker
+          currentMonth={
+            new Date(
+              filters.year || new Date().getFullYear(),
+              filters.month || new Date().getMonth()
+            )
+          }
+          onMonthChange={(date) =>
+            setFilters({
+              ...filters,
+              year: date.getFullYear(),
+              month: date.getMonth(),
             })
           }
-          className="rounded-md bg-card/90 px-2 py-1 text-sm text-card-foreground"
-        >
-          <option value="">Todos</option>
-          <option value="DEBIT_CARD">Cartão de Débito</option>
-          <option value="CREDIT_CARD">Cartão de Crédito</option>
-          <option value="CASH">Dinheiro</option>
-          <option value="PIX">PIX</option>
-        </select>
+        />
       </div>
-    </div>
+    </>
   )
 }
 
-function Header() {
+function Header({
+  setShowFilters,
+  showFilters,
+}: {
+  setShowFilters: (filters: boolean | ((prev: boolean) => boolean)) => void
+  showFilters: boolean
+}) {
   return (
     <div className="mb-6 flex items-center justify-between">
+      <Button
+        onClick={() => setShowFilters((prev) => !prev)}
+        className="flex items-center gap-2 rounded-md bg-secondary px-6 py-4 text-sm font-semibold text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground/90"
+      >
+        Filtros
+        <CaretRight
+          size={20}
+          className={cn(
+            'rotate-90 transform transition-transform duration-300',
+            {
+              '-rotate-90': showFilters,
+            }
+          )}
+        />
+      </Button>
       <Link href="/transactions/create">
         <div className="flex h-10 items-center gap-2 rounded-md bg-secondary px-6 py-4 text-sm font-semibold text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground/90">
           <Plus size={16} weight="bold" />
