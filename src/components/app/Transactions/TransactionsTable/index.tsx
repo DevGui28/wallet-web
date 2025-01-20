@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table'
 import { CaretRight, Plus } from '@phosphor-icons/react'
 import Link from 'next/link'
+import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { handleGetTransactions } from '../../../../api'
 import useMediaQuery from '../../../../hooks/useMediaQuery'
@@ -23,12 +24,26 @@ import {
   formatDateToString,
   transformToCammelCase,
 } from '../../../../lib/utils'
+import {
+  PaymentMethod,
+  TransactionType,
+} from '../../../../types/transactions.interface'
 import { Skeleton } from '../../../ui/skeleton'
 
+export type TransactionFilters = {
+  categoryId?: string
+  paymentMethod?: PaymentMethod
+  creditCardId?: string
+  type?: TransactionType
+  month?: number
+  year?: number
+}
+
 export default function TransactionsTable() {
+  const [filters, setFilters] = useState<TransactionFilters>({})
   const { data: transactions, isLoading } = useQuery({
     queryKey: ['transactions'],
-    queryFn: handleGetTransactions,
+    queryFn: () => handleGetTransactions(filters),
   })
 
   const screen = {
@@ -62,6 +77,7 @@ export default function TransactionsTable() {
   return (
     <>
       <Header />
+      <Filters setFilters={setFilters} filters={filters} />
       <Table>
         <TableHeader className="sticky top-0 z-10 cursor-default">
           <TableRow className="text-xs font-bold text-card-foreground">
@@ -154,9 +170,64 @@ export default function TransactionsTable() {
   )
 }
 
+type FiltersProps = {
+  setFilters: (filters: TransactionFilters) => void
+  filters: TransactionFilters
+}
+
+function Filters(props: FiltersProps) {
+  const { setFilters, filters } = props
+
+  return (
+    <div className="mb-4 flex gap-4">
+      <div className="flex flex-col gap-2">
+        <label htmlFor="type" className="text-sm text-card-foreground">
+          Tipo
+        </label>
+        <select
+          id="type"
+          name="type"
+          value={filters.type}
+          onChange={(e) =>
+            setFilters({ ...filters, type: e.target.value as TransactionType })
+          }
+          className="rounded-md bg-card/90 px-2 py-1 text-sm text-card-foreground"
+        >
+          <option value="">Todos</option>
+          <option value="INCOME">Receita</option>
+          <option value="EXPENSE">Despesa</option>
+        </select>
+      </div>
+      <div className="flex flex-col gap-2">
+        <label htmlFor="paymentMethod" className="text-sm text-card-foreground">
+          Método de Pagamento
+        </label>
+        <select
+          id="paymentMethod"
+          name="paymentMethod"
+          value={filters.paymentMethod}
+          onChange={(e) =>
+            setFilters({
+              ...filters,
+              paymentMethod: e.target.value as PaymentMethod,
+            })
+          }
+          className="rounded-md bg-card/90 px-2 py-1 text-sm text-card-foreground"
+        >
+          <option value="">Todos</option>
+          <option value="DEBIT_CARD">Cartão de Débito</option>
+          <option value="CREDIT_CARD">Cartão de Crédito</option>
+          <option value="CASH">Dinheiro</option>
+          <option value="PIX">PIX</option>
+        </select>
+      </div>
+    </div>
+  )
+}
+
 function Header() {
   return (
-    <div className="mb-4 flex items-center justify-end">
+    <div className="mb-6 flex items-center justify-between">
       <Link href="/transactions/create">
         <div className="flex h-10 items-center gap-2 rounded-md bg-secondary px-6 py-4 text-sm font-semibold text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground/90">
           <Plus size={16} weight="bold" />
