@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sábio Financeiro - Frontend
 
-## Getting Started
+Este repositório contém o código-fonte do **frontend** do **Sábio Financeiro**, uma plataforma de gerenciamento financeiro pessoal. O frontend foi desenvolvido utilizando **Next.js** e **useQuery**, proporcionando uma experiência de usuário rápida e responsiva.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tecnologias Utilizadas
+
+- **Next.js**: Framework React para renderização do lado do servidor (SSR) e geração estática (SSG).
+- **useQuery**: Gerenciamento de requisições e cache de dados.
+- **Tailwind CSS**: Estilização rápida e responsiva.
+- **React Hook Form**: Validação e gerenciamento de formulários.
+- **Axios**: Cliente HTTP para comunicação com o backend.
+
+---
+
+## Funcionalidades Principais
+
+- **Autenticação:** Páginas de login e registro integradas com o backend.
+- **Dashboard:** Visualização de resumo financeiro e gráficos.
+- **Gerenciamento de Transações:** Adição, edição e exclusão de despesas e receitas.
+- **Relatórios:** Visualização de relatórios detalhados.
+- **Responsividade:** Design adaptável para diferentes dispositivos.
+
+---
+
+## Como Executar o Projeto
+
+### Pré-requisitos
+
+- **Node.js** (v18 ou superior)
+- **Git**
+
+### Passos para Configuração
+
+1. **Clone o repositório:**
+
+   ```bash
+   git clone git@github.com:feroddev/wallet-web.git
+   cd wallet-web
+   ```
+
+2. **Instale as dependências:**
+
+   ```bash
+   yarn install
+   ```
+
+3. **Configure as variáveis de ambiente:**
+
+   - Crie um arquivo `.env.local` na raiz do projeto (use o `.env.example` como modelo).
+
+4. **Inicie o servidor de desenvolvimento:**
+
+   ```bash
+   yarn dev
+   ```
+
+5. **Acesse a aplicação:**
+   - O frontend estará disponível em `http://localhost:3000`.
+
+---
+
+## Estrutura do Projeto
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+wallet-web/
+├── src/
+│   ├── components/        # Componentes reutilizáveis
+│   ├── pages/             # Páginas da aplicação
+│   ├── hooks/             # Hooks personalizados
+│   ├── services/          # Integração com a API do backend
+│   └── utils/             # Funções utilitárias
+├── .env.example           # Exemplo de variáveis de ambiente
+├── next.config.js         # Configurações do Next.js
+└── README.md              # Este arquivo
+```
