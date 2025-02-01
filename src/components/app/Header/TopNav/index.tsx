@@ -30,7 +30,7 @@ export default function TopNav({ title, name }: Props) {
           <div className="hidden h-8 w-8 cursor-default items-center justify-center rounded-full border border-primary bg-primary font-bold text-primary-foreground md:flex">
             {name
               .split(' ')
-              .map((n) => n[0].toUpperCase())
+              .map((n, i) => (i < 2 ? n[0].toUpperCase() : ''))
               .join('')}
           </div>
         )}
