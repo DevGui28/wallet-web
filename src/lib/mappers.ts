@@ -4,6 +4,7 @@ export const paymentMethodMapper = {
   CASH: 'Dinheiro',
   BANK_SLIP: 'Boleto',
   BANK_TRANSFER: 'Transferência',
+  INVOICE: 'Fatura do Cartão',
   PIX: 'PIX',
   OTHER: 'Outro',
 }
