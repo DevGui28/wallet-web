@@ -262,8 +262,8 @@ function Filters(props: FiltersProps) {
   const paymentMethods = Object.entries(paymentMethodMapper)
     .filter(([key]) =>
       filters.type === 'INCOME'
-        ? !key.includes('CARD') && !key.includes('SLIP')
-        : true
+        ? !key.includes('CARD') && !key.includes('SLIP') && key !== 'INVOICE'
+        : key !== 'CREDIT_CARD'
     )
     .map(([key, value]) => ({
       value: key,
