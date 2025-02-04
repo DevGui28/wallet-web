@@ -39,8 +39,7 @@ export type TransactionFilters = {
   paymentMethod?: PaymentMethod
   creditCardId?: string
   type?: string
-  month?: number
-  year?: number
+  date?: string
 }
 
 export default function TransactionsTable() {
@@ -53,8 +52,7 @@ export default function TransactionsTable() {
       filters.paymentMethod,
       filters.creditCardId,
       filters.categoryId,
-      filters.month,
-      filters.year,
+      filters.date,
     ],
     queryFn: () => handleGetTransactions(filters),
   })
@@ -108,6 +106,15 @@ export default function TransactionsTable() {
   }
 
   const screenCurrent = Object.entries(screen).find(([, value]) => value)?.[0]
+
+  const total = transactions
+    ?.filter((transaction) => transaction.paymentMethod !== 'CREDIT_CARD')
+    .reduce((acc, transaction) => {
+      if (transaction.type === 'INCOME') {
+        return acc + Number(transaction.totalAmount)
+      }
+      return acc - Number(transaction.totalAmount)
+    }, 0)
 
   return (
     <>
@@ -192,6 +199,21 @@ export default function TransactionsTable() {
               </TableCell>
             </TableRow>
           ))}
+          {transactions?.length && !isLoading && (
+            <TableRow>
+              <TableCell
+                colSpan={(
+                  columns[screenCurrent as keyof typeof columns] || columns.xl
+                ).findIndex((column) => column === 'Valor')}
+                className="text-left font-semibold"
+              >
+                Total
+              </TableCell>
+              <TableCell className="font-semibold text-card-foreground">
+                {formatCurrency(total!)}
+              </TableCell>
+            </TableRow>
+          )}
           {!transactions?.length && !isLoading && (
             <TableRow>
               <TableCell
@@ -311,17 +333,11 @@ function Filters(props: FiltersProps) {
             Selecione o mês
           </p>
           <MonthPicker
-            currentMonth={
-              new Date(
-                filters.year || new Date().getFullYear(),
-                filters.month || new Date().getMonth()
-              )
-            }
+            currentMonth={new Date(filters.date || new Date().toISOString())}
             onMonthChange={(date) =>
               setFilters({
                 ...filters,
-                year: date.getFullYear(),
-                month: date.getMonth(),
+                date: date.toISOString(),
               })
             }
           />

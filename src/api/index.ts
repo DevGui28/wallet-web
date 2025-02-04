@@ -52,17 +52,12 @@ export const handleGetTransactions = async (filters: TransactionFilters) => {
     ...(filters.paymentMethod && { paymentMethod: filters.paymentMethod }),
     ...(filters.creditCardId && { creditCardId: filters.creditCardId }),
     ...(filters.type && { type: filters.type !== 'ALL' ? filters.type : '' }),
-    ...(filters.month !== undefined && { month: filters.month.toString() }),
-    ...(filters.year && { year: filters.year.toString() }),
+    ...(filters.date && { date: filters.date }),
   })
 
   const { data } = await apiWallet.get<TransactionResponse[]>(
     `/transactions?${params}`
   )
-
-  console.log({ params: `/transactions?${params}` })
-
-  console.log({ data })
 
   return data
 }

@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from 'clsx'
-import { add, formatDate } from 'date-fns'
+import { formatDate } from 'date-fns'
 import { twMerge } from 'tailwind-merge'
 import {
   TransactionResponse,
@@ -17,9 +17,7 @@ export function transformToCammelCase(str: string) {
 }
 
 export function formatDateToString(date: Date | string) {
-  return transformToCammelCase(
-    formatDate(add(new Date(date), { days: 1 }), 'dd/MM/yyyy')
-  )
+  return formatDate(new Date(date), 'dd/MM/yyyy')
 }
 
 export function formatCurrency(value: number | string) {
