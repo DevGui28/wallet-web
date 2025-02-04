@@ -3,7 +3,7 @@
 import { CaretRight } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import { toast } from 'sonner'
 import {
   handleGetCreditCards,
@@ -31,6 +31,7 @@ import {
 export function InstallmentsTable() {
   const [creditCardId, setCreditCardId] = useState<string>()
   const [date, setDate] = useState<string>(new Date().toISOString())
+  const queryClient = useQueryClient()
 
   const { data: creditCards } = useQuery({
     queryKey: ['creditCards'],
@@ -78,19 +79,26 @@ export function InstallmentsTable() {
 
   const onPayIncome = async () => {
     try {
-      await handlePayIncome({
+      const pay = await handlePayIncome({
         creditCardId: creditCardId!,
         paidAt: new Date(),
         dueDate: new Date(date),
       })
-
+      if (pay.message) {
+        throw new Error(pay.message)
+      }
+      queryClient.invalidateQueries(['installments', 'transactions'])
       toast.success('Fatura paga com sucesso')
-    } catch (error) {
-      toast.error('Erro ao pagar fatura')
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao pagar fatura')
     }
   }
 
   const screenCurrent = Object.entries(screen).find(([, value]) => value)?.[0]
+
+  const incomePayed = data?.installments.every((installment) =>
+    installment.splitsOrRecurrences.every((split) => split.paidAt)
+  )
 
   return (
     <>
@@ -131,8 +139,12 @@ export function InstallmentsTable() {
           )}
           {creditCardId && data && (
             <div className="flex flex-col items-center gap-2 md:flex-row">
-              <Button className="w-full md:w-auto" onClick={onPayIncome}>
-                Pagar fatura
+              <Button
+                disabled={incomePayed}
+                className="w-full md:w-auto"
+                onClick={onPayIncome}
+              >
+                {incomePayed ? 'Fatura paga' : 'Pagar fatura'}
               </Button>
             </div>
           )}
