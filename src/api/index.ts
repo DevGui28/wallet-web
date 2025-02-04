@@ -109,6 +109,25 @@ export const handlePaySplitOrRecurrence = async (id: string, paidAt: Date) => {
   return data
 }
 
+export const handlePayIncome = async ({
+  creditCardId,
+  paidAt,
+  dueDate,
+}: {
+  creditCardId: string
+  paidAt: Date
+  dueDate: Date
+}) => {
+  const { data } = await apiWallet.patch(
+    `/split-or-recurrence/credit-card/${creditCardId}/pay`,
+    {
+      paidAt,
+      dueDate,
+    }
+  )
+  return data
+}
+
 export const handleGetInstallments = async ({
   creditcardId,
   date,

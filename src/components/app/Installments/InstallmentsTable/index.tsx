@@ -4,7 +4,12 @@ import { CaretRight } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { handleGetCreditCards, handleGetInstallments } from '../../../../api'
+import { toast } from 'sonner'
+import {
+  handleGetCreditCards,
+  handleGetInstallments,
+  handlePayIncome,
+} from '../../../../api'
 import useMediaQuery from '../../../../hooks/useMediaQuery'
 import {
   formatCurrency,
@@ -13,6 +18,7 @@ import {
 } from '../../../../lib/utils'
 import { CustomSelect } from '../../../shared/CustomSelect'
 import MonthPicker from '../../../shared/MonthPicker'
+import { Button } from '../../../ui/button'
 import {
   Table,
   TableBody,
@@ -70,6 +76,20 @@ export function InstallmentsTable() {
     ],
   }
 
+  const onPayIncome = async () => {
+    try {
+      await handlePayIncome({
+        creditCardId: creditCardId!,
+        paidAt: new Date(),
+        dueDate: new Date(date),
+      })
+
+      toast.success('Fatura paga com sucesso')
+    } catch (error) {
+      toast.error('Erro ao pagar fatura')
+    }
+  }
+
   const screenCurrent = Object.entries(screen).find(([, value]) => value)?.[0]
 
   return (
@@ -98,7 +118,7 @@ export function InstallmentsTable() {
             />
           </div>
           {creditCardId && (
-            <div className="hidden flex-col items-center gap-2 md:flex-row lg:flex">
+            <div className="flex-col items-center gap-2 md:flex-row lg:flex">
               <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Vencimento da Fatura:{' '}
                 {
@@ -107,6 +127,13 @@ export function InstallmentsTable() {
                 }
                 /{`${date.split('-')[1]}/${date.split('-')[0]}`}
               </p>
+            </div>
+          )}
+          {creditCardId && data && (
+            <div className="flex flex-col items-center gap-2 md:flex-row">
+              <Button className="w-full md:w-auto" onClick={onPayIncome}>
+                Pagar fatura
+              </Button>
             </div>
           )}
         </div>
@@ -137,7 +164,7 @@ export function InstallmentsTable() {
                   <TableCell className="hidden lg:table-cell">
                     {installment.category.name}
                   </TableCell>
-                  <TableCell className="text-left text-card-foreground">
+                  <TableCell className="hidden text-left text-card-foreground lg:table-cell">
                     {split.installmentNumber}/{split.totalInstallments}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
@@ -191,7 +218,7 @@ export function InstallmentsTable() {
               >
                 Total
               </TableCell>
-              <TableCell className="font-bold">
+              <TableCell className="font-bold" colSpan={columns.xl.length}>
                 {formatCurrency(data.total)}
               </TableCell>
               <TableCell />
