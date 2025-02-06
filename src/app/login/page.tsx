@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CircularProgress } from '@mui/material'
 import { AxiosError } from 'axios'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -22,12 +21,14 @@ const loginSchema = z.object({
   password: z
     .string()
     .min(6, { message: 'Senha deve ter no mínimo 6 caracteres' }),
+  name: z.optional(z.string()),
 })
 
 export type Login = z.infer<typeof loginSchema>
 
 export default function SignIn() {
   const [error, setError] = useState<string | null>(null)
+  const [isLogin, setIsLogin] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { updateToken, isLoading, isLogged } = useAuth()
   const router = useRouter()
@@ -85,33 +86,46 @@ export default function SignIn() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-5 flex max-w-xs flex-col justify-center"
+            className="mt-5 flex max-w-xs flex-col justify-center gap-2"
           >
+            {!isLogin && (
+              <FormInput
+                form={form}
+                name="name"
+                label="Nome"
+                type="text"
+                placeholder="Digite seu nome"
+              />
+            )}
             <FormInput
               form={form}
               name="email"
+              label="E-mail"
               type="email"
               placeholder="Digite seu e-mail"
             />
             <FormInput
               form={form}
               name="password"
+              label="Senha"
               type="password"
               placeholder="Digite sua senha"
             />
-            <Link
-              className="mt-3 text-center text-xs text-foreground"
-              href="/register"
-            >
-              Não tem uma conta?{' '}
-              <span className="font-bold">Crie sua conta</span>
-            </Link>
+            <p className="mt-3 text-center text-xs text-foreground">
+              {isLogin ? 'Não tem uma conta? ' : 'Já tem uma conta? '}
+              <span
+                onClick={() => setIsLogin(!isLogin)}
+                className="cursor-pointer font-bold"
+              >
+                {isLogin ? 'Crie uma conta!' : 'Faça o login!'}
+              </span>
+            </p>
             <button
               className={cn(
                 'mt-5 flex items-center justify-center rounded-md p-2 font-medium text-accent-foreground',
                 loading
                   ? 'cursor-not-allowed bg-accent/50 text-foreground/50'
-                  : 'cursor-pointer bg-accent'
+                  : 'cursor-pointer bg-accent disabled:text-accent-foreground'
               )}
               disabled={loading}
               type="submit"
@@ -122,7 +136,7 @@ export default function SignIn() {
                   className="mr-2 h-1 w-1 animate-spin text-foreground"
                 />
               )}
-              {loading ? 'Carregando...' : 'Entrar'}
+              {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Cadastrar'}
             </button>
           </form>
           {error && (
