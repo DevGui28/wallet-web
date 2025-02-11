@@ -69,7 +69,6 @@ export default function AddTransactionPage() {
         label: card.cardName,
       }))
     },
-    cacheTime: 0,
   })
 
   console.log({ creditCards, isLoading })
