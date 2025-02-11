@@ -59,6 +59,7 @@ export default function AddTransactionPage() {
       }))
     },
   })
+
   const { data: creditCards, isLoading } = useQuery({
     queryKey: ['credit-cards'],
     queryFn: async () => {
@@ -68,7 +69,10 @@ export default function AddTransactionPage() {
         label: card.cardName,
       }))
     },
+    cacheTime: 0,
   })
+
+  console.log({ creditCards, isLoading })
 
   const queryClient = useQueryClient()
 
