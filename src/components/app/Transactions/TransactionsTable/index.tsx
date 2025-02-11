@@ -199,7 +199,7 @@ export default function TransactionsTable() {
               </TableCell>
             </TableRow>
           ))}
-          {transactions?.length && !isLoading && (
+          {!isLoading && !!transactions?.length && (
             <TableRow>
               <TableCell
                 colSpan={(

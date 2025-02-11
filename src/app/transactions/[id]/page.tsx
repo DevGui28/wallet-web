@@ -3,7 +3,6 @@ import { jwtDecode } from 'jwt-decode'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import TopNav from '../../../components/app/Header/TopNav'
-import SplitOrRecurrenceTable from '../../../components/app/Transactions/SplitOrRecurrenceTable'
 import { tokenName } from '../../../constants/cookies'
 import { urls } from '../../../constants/urls'
 import { paymentMethodMapper } from '../../../lib/mappers'
@@ -77,24 +76,7 @@ export default async function TranscationDetail({
                 {transaction.category.name}
               </span>
             </p>
-            {transaction.creditCard && (
-              <p>
-                Cartão:
-                <span className="ml-1 font-semibold">
-                  {transaction.creditCard.cardName} -
-                  {transaction.creditCard.lastDigits
-                    ? ` Final ${transaction.creditCard.lastDigits}`
-                    : ''}
-                </span>
-              </p>
-            )}
           </div>
-          {transaction.splitsOrRecurrences.length > 0 && (
-            <div className="flex flex-col gap-2 rounded-lg py-4">
-              <h2 className="font-semibold">Parcelas</h2>
-              <SplitOrRecurrenceTable id={transaction.id} />
-            </div>
-          )}
         </div>
       </div>
     </>

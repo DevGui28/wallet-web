@@ -43,20 +43,20 @@ export type SplitsOrRecurrences = {
 export type TransactionResponse = {
   id: string
   userId: string
+  categoryId: string
   name: string
   type: TransactionType
-  description?: string | null
+  description?: string
   paymentMethod: PaymentMethod
-  date: string
-  totalAmount: string
-  isSplitOrRecurring: boolean
+  date: string | Date
+  totalAmount: number | string
+  creditCardId?: string
   createdAt: string
   updatedAt: string
   category: {
     name: string
   }
   creditCard?: CreditCardResponse
-  splitsOrRecurrences: SplitsOrRecurrences[]
 }
 
 export interface CreateTransaction {
