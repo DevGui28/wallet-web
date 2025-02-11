@@ -98,6 +98,10 @@ export function InstallmentsTable() {
     (installment) => installment.paidAt
   )
 
+  const closingDay = creditCards?.find(
+    (card) => card.id === creditCardId
+  )?.closingDay
+
   return (
     <>
       {creditCards && (
@@ -127,11 +131,8 @@ export function InstallmentsTable() {
             <div className="flex-col items-center gap-2 md:flex-row lg:flex">
               <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Vencimento da Fatura:{' '}
-                {
-                  creditCards.find((card) => card.id === creditCardId)
-                    ?.closingDay
-                }
-                /{`${date.split('-')[1]}/${date.split('-')[0]}`}
+                {closingDay && closingDay <= 9 ? `0${closingDay}` : closingDay}/
+                {`${date.split('-')[1]}/${date.split('-')[0]}`}
               </p>
             </div>
           )}
