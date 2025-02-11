@@ -37,7 +37,7 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
         limit: creditCard.limit,
         closingDay: creditCard.closingDay.toString(),
         dueDay: creditCard.dueDay.toString(),
-        lastDigits: creditCard.lastDigits.toString(),
+        lastDigits: creditCard.lastDigits?.toString(),
       })
     }
   }, [creditCard])
@@ -57,14 +57,17 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
       ...(data.dueDay === creditCard?.dueDay.toString()
         ? {}
         : { dueDay: Number(data.dueDay) }),
-      ...(data.lastDigits === creditCard?.lastDigits.toString()
+      ...(data.lastDigits === creditCard?.lastDigits?.toString()
         ? {}
         : { lastDigits: Number(data.lastDigits) }),
     }
 
     try {
+      console.log({ payload })
+
       await handleUpdateCreditCard(id, payload)
       toast.success('Cartão atualizado com sucesso')
+      queryClient.invalidateQueries('credit-cards')
       queryClient.invalidateQueries('credit-cards-detail')
     } catch (error) {
       toast.error('Erro ao atualizar cartão')

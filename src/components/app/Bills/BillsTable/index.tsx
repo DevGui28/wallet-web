@@ -25,7 +25,7 @@ import {
 export function BillsTable() {
   const [date, setDate] = useState<string>(new Date().toISOString())
   const queryClient = useQueryClient()
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['bills', date],
     queryFn: async () => {
       const data = await handleGetBills({
@@ -97,16 +97,15 @@ export function BillsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data ? (
+          {data &&
+            !isLoading &&
             data.installments.map((installment) => (
               <TableRow key={installment.id}>
                 <TableCell className="text-center text-card-foreground md:text-left">
                   {installment.name}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
-                  {transformToCammelCase(
-                    installment.description || 'Sem descrição'
-                  )}
+                  {transformToCammelCase(installment.description || '-')}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
                   {installment.category.name}
@@ -133,8 +132,8 @@ export function BillsTable() {
                   </Button>
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
+            ))}
+          {!data && !isLoading && (
             <TableRow>
               <TableCell
                 colSpan={

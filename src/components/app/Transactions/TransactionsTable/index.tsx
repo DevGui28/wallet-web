@@ -158,9 +158,7 @@ export default function TransactionsTable() {
                 {transactions.name}
               </TableCell>
               <TableCell className="hidden lg:table-cell">
-                {transformToCammelCase(
-                  transactions.description || 'Sem descrição'
-                )}
+                {transformToCammelCase(transactions.description || '-')}
               </TableCell>
               <TableCell className="hidden xr:table-cell">
                 <span
