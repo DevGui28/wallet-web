@@ -59,11 +59,12 @@ export default function FormSelect<T extends FieldValues, K extends Path<T>>({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {data?.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
+              {!!data?.length &&
+                data.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
           {description && <FormDescription>{description}</FormDescription>}
