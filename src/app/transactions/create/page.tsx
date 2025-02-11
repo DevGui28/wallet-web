@@ -92,7 +92,7 @@ export default function AddTransactionPage() {
 
   const onSubmit = async (data: FormAddTransaction) => {
     if (!type) return
-    const isSplitOrRecurring =
+    const isRecurring =
       (typeIncome === 'RECURRING' && type === TransactionType.EXPENSE) ||
       data.paymentMethod === PaymentMethod.CREDIT_CARD
     try {
@@ -103,7 +103,7 @@ export default function AddTransactionPage() {
         totalInstallments: data.totalInstallments
           ? Number(data.totalInstallments)
           : undefined,
-        isSplitOrRecurring,
+        isRecurring,
         type,
       })
       handleResetForm()

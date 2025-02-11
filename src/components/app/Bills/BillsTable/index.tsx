@@ -1,7 +1,5 @@
 'use client'
 
-import { CaretRight } from '@phosphor-icons/react'
-import Link from 'next/link'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { toast } from 'sonner'
@@ -56,10 +54,10 @@ export function BillsTable() {
   }
 
   const columns = {
-    xr: ['Nome', 'Valor', 'Detalhes'],
-    small: ['Nome', 'Valor', 'Detalhes'],
-    medium: ['Nome', 'Valor', 'Detalhes'],
-    large: ['Nome', 'Data da transação', 'Valor', 'Pagar', 'Detalhes'],
+    xr: ['Nome', 'Valor', 'Pagar'],
+    small: ['Nome', 'Valor', 'Pagar'],
+    medium: ['Nome', 'Valor', 'Pagar'],
+    large: ['Nome', 'Data da transação', 'Valor', 'Pagar'],
     xl: [
       'Nome',
       'Descrição',
@@ -67,7 +65,6 @@ export function BillsTable() {
       'Data da transação',
       'Valor',
       'Pagar',
-      'Detalhes',
     ],
   }
 
@@ -92,60 +89,51 @@ export function BillsTable() {
           <TableRow className="text-xs font-bold text-card-foreground">
             {(columns[screenCurrent as keyof typeof columns] || columns.xl).map(
               (column) => (
-                <TableHead key={column}>{column}</TableHead>
+                <TableHead key={column} className="text-center md:text-left">
+                  {column}
+                </TableHead>
               )
             )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {data ? (
-            data.installments.map((installment) =>
-              installment.splitsOrRecurrences.map((split) => (
-                <TableRow key={split.id}>
-                  <TableCell className="text-left text-card-foreground">
-                    {installment.name}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    {transformToCammelCase(
-                      installment.description || 'Sem descrição'
+            data.installments.map((installment) => (
+              <TableRow key={installment.id}>
+                <TableCell className="text-center text-card-foreground md:text-left">
+                  {installment.name}
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  {transformToCammelCase(
+                    installment.description || 'Sem descrição'
+                  )}
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  {installment.category.name}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {formatDateToString(installment.dueDate)}
+                </TableCell>
+                <TableCell className="text-center font-semibold text-card-foreground md:text-left">
+                  {formatCurrency(installment.totalAmount)}
+                </TableCell>
+                <TableCell className="text-center md:text-left">
+                  <Button
+                    className={cn(
+                      'h-8 rounded-full bg-secondary px-4 py-2 text-xs font-medium text-secondary-foreground',
+                      {
+                        'bg-accent text-accent-foreground':
+                          installment.status === 'PENDING',
+                      }
                     )}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    {installment.category.name}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {split.type === 'RECURRING'
-                      ? 'Recorrente'
-                      : formatDateToString(installment.date)}
-                  </TableCell>
-                  <TableCell className="font-semibold text-card-foreground">
-                    {formatCurrency(split.amount)}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <Button
-                      className={cn(
-                        'rounded-full bg-secondary text-xs font-medium text-secondary-foreground',
-                        {
-                          'bg-accent text-accent-foreground':
-                            split.paymentStatus === 'PENDING',
-                        }
-                      )}
-                      onClick={() => handlePay(split.id)}
-                      disabled={split.paymentStatus === 'PAID'}
-                    >
-                      {split.paymentStatus === 'PAID' ? 'Pago' : 'Pagar'}
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Link href={`/transactions/${installment.id}`}>
-                      <div className="ml-2 flex w-1/2 justify-center rounded-full hover:bg-card-foreground/5">
-                        <CaretRight size={25} />
-                      </div>
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))
-            )
+                    onClick={() => handlePay(installment.id)}
+                    disabled={installment.status === 'PAID'}
+                  >
+                    {installment.status === 'PAID' ? 'Pago' : 'Pagar'}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
           ) : (
             <TableRow>
               <TableCell
@@ -153,27 +141,29 @@ export function BillsTable() {
                   (columns[screenCurrent as keyof typeof columns] || columns.xl)
                     .length
                 }
-                className="text-center text-card-foreground"
+                className="p-4 text-center text-card-foreground"
               >
                 Nenhuma conta ou boleto encontrado
               </TableCell>
             </TableRow>
           )}
           {data && (
-            <TableRow className="bg-card-foreground/5 hover:bg-card-foreground/10">
-              <TableCell
-                colSpan={(
-                  columns[screenCurrent as keyof typeof columns] || columns.xl
-                ).findIndex((column) => column === 'Valor')}
-                className="text-left font-bold text-card-foreground"
-              >
-                Total
-              </TableCell>
-              <TableCell className="font-bold">
-                {formatCurrency(data.total)}
-              </TableCell>
-              <TableCell colSpan={2} />
-            </TableRow>
+            <>
+              <TableRow className="bg-card-foreground/5 hover:bg-card-foreground/10">
+                <TableCell
+                  colSpan={(
+                    columns[screenCurrent as keyof typeof columns] || columns.xl
+                  ).findIndex((column) => column === 'Valor')}
+                  className="p-4 text-center font-bold text-card-foreground md:text-left"
+                >
+                  Total a pagar
+                </TableCell>
+                <TableCell className="text-center font-bold md:text-left">
+                  {formatCurrency(data.pending)}
+                </TableCell>
+                <TableCell colSpan={2} />
+              </TableRow>
+            </>
           )}
         </TableBody>
       </Table>

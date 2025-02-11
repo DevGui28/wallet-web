@@ -221,7 +221,7 @@ export default function TransactionsTable() {
                   (columns[screenCurrent as keyof typeof columns] || columns.xl)
                     .length
                 }
-                className="text-center font-semibold"
+                className="p-4 text-center font-semibold"
               >
                 Nenhuma transação encontrada
               </TableCell>

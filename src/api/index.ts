@@ -103,7 +103,7 @@ export const handleDeleteCreditCard = async (id: string) => {
 }
 
 export const handlePaySplitOrRecurrence = async (id: string, paidAt: Date) => {
-  const { data } = await apiWallet.patch(`/split-or-recurrence/${id}/pay`, {
+  const { data } = await apiWallet.patch(`/pending-payment/${id}/pay`, {
     paidAt,
   })
   return data
@@ -151,7 +151,7 @@ export const handleGetBills = async ({ date }: { date: string }) => {
   const params = new URLSearchParams()
   params.append('date', date)
   const { data } = await apiWallet.get<IncomesResponse>(
-    `/split-or-recurrence/bills?${params}`
+    `/pending-payment?${params}`
   )
   return data
 }

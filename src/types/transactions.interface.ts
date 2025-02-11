@@ -40,6 +40,19 @@ export type SplitsOrRecurrences = {
   updatedAt: string
 }
 
+export interface CreateTransaction {
+  categoryId: string
+  name: string
+  description?: string
+  paymentMethod: string
+  isRecurring?: boolean
+  creditCardId?: string
+  totalInstallments?: number
+  date: string | Date
+  totalAmount: number
+  type: TransactionType
+}
+
 export type TransactionResponse = {
   id: string
   userId: string
@@ -58,21 +71,27 @@ export type TransactionResponse = {
   }
   creditCard?: CreditCardResponse
 }
-
-export interface CreateTransaction {
-  categoryId: string
+export interface PendingPaymentsResponse {
+  id: string
+  userId: string
   name: string
   description?: string
-  paymentMethod: string
-  creditCardId?: string
-  totalInstallments?: number
-  isSplitOrRecurring?: boolean
-  date: string | Date
+  categoryId: string
   totalAmount: number
-  type: TransactionType
+  dueDate: string | Date
+  status: TransactionStatus
+  paymentMethod: PaymentMethod
+  paidAt: string | Date | null
+  createdAt: string
+  updatedAt: string
+  category: {
+    name: string
+  }
 }
 
 export type IncomesResponse = {
+  pending: number
+  paid: number
   total: number
-  installments: TransactionResponse[]
+  installments: PendingPaymentsResponse[]
 }
