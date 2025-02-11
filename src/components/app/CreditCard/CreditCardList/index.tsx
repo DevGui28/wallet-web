@@ -56,14 +56,14 @@ export function CreditCard({ key, creditCard, edit = false }: CreditCardProps) {
         'flex min-h-48 w-full max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 p-5',
         {
           'from-purple-900 to-purple-950':
-            creditCard.cardName.includes('Nubank'),
+            creditCard.cardName?.includes('Nubank'),
           'from-orange-500 to-orange-600':
-            creditCard.cardName.includes('Inter') ||
-            creditCard.cardName.includes('Itaú'),
+            creditCard.cardName?.includes('Inter') ||
+            creditCard.cardName?.includes('Itaú'),
           'from-red-600 to-red-700':
-            creditCard.cardName.includes('Santander') ||
-            creditCard.cardName.includes('Bradesco'),
-          'from-blue-600 to-blue-800': creditCard.cardName.includes('Caixa'),
+            creditCard.cardName?.includes('Santander') ||
+            creditCard.cardName?.includes('Bradesco'),
+          'from-blue-600 to-blue-800': creditCard.cardName?.includes('Caixa'),
         }
       )}
     >
