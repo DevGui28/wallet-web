@@ -22,7 +22,7 @@ export default function CreditCardList() {
           Array.from({ length: 3 }).map((_, index) => (
             <Skeleton key={index} className="h-40 w-96" />
           ))}
-        {creditCards &&
+        {!!creditCards?.length &&
           creditCards.map((creditCard: CreditCardResponse) => (
             <CreditCard
               key={creditCard.id}
@@ -30,6 +30,13 @@ export default function CreditCardList() {
               edit={true}
             />
           ))}
+        {!creditCards?.length && !isLoading && (
+          <div className="flex h-40 w-full items-center justify-center rounded-lg bg-white shadow-md">
+            <p className="text-lg font-semibold text-gray-400">
+              Nenhum cartão de crédito cadastrado
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )
