@@ -44,13 +44,11 @@ export function InstallmentsTable() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['installments', creditCardId, date],
-    queryFn: async () => {
-      const data = await handleGetInstallments({
+    queryFn: () =>
+      handleGetInstallments({
         creditcardId: creditCardId,
         date,
-      })
-      return data
-    },
+      }),
   })
 
   const screen = {
@@ -96,9 +94,16 @@ export function InstallmentsTable() {
 
   const screenCurrent = Object.entries(screen).find(([, value]) => value)?.[0]
 
-  const incomePayed = data?.installments.every((installment) =>
-    installment.splitsOrRecurrences.every((split) => split.paidAt)
+  const incomePayed = data?.installments.every(
+    (installment) => installment.paidAt
   )
+
+  console.log({
+    verify: !data && creditCardId && !isLoading,
+    data,
+    creditCardId,
+    isLoading,
+  })
 
   return (
     <>
@@ -161,41 +166,41 @@ export function InstallmentsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data ? (
-            data.installments.map((installment) =>
-              installment.splitsOrRecurrences.map((split) => (
-                <TableRow key={split.id}>
-                  <TableCell className="text-left text-card-foreground">
-                    {installment.name}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    {transformToCammelCase(
-                      installment.description || 'Sem descrição'
-                    )}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    {installment.category.name}
-                  </TableCell>
-                  <TableCell className="hidden text-left text-card-foreground lg:table-cell">
-                    {split.installmentNumber}/{split.totalInstallments}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {formatDateToString(installment.date)}
-                  </TableCell>
-                  <TableCell className="font-semibold text-card-foreground">
-                    {formatCurrency(split.amount)}
-                  </TableCell>
-                  <TableCell>
-                    <Link href={`/transactions/${installment.id}`}>
-                      <div className="ml-2 flex w-1/2 justify-center rounded-full hover:bg-card-foreground/5">
-                        <CaretRight size={25} />
-                      </div>
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))
-            )
-          ) : creditCardId && !isLoading ? (
+          {!!data?.installments.length &&
+            !isLoading &&
+            data.installments.map((installment) => (
+              <TableRow key={installment.id}>
+                <TableCell className="text-left text-card-foreground">
+                  {installment.name}
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  {transformToCammelCase(
+                    installment.description || 'Sem descrição'
+                  )}
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  {installment.category.name}
+                </TableCell>
+                <TableCell className="hidden text-left text-card-foreground lg:table-cell">
+                  {installment.installmentNumber}/
+                  {installment.totalInstallments}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {formatDateToString(installment.dueDate)}
+                </TableCell>
+                <TableCell className="font-semibold text-card-foreground">
+                  {formatCurrency(installment.amount)}
+                </TableCell>
+                <TableCell>
+                  <Link href={`/transactions/${installment.id}`}>
+                    <div className="ml-2 flex w-1/2 justify-center rounded-full hover:bg-card-foreground/5">
+                      <CaretRight size={25} />
+                    </div>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          {!data?.installments.length && creditCardId && !isLoading && (
             <TableRow>
               <TableCell
                 colSpan={
@@ -207,7 +212,8 @@ export function InstallmentsTable() {
                 Nenhum parcelamento encontrado
               </TableCell>
             </TableRow>
-          ) : (
+          )}
+          {!creditCardId && !isLoading && (
             <TableRow>
               <TableCell
                 colSpan={
@@ -220,7 +226,7 @@ export function InstallmentsTable() {
               </TableCell>
             </TableRow>
           )}
-          {data && (
+          {!!data?.installments.length && !isLoading && (
             <TableRow className="bg-card-foreground/5 hover:bg-card-foreground/10">
               <TableCell
                 colSpan={(

@@ -27,17 +27,21 @@ export enum RecurrenceType {
 
 export type SplitsOrRecurrences = {
   id: string
-  transactionId: string
+  name: string
+  description?: string
   creditCardId: string
-  type: RecurrenceType
+  categoryId: string
   installmentNumber: number
-  amount: string
+  amount: number | string
   totalInstallments: number
-  dueDate: string
+  dueDate: string | Date
   paymentStatus: TransactionStatus
   paidAt: string | Date | null
   createdAt: string
   updatedAt: string
+  category: {
+    name: string
+  }
 }
 
 export interface CreateTransaction {
@@ -71,7 +75,7 @@ export type TransactionResponse = {
   }
   creditCard?: CreditCardResponse
 }
-export interface PendingPaymentsResponse {
+export interface PendingPayments {
   id: string
   userId: string
   name: string
@@ -89,9 +93,14 @@ export interface PendingPaymentsResponse {
   }
 }
 
-export type IncomesResponse = {
+export type PendingPaymentsResponse = {
   pending: number
   paid: number
   total: number
-  installments: PendingPaymentsResponse[]
+  installments: PendingPayments[]
+}
+
+export type InstallmentsResponse = {
+  total: number
+  installments: SplitsOrRecurrences[]
 }

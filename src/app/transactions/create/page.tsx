@@ -59,17 +59,18 @@ export default function AddTransactionPage() {
       }))
     },
   })
-  const { data } = useQuery({
+  const { data: creditCards } = useQuery({
     queryKey: ['credit-cards'],
-    queryFn: handleGetCreditCards,
+    queryFn: async () => {
+      const creditCard = await handleGetCreditCards()
+      return creditCard.map((card) => ({
+        value: card.id,
+        label: card.cardName,
+      }))
+    },
   })
 
   const queryClient = useQueryClient()
-
-  const creditCards = data?.map((creditCard) => ({
-    value: creditCard.id,
-    label: creditCard.cardName,
-  }))
 
   const form = useForm<FormAddTransaction>({
     resolver: zodResolver(formAddTransactionSchema),

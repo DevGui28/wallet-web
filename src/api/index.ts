@@ -10,7 +10,8 @@ import {
 } from '../types/credit-card.interface'
 import {
   CreateTransaction,
-  IncomesResponse,
+  InstallmentsResponse,
+  PendingPaymentsResponse,
   TransactionResponse,
   TransactionType,
 } from '../types/transactions.interface'
@@ -141,8 +142,8 @@ export const handleGetInstallments = async ({
 
   const params = new URLSearchParams()
   params.append('date', date)
-  const { data } = await apiWallet.get<IncomesResponse>(
-    `/split-or-recurrence/${creditcardId}/invoices?${params}`
+  const { data } = await apiWallet.get<InstallmentsResponse>(
+    `/credit-card-expense/${creditcardId}?${params}`
   )
   return data
 }
@@ -150,7 +151,7 @@ export const handleGetInstallments = async ({
 export const handleGetBills = async ({ date }: { date: string }) => {
   const params = new URLSearchParams()
   params.append('date', date)
-  const { data } = await apiWallet.get<IncomesResponse>(
+  const { data } = await apiWallet.get<PendingPaymentsResponse>(
     `/pending-payment?${params}`
   )
   return data
