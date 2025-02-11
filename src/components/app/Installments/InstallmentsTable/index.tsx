@@ -98,13 +98,6 @@ export function InstallmentsTable() {
     (installment) => installment.paidAt
   )
 
-  console.log({
-    verify: !data && creditCardId && !isLoading,
-    data,
-    creditCardId,
-    isLoading,
-  })
-
   return (
     <>
       {creditCards && (
@@ -174,9 +167,7 @@ export function InstallmentsTable() {
                   {installment.name}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
-                  {transformToCammelCase(
-                    installment.description || 'Sem descrição'
-                  )}
+                  {transformToCammelCase(installment.description || '-')}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
                   {installment.category.name}
@@ -186,13 +177,13 @@ export function InstallmentsTable() {
                   {installment.totalInstallments}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {formatDateToString(installment.dueDate)}
+                  {formatDateToString(installment.date)}
                 </TableCell>
                 <TableCell className="font-semibold text-card-foreground">
                   {formatCurrency(installment.amount)}
                 </TableCell>
                 <TableCell>
-                  <Link href={`/transactions/${installment.id}`}>
+                  <Link href={`/installments/${installment.id}`}>
                     <div className="ml-2 flex w-1/2 justify-center rounded-full hover:bg-card-foreground/5">
                       <CaretRight size={25} />
                     </div>

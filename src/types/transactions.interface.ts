@@ -35,6 +35,7 @@ export type SplitsOrRecurrences = {
   amount: number | string
   totalInstallments: number
   dueDate: string | Date
+  date: string | Date
   paymentStatus: TransactionStatus
   paidAt: string | Date | null
   createdAt: string
