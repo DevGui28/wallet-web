@@ -59,7 +59,7 @@ export default function AddTransactionPage() {
       }))
     },
   })
-  const { data: creditCards } = useQuery({
+  const { data: creditCards, isLoading } = useQuery({
     queryKey: ['credit-cards'],
     queryFn: async () => {
       const creditCard = await handleGetCreditCards()
@@ -191,7 +191,7 @@ export default function AddTransactionPage() {
                     label="Método de pagamento"
                   />
                   {form.watch('paymentMethod') === 'CREDIT_CARD' &&
-                    (creditCards?.length ? (
+                    (!isLoading && creditCards?.length ? (
                       <>
                         <FormSelect
                           form={form}
@@ -206,6 +206,13 @@ export default function AddTransactionPage() {
                           form={form}
                           numeric
                         />
+                        {form.formState.errors.creditCardId && (
+                          <span className="mt-2 text-xs text-destructive">
+                            Você precisa adicionar um cartão de crédito para
+                            poder adicionar uma transação com esse método de
+                            pagamento.
+                          </span>
+                        )}
                       </>
                     ) : (
                       <div className="mt-2 flex w-full flex-col gap-1">
