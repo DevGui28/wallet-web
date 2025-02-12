@@ -17,7 +17,7 @@ export default function CreditCardList() {
 
   return (
     <div className="flex w-full items-center justify-center">
-      <div className="flex w-full flex-col items-center gap-4 lg:flex-row">
+      <div className="flex w-full flex-wrap justify-center gap-4">
         {isLoading &&
           Array.from({ length: 3 }).map((_, index) => (
             <Skeleton key={index} className="h-40 w-96" />
@@ -53,7 +53,7 @@ export function CreditCard({ key, creditCard, edit = false }: CreditCardProps) {
     <div
       key={key}
       className={cn(
-        'flex min-h-48 w-full max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 p-5',
+        'flex min-h-48 w-full min-w-[350px] max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 p-5',
         {
           'from-purple-900 to-purple-950':
             creditCard.cardName?.includes('Nubank'),
@@ -106,7 +106,9 @@ export function CreditCard({ key, creditCard, edit = false }: CreditCardProps) {
             variant="secondary"
             className="rounded-lg bg-secondary/30 p-2 text-xs hover:bg-secondary/20"
           >
-            Ver fatura
+            <Link href={`/installments?creditCardId=${creditCard.id}`}>
+              Ver fatura
+            </Link>
           </Button>
         </div>
       </div>
