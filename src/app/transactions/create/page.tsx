@@ -71,8 +71,6 @@ export default function AddTransactionPage() {
     },
   })
 
-  console.log({ creditCards, isLoading })
-
   const queryClient = useQueryClient()
 
   const form = useForm<FormAddTransaction>({
