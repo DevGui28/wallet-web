@@ -14,7 +14,7 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import * as React from 'react'
 import { useState } from 'react'
-import { cn } from '../../../lib/utils'
+import { cn, optionsLongMonth, optionsShortMonth } from '../../../lib/utils'
 import { Button, buttonVariants } from '../../ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover'
 
@@ -50,6 +50,7 @@ export default function MonthPicker(props: MonthPickerProps) {
     const firstDayNextYear = add(firstDayCurrentYear, { years: 1 })
     setCurrentYear(format(firstDayNextYear, 'yyyy'))
   }
+  const currentMonthActual = currentMonth.getUTCMonth() + 1 < 10 ? '0' : ''
 
   return (
     <Popover modal={true} open={open} onOpenChange={setOpen}>
@@ -60,9 +61,11 @@ export default function MonthPicker(props: MonthPickerProps) {
         >
           <div className="text-right">
             <div className="py-1">
-              <p>{`${
-                currentMonth.getUTCMonth() + 1
-              }/${currentMonth.getFullYear()}`}</p>
+              <p>{`${format(
+                currentMonthActual + (currentMonth.getUTCMonth() + 1),
+                'MMM',
+                optionsLongMonth
+              )}/${currentMonth.getFullYear()}`}</p>
             </div>
           </div>
           <div className="-mr-2 scale-125 pl-1 opacity-60">
@@ -139,7 +142,7 @@ export default function MonthPicker(props: MonthPickerProps) {
                       onClick={() => onMonthChange(month)}
                     >
                       <time dateTime={format(month, 'yyyy-MM-dd')}>
-                        {format(month, 'MMM')}
+                        {format(month, 'MMM', optionsShortMonth)}
                       </time>
                     </button>
                   </div>

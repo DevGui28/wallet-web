@@ -37,3 +37,69 @@ export function sumTotal(transactions: TransactionResponse[]) {
     }, 0)
   )
 }
+
+export const optionsLongMonth = {
+  locale: {
+    localize: {
+      month: (n: number) => {
+        return [
+          'Janeiro',
+          'Fevereiro',
+          'Março',
+          'Abril',
+          'Maio',
+          'Junho',
+          'Julho',
+          'Agosto',
+          'Setembro',
+          'Outubro',
+          'Novembro',
+          'Dezembro',
+        ][n]
+      },
+      ordinalNumber: (n: number) => `${n}º`,
+      era: (n: number) => (n === 0 ? 'AC' : 'DC'),
+      quarter: (n: number) => `${n}º trimestre`,
+      day: (n: number) => ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][n],
+      dayPeriod: (n: string) => (n === 'am' ? 'AM' : 'PM'),
+    },
+    formatLong: {
+      date: () => 'dd/MM/yyyy',
+      time: () => 'HH:mm',
+      dateTime: () => 'dd/MM/yyyy HH:mm',
+    },
+  },
+}
+
+export const optionsShortMonth = {
+  locale: {
+    localize: {
+      month: (n: number) => {
+        return [
+          'Jan',
+          'Fev',
+          'Mar',
+          'Abr',
+          'Mai',
+          'Jun',
+          'Jul',
+          'Ago',
+          'Set',
+          'Out',
+          'Nov',
+          'Dez',
+        ][n]
+      },
+      ordinalNumber: (n: number) => `${n}º`,
+      era: (n: number) => (n === 0 ? 'AC' : 'DC'),
+      quarter: (n: number) => `${n}º trimestre`,
+      day: (n: number) => ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][n],
+      dayPeriod: (n: string) => (n === 'am' ? 'AM' : 'PM'),
+    },
+    formatLong: {
+      date: () => 'dd/MM/yyyy',
+      time: () => 'HH:mm',
+      dateTime: () => 'dd/MM/yyyy HH:mm',
+    },
+  },
+}
