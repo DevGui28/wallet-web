@@ -2,6 +2,7 @@
 
 import { CaretRight } from '@phosphor-icons/react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { toast } from 'sonner'
@@ -29,7 +30,10 @@ import {
 } from '../../../ui/table'
 
 export function InstallmentsTable() {
-  const [creditCardId, setCreditCardId] = useState<string>()
+  const search = useSearchParams()
+  const [creditCardId, setCreditCardId] = useState<string>(() => {
+    return search.get('creditCardId') || ''
+  })
   const [date, setDate] = useState<string>(new Date().toISOString())
   const queryClient = useQueryClient()
 
@@ -37,7 +41,6 @@ export function InstallmentsTable() {
     queryKey: ['creditCards'],
     queryFn: async () => {
       const data = await handleGetCreditCards()
-      setCreditCardId(data[0].id)
       return data
     },
   })
@@ -98,9 +101,7 @@ export function InstallmentsTable() {
     (installment) => installment.paidAt
   )
 
-  const closingDay = creditCards?.find(
-    (card) => card.id === creditCardId
-  )?.closingDay
+  const dueDay = creditCards?.find((card) => card.id === creditCardId)?.dueDay
 
   return (
     <>
@@ -131,7 +132,7 @@ export function InstallmentsTable() {
             <div className="flex-col items-center gap-2 md:flex-row lg:flex">
               <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Vencimento da Fatura:{' '}
-                {closingDay && closingDay <= 9 ? `0${closingDay}` : closingDay}/
+                {dueDay && dueDay <= 9 ? `0${dueDay}` : dueDay}/
                 {`${date.split('-')[1]}/${date.split('-')[0]}`}
               </p>
             </div>

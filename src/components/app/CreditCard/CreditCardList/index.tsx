@@ -11,7 +11,7 @@ import { Skeleton } from '../../../ui/skeleton'
 
 export default function CreditCardList() {
   const { data: creditCards, isLoading } = useQuery({
-    queryKey: ['credit-cards'],
+    queryKey: ['credit-cards-details'],
     queryFn: handleGetCreditCards,
   })
 
