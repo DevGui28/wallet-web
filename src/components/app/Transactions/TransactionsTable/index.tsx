@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { CaretRight, Plus } from '@phosphor-icons/react'
+import { ArrowDown, ArrowUp, CaretRight, Plus } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
@@ -172,9 +172,21 @@ export default function TransactionsTable() {
                   {transactionTypeMapper[transactions.type]}
                 </span>
               </TableCell>
-              <TableCell className="font-semibold text-card-foreground">
-                {transactions.type === 'INCOME' ? '+' : '-'}
-                {formatCurrency(transactions.totalAmount)}
+              <TableCell
+                className={cn('font-semibold text-card-foreground', {
+                  'text-emerald-500': transactions.type === 'INCOME',
+                  'text-red-500': transactions.type === 'EXPENSE',
+                })}
+              >
+                <div className="flex">
+                  {transactions.type === 'INCOME' ? (
+                    <ArrowDown className="h-4 w-4" />
+                  ) : (
+                    <ArrowUp className="h-4 w-4" />
+                  )}
+                  {transactions.type === 'INCOME' ? '+ ' : '- '}
+                  {formatCurrency(transactions.totalAmount)}
+                </div>
               </TableCell>
               <TableCell className="hidden lg:table-cell">
                 {transactions.category.name}

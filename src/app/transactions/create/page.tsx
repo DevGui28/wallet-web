@@ -79,7 +79,11 @@ export default function AddTransactionPage() {
 
   const paymentMethods = Object.entries(paymentMethodMapper)
     .filter(([key]) =>
-      type === 'INCOME' ? !key.includes('CARD') && !key.includes('SLIP') : true
+      type === 'INCOME'
+        ? !key.includes('CARD') &&
+          !key.includes('SLIP') &&
+          !key.includes('INVOICE')
+        : true
     )
     .map(([key, value]) => ({
       value: key,
@@ -160,13 +164,21 @@ export default function AddTransactionPage() {
                   <FormInput
                     label="Identificação"
                     name="name"
-                    placeholder="Ifood, Uber, Mercado, etc..."
+                    placeholder={
+                      type === TransactionType.EXPENSE
+                        ? 'Ifood, Uber, Mercado, etc...'
+                        : 'Salário, Venda de produto, etc...'
+                    }
                     form={form}
                   />
                   <FormInput
                     label="Descição"
                     name="description"
-                    placeholder="Pizza, ida para festa, etc..."
+                    placeholder={
+                      type === TransactionType.EXPENSE
+                        ? 'Pizza, ida para festa, etc...'
+                        : 'Salário do mês, Venda de produto, etc...'
+                    }
                     form={form}
                     isOptional
                   />
