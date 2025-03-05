@@ -63,8 +63,6 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
     }
 
     try {
-      console.log({ payload })
-
       await handleUpdateCreditCard(id, payload)
       toast.success('Cartão atualizado com sucesso')
       queryClient.invalidateQueries('credit-cards')

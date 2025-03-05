@@ -67,6 +67,7 @@ export default function AddCreditCardPage() {
       await handleCreateCreditCard(payload)
       toast.success('Cartão de crédito cadastrado com sucesso')
       queryClient.invalidateQueries('credit-cards')
+      queryClient.invalidateQueries('credit-cards-detail')
       form.reset()
       router.push('/credit-card')
     } catch (error) {

@@ -38,10 +38,18 @@ export function InstallmentsTable() {
   const queryClient = useQueryClient()
 
   const { data: creditCards } = useQuery({
-    queryKey: ['creditCards'],
+    queryKey: ['credit-cards-detail'],
+    queryFn: handleGetCreditCards,
+  })
+
+  const { data: creditCardsOptions } = useQuery({
+    queryKey: ['credit-cards'],
     queryFn: async () => {
       const data = await handleGetCreditCards()
-      return data
+      return data.map((creditCard) => ({
+        value: creditCard.id,
+        label: creditCard.cardName,
+      }))
     },
   })
 
@@ -112,10 +120,7 @@ export function InstallmentsTable() {
             label="Selecione o cartão de crédito"
             placeholder="Selecione um cartão"
             classinput="w-1/2"
-            options={creditCards.map((creditCard) => ({
-              value: creditCard.id,
-              label: creditCard.cardName,
-            }))}
+            options={creditCardsOptions || []}
             value={creditCardId || ''}
             onChange={(value) => setCreditCardId(value)}
           />
