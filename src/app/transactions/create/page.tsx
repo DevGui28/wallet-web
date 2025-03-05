@@ -83,7 +83,7 @@ export default function AddTransactionPage() {
         ? !key.includes('CARD') &&
           !key.includes('SLIP') &&
           !key.includes('INVOICE')
-        : true
+        : !key.includes('INVOICE')
     )
     .map(([key, value]) => ({
       value: key,
