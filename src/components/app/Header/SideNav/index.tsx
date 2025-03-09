@@ -114,7 +114,7 @@ export function SideNav({ className }: Props) {
                 }
               )}
             >
-              <span className="flex items-center gap-2 text-xs">
+              <span className="flex items-center gap-4 text-xs font-semibold">
                 {item.icon}
                 <span>{item.label}</span>
               </span>
