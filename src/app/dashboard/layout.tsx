@@ -26,7 +26,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
           name={name}
           subtitle="Bem-vindo! Aqui está uma visão geral das suas finanças."
         />
-        <div className="flex w-full items-center justify-between md:px-8">
+        <div className="flex w-full items-center justify-between md:px-4">
           {children}
         </div>
       </main>

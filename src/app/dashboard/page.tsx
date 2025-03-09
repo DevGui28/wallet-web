@@ -4,7 +4,7 @@ import { Card } from '../../components/ui/card'
 
 function Page() {
   return (
-    <div className="grid h-full w-full grid-cols-1 gap-4 lg:grid-cols-2">
+    <div className="grid h-full w-full grid-cols-1 gap-6 lg:grid-cols-2">
       <Summary />
       <Account />
       <Card className="flex items-center justify-center p-5">
