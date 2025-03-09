@@ -27,7 +27,7 @@ export const menuItems: MenuItem[] = [
   {
     link: 'dashboard',
     icon: <ChartLine weight="fill" size={18} />,
-    label: 'Painel',
+    label: 'Dashboard',
   },
   {
     link: 'transactions',
@@ -94,10 +94,6 @@ export function SideNav({ className }: Props) {
     >
       <div>
         <div className="my-8 flex items-center justify-center">
-          {/* <img alt="logo" src="/wallet-logo.png" className="mr-2 h-14" />
-          <h1 className="inter-900 text-wrap text-2xl/6 text-card-foreground">
-            Sábio Financeiro
-          </h1> */}
           <Image
             alt="logo"
             src={`/sabio-financeiro-${theme === 'dark' ? 'dark' : 'light'}.png`}
@@ -126,7 +122,7 @@ export function SideNav({ className }: Props) {
           ))}
         </nav>
       </div>
-      <div className="text-background-foreground flex h-12 w-full cursor-pointer items-center justify-center rounded-md bg-background hover:bg-secondary hover:text-secondary-foreground">
+      <div className="text-background-foreground flex h-12 w-full cursor-pointer items-center justify-center rounded-md bg-background hover:border hover:border-destructive hover:bg-destructive/40 hover:text-destructive-foreground">
         <SignOut size={18} />
         <span className="text-xs">Sair</span>
       </div>

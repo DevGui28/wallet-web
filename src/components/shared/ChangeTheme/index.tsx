@@ -6,8 +6,6 @@ import { useTheme } from 'next-themes'
 
 export default function ChangeTheme({
   className,
-  withText,
-  textClass,
 }: {
   className?: string
   withText?: boolean
@@ -24,19 +22,9 @@ export default function ChangeTheme({
       onClick={() => setTheme((theme) => (theme === 'dark' ? 'light' : 'dark'))}
     >
       {theme === 'dark' ? (
-        <>
-          <Sun weight="fill" size={20} />
-          {withText && (
-            <span className={cn('font-medium', textClass)}>Claro</span>
-          )}
-        </>
+        <Sun weight="fill" size={20} />
       ) : (
-        <>
-          <Moon weight="fill" size={20} />
-          {withText && (
-            <span className={cn('font-medium', textClass)}>Escuro</span>
-          )}
-        </>
+        <Moon weight="fill" size={20} />
       )}
     </button>
   )
