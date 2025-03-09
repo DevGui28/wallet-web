@@ -45,8 +45,8 @@ export function MobileNav({ className }: Props) {
         {isOpen &&
           menuItems.map((item) => (
             <Link
-              href={`/${item.id}`}
-              key={item.id}
+              href={`/${item.link}`}
+              key={item.link}
               className="rounded-md bg-secondary p-1 text-center text-secondary-foreground hover:text-primary"
             >
               {item.label}

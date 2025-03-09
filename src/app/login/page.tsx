@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircularProgress } from '@mui/material'
 import { AxiosError } from 'axios'
+import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -10,7 +11,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { handleLogin } from '../../api'
 import { LoadingGlobal } from '../../components/app/common/Loading/global-loading'
-import ChangeTheme from '../../components/shared/ChangeTheme'
 import FormInput from '../../components/shared/Form/FormInput'
 import { Form } from '../../components/ui/form'
 import { useAuth } from '../../hooks/useAuth'
@@ -31,6 +31,7 @@ export default function SignIn() {
   const [isLogin, setIsLogin] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { updateToken, isLoading, isLogged } = useAuth()
+  const { theme } = useTheme()
   const router = useRouter()
 
   const form = useForm<Login>({
@@ -70,18 +71,14 @@ export default function SignIn() {
 
   return (
     <div className="flex h-screen w-full items-center justify-center">
-      <ChangeTheme
-        className="fixed right-5 top-5 lg:right-40 lg:top-10"
-        textClass="hidden lg:block"
-        withText
-      />
       <div className="flex w-4/5 max-w-[600px] flex-col items-center justify-center rounded-3xl bg-card px-4 py-16 text-foreground">
         <div className="my-8 flex cursor-default items-center">
-          <Image alt="logo" src="/wallet-logo.png" width={100} height={56} />
-          <h1 className="inter-900 text-wrap text-3xl/10 text-card-foreground lg:text-4xl/10">
-            <p className="-mb-1">Sábio</p>
-            Financeiro
-          </h1>
+          <Image
+            alt="logo"
+            src={`/sabio-financeiro-${theme === 'dark' ? 'dark' : 'light'}.png`}
+            width={300}
+            height={40}
+          />
         </div>
         <Form {...form}>
           <form

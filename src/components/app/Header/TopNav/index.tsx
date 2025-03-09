@@ -15,8 +15,8 @@ export default function TopNav({ title, name }: Props) {
       <div className="flex items-center justify-center space-x-6">
         <div className="relative cursor-pointer">
           <Bell size={20} weight="fill" />
-          <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-            3
+          <span className="absolute -right-3 -top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+            +9
           </span>
         </div>
         <ChangeTheme />
@@ -30,7 +30,7 @@ export default function TopNav({ title, name }: Props) {
           <div className="hidden h-8 w-8 cursor-default items-center justify-center rounded-full border border-primary bg-primary font-bold text-primary-foreground md:flex">
             {name
               .split(' ')
-              .map((n, i) => (i < 2 ? n[0].toUpperCase() : ''))
+              .map((n, i) => (i < 1 ? n[0].toUpperCase() : ''))
               .join('')}
           </div>
         )}
