@@ -16,7 +16,13 @@ export default function TransactionsPage() {
   const name = payload.user.name
   return (
     <>
-      <TopNav title="Transações" name={name} />
+      <TopNav
+        title="Transações"
+        name={name}
+        subtitle="Um registro completo de suas receitas e despesas
+
+"
+      />
       <div className="mt-4 flex w-full items-center justify-center px-4">
         <div className="mb-6 w-full">
           <TransactionsTable />
