@@ -11,9 +11,9 @@ import { ArrowDownRight, ArrowUpRight, Wallet } from '@phosphor-icons/react'
 import { formatCurrency } from '../../../lib/utils'
 
 export function Summary() {
-  const monthlyIncome = 4500
-  const monthlyExpenses = 3200
-  const investments = 500
+  const monthlyIncome = 45500
+  const monthlyExpenses = 32600
+  const investments = 2500
   const totalBalance = monthlyIncome - monthlyExpenses
 
   return (

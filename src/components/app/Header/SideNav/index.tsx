@@ -122,8 +122,8 @@ export function SideNav({ className }: Props) {
           ))}
         </nav>
       </div>
-      <div className="text-background-foreground flex h-12 w-full cursor-pointer items-center justify-center rounded-md bg-background hover:border hover:border-destructive hover:bg-destructive/40 hover:text-destructive-foreground">
-        <SignOut size={18} />
+      <div className="text-background-foreground flex h-12 w-full cursor-pointer items-center justify-center gap-5 rounded-md bg-background font-semibold hover:border hover:border-destructive hover:bg-destructive/40 hover:text-destructive">
+        <SignOut size={18} weight="bold" />
         <span className="text-xs">Sair</span>
       </div>
     </div>
