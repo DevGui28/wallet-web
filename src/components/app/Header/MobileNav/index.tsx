@@ -47,7 +47,7 @@ export function MobileNav({ className }: Props) {
             <Link
               href={`/${item.link}`}
               key={item.link}
-              className="rounded-md bg-secondary p-1 text-center text-secondary-foreground hover:text-primary"
+              className="rounded-md bg-secondary p-1 px-4 text-center text-secondary-foreground hover:bg-primary/20 hover:text-primary"
             >
               {item.label}
             </Link>
