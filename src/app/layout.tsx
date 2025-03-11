@@ -19,7 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <body className="inter-300 bg-background">
             <QueryProvider>{children}</QueryProvider>
             <Toaster position="top-right" />

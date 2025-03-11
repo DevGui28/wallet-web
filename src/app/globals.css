@@ -41,7 +41,7 @@
     --chart-10: 150 25% 55%;
   }
 
-  [data-theme='dark'] {
+  .dark {
     --background: 0 0% 4%;
     --foreground: 210 40% 98%;
     --card: 0 0% 7%;
