@@ -124,7 +124,7 @@ export default function TransactionsTable() {
           <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-muted-foreground" />
           <input
             type="text"
-            placeholder="Buscar transações..."
+            placeholder="Buscar transação por descrição, categoria ou data"
             className="w-full rounded-lg bg-muted py-2 pl-10 pr-4"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -133,21 +133,27 @@ export default function TransactionsTable() {
         <NewTransactionModal />
       </div>
 
-      <div className="rounded-lg bg-card p-6">
+      <div className="w-full rounded-2xl bg-card">
         <div className="overflow-x-auto">
           <Table className="w-full rounded-2xl">
             <TableHeader>
-              <tr className="border-muted">
-                <TableHead className="px-4 py-4 text-left">Descrição</TableHead>
-                <TableHead className="px-4 py-4 text-left">Categoria</TableHead>
+              <TableRow className="border-muted">
                 <TableHead className="px-4 py-4 text-left">Data</TableHead>
-                <TableHead className="px-4 py-4 text-left">Tipo</TableHead>
-                <TableHead className="px-4 py-4 text-left">
+                <TableHead className="px-4 py-4 text-left">Descrição</TableHead>
+                <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
+                  Categoria
+                </TableHead>
+                <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
+                  Tipo
+                </TableHead>
+                <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
                   Recorrência
                 </TableHead>
-                <TableHead className="px-4 py-4 text-left">Status</TableHead>
+                <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
+                  Status
+                </TableHead>
                 <TableHead className="px-4 py-4 text-right">Valor</TableHead>
-              </tr>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {transactions
@@ -159,6 +165,10 @@ export default function TransactionsTable() {
                       .includes(search.toLowerCase()) ||
                     transaction.category
                       .toLowerCase()
+                      .includes(search.toLowerCase()) ||
+                    transaction.date
+                      .toLocaleString('pt-BR')
+                      .toLowerCase()
                       .includes(search.toLowerCase())
                 )
                 .map((transaction) => (
@@ -167,21 +177,21 @@ export default function TransactionsTable() {
                     className="border-b border-muted"
                   >
                     <TableCell className="px-4 py-4">
+                      {format(transaction.date, 'dd/MM/yyyy')}
+                    </TableCell>
+                    <TableCell className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         {transactionTypeIcons[transaction.transaction_type]}
                         {transaction.description}
                       </div>
                     </TableCell>
-                    <TableCell className="px-4 py-4">
+                    <TableCell className="hidden px-4 py-4 xl:table-cell">
                       {transaction.category}
                     </TableCell>
-                    <TableCell className="px-4 py-4">
-                      {format(transaction.date, 'dd/MM/yyyy')}
-                    </TableCell>
-                    <TableCell className="px-4 py-4">
+                    <TableCell className="hidden px-4 py-4 xl:table-cell">
                       {transactionTypeLabels[transaction.transaction_type]}
                     </TableCell>
-                    <TableCell className="px-4 py-4">
+                    <TableCell className="hidden px-4 py-4 xl:table-cell">
                       {transaction.is_recurring ? (
                         <div className="space-y-1">
                           <span className="text-sm font-medium">
@@ -205,7 +215,7 @@ export default function TransactionsTable() {
                         <span className="text-sm text-muted-foreground">-</span>
                       )}
                     </TableCell>
-                    <TableCell className="px-4 py-4">
+                    <TableCell className="hidden px-4 py-4 xl:table-cell">
                       <span
                         className={`rounded-full px-2 py-1 text-sm ${
                           statusColors[transaction.status]
