@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUp, CreditCard, TrendUp } from '@phosphor-icons/react'
 import { format } from 'date-fns'
 import { Search } from 'lucide-react'
 import { useState } from 'react'
+import { formatCurrency, formatDateToString } from '../../../../lib/utils'
 import {
   Table,
   TableBody,
@@ -177,7 +178,7 @@ export default function TransactionsTable() {
                     className="border-b border-muted"
                   >
                     <TableCell className="px-4 py-4">
-                      {format(transaction.date, 'dd/MM/yyyy')}
+                      {formatDateToString(transaction.date, 'dd MMM yyyy')}
                     </TableCell>
                     <TableCell className="px-4 py-4">
                       <div className="flex items-center gap-3">
@@ -231,8 +232,8 @@ export default function TransactionsTable() {
                           : 'text-red-500'
                       }`}
                     >
-                      {transaction.transaction_type === 'INCOME' ? '+' : '-'} R${' '}
-                      {transaction.amount.toFixed(2)}
+                      {transaction.transaction_type === 'INCOME' ? '+' : '-'}
+                      {formatCurrency(transaction.amount.toFixed(2))}
                     </TableCell>
                   </TableRow>
                 ))}
