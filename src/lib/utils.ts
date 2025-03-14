@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { formatDate } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { twMerge } from 'tailwind-merge'
 import {
   TransactionResponse,
@@ -16,8 +17,17 @@ export function transformToCammelCase(str: string) {
   )
 }
 
-export function formatDateToString(date: Date | string) {
-  return formatDate(new Date(date), 'dd/MM/yyyy')
+export function formatDateToString(date: Date | string, format: string) {
+  const dateString = formatDate(new Date(date), format, { locale: ptBR })
+
+  const formattedDate = dateString.replace(
+    /(\d*\W*)([a-zA-ZÀ-ÖØ-öø-ÿ])/,
+    (_, prefix, firstLetter) => {
+      return prefix + firstLetter.toUpperCase()
+    }
+  )
+
+  return formattedDate
 }
 
 export function formatCurrency(value: number | string) {
