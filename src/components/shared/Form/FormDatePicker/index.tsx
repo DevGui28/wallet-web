@@ -27,6 +27,7 @@ type Props<T extends FieldValues, K extends Path<T>> = {
   readonly maxDate?: Date
   readonly description?: string
   readonly modal?: boolean
+  readonly optional?: boolean
 }
 
 export default function FormDatePicker<
@@ -41,6 +42,7 @@ export default function FormDatePicker<
   maxDate = new Date(),
   description,
   modal,
+  optional = false,
 }: Props<T, K>) {
   return (
     <FormField
@@ -48,7 +50,12 @@ export default function FormDatePicker<
       name={name}
       render={({ field }) => (
         <FormItem className="mt-[6px] flex flex-col">
-          {label && <FormLabel className="mb-1">{label}</FormLabel>}
+          {label && (
+            <FormLabel className="mb-1">
+              {label}
+              {optional ? ' (opcional)' : ''}
+            </FormLabel>
+          )}
           <Popover modal={modal}>
             <PopoverTrigger asChild>
               <FormControl>
