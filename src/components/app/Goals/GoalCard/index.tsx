@@ -29,25 +29,27 @@ export function GoalCard({ goal }: Props) {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex h-24 items-center justify-center bg-primary/10 text-4xl">
+      <div className="flex h-20 items-center justify-center bg-primary/10 text-3xl sm:h-24 sm:text-4xl">
         {goal.icon}
       </div>
-      <CardContent className="p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="font-medium">{goal.title}</h3>
-          <div className="flex gap-2">
+      <CardContent className="p-3 sm:p-4">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <h3 className="truncate text-sm font-medium sm:text-base">
+            {goal.title}
+          </h3>
+          <div className="flex shrink-0 gap-1 sm:gap-2">
             <PencilSimpleLine
-              size={16}
-              className="cursor-pointer text-muted-foreground hover:text-primary"
+              size={14}
+              className="cursor-pointer text-muted-foreground hover:text-primary sm:size-4"
             />
             <Trash
-              size={16}
-              className="cursor-pointer text-muted-foreground hover:text-destructive"
+              size={14}
+              className="cursor-pointer text-muted-foreground hover:text-destructive sm:size-4"
             />
           </div>
         </div>
 
-        <div className="mb-2 flex items-center justify-between text-sm">
+        <div className="mb-2 flex items-center justify-between gap-1 text-xs sm:text-sm">
           <span className="font-medium text-primary">
             {percentage}% concluído
           </span>
@@ -66,10 +68,10 @@ export function GoalCard({ goal }: Props) {
         <div className="mt-2 text-xs">Faltam R$ {remaining.toFixed(2)}</div>
 
         <Button
-          className="mt-4 flex w-full items-center justify-center gap-2"
+          className="mt-3 flex h-8 w-full items-center justify-center gap-1 text-xs sm:mt-4 sm:h-9 sm:gap-2 sm:text-sm"
           size="sm"
         >
-          <CoinVertical size={16} weight="bold" />
+          <CoinVertical size={14} weight="bold" className="sm:size-4" />
           Adicionar Valor
         </Button>
       </CardContent>

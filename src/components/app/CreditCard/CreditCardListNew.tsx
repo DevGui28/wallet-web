@@ -17,13 +17,13 @@ export default function CreditCardListNew() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <CardTitle className="text-xl">Cartões de Crédito</CardTitle>
-          <Link href="/credit-card/create">
+          <Link href="/credit-card/create" className="w-full sm:w-auto">
             <Button
               variant="default"
               size="sm"
-              className="flex items-center gap-2"
+              className="flex w-full items-center justify-center gap-2 sm:w-auto"
             >
               <Plus className="h-5 w-5" />
               Adicionar cartão
@@ -37,20 +37,18 @@ export default function CreditCardListNew() {
             Array.from({ length: 3 }).map((_, index) => (
               <div
                 key={index}
-                className="h-40 w-96 animate-pulse rounded-lg bg-muted"
+                className="h-40 w-full animate-pulse rounded-lg bg-muted sm:w-80 md:w-96"
               ></div>
             ))}
           {!!creditCards?.length &&
             creditCards.map((creditCard) => (
-              <CreditCard
-                key={creditCard.id}
-                creditCard={creditCard}
-                edit={true}
-              />
+              <div key={creditCard.id} className="w-full sm:w-auto">
+                <CreditCard creditCard={creditCard} edit={true} />
+              </div>
             ))}
           {!creditCards?.length && !isLoading && (
             <div className="flex h-40 w-full items-center justify-center rounded-lg bg-card shadow-sm">
-              <p className="text-lg font-semibold text-muted-foreground">
+              <p className="text-base font-semibold text-muted-foreground sm:text-lg">
                 Nenhum cartão de crédito cadastrado
               </p>
             </div>

@@ -39,30 +39,44 @@ export function PlanCard({ plan }: Props) {
       )}
     >
       {plan.recommended && (
-        <div className="bg-primary px-3 py-1 text-center text-xs font-medium text-primary-foreground">
+        <div className="bg-primary px-2 py-0.5 text-center text-[10px] font-medium text-primary-foreground sm:px-3 sm:py-1 sm:text-xs">
           Recomendado
         </div>
       )}
-      <CardHeader>
-        <CardTitle className="text-xl">{plan.name}</CardTitle>
-        <div className="mt-2">
-          <span className="text-2xl font-bold">R$ {plan.price.toFixed(2)}</span>
-          <span className="text-muted-foreground">/mês</span>
+      <CardHeader className="p-3 sm:p-4 md:p-6">
+        <CardTitle className="text-base sm:text-lg md:text-xl">
+          {plan.name}
+        </CardTitle>
+        <div className="mt-1 sm:mt-2">
+          <span className="text-lg font-bold sm:text-xl md:text-2xl">
+            R$ {plan.price.toFixed(2)}
+          </span>
+          <span className="text-xs text-muted-foreground sm:text-sm">/mês</span>
         </div>
-        <p className="text-sm text-muted-foreground">{plan.description}</p>
+        <p className="text-xs text-muted-foreground sm:text-sm">
+          {plan.description}
+        </p>
       </CardHeader>
-      <CardContent className="flex-1">
-        <ul className="space-y-2">
+      <CardContent className="flex-1 p-3 sm:p-4 md:p-6">
+        <ul className="space-y-1 sm:space-y-2">
           {plan.features.map((feature, index) => (
             <li key={index} className="flex items-center gap-2">
               {feature.included ? (
-                <Check size={16} className="text-success" weight="bold" />
+                <Check
+                  size={14}
+                  className="text-success sm:size-4"
+                  weight="bold"
+                />
               ) : (
-                <X size={16} className="text-muted-foreground" weight="bold" />
+                <X
+                  size={14}
+                  className="text-muted-foreground sm:size-4"
+                  weight="bold"
+                />
               )}
               <span
                 className={cn(
-                  'text-sm',
+                  'text-xs sm:text-sm',
                   !feature.included && 'text-muted-foreground'
                 )}
               >
@@ -72,9 +86,9 @@ export function PlanCard({ plan }: Props) {
           ))}
         </ul>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="p-3 sm:p-4 md:p-6">
         <Button
-          className="w-full"
+          className="h-8 w-full text-xs sm:h-9 sm:text-sm"
           variant={plan.recommended ? 'default' : 'outline'}
           disabled={plan.buttonText === 'Plano Atual'}
         >

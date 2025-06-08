@@ -78,14 +78,25 @@ export default function PlansList() {
 
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-xl">Escolha seu plano</CardTitle>
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-lg sm:text-xl md:text-2xl">
+          Escolha seu plano
+        </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid gap-6 md:grid-cols-3">
+      <CardContent className="p-3 sm:p-6">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
           {plans.map((plan) => (
-            <PlanCard key={plan.id} plan={plan} />
+            <div key={plan.id} className="w-full">
+              <PlanCard plan={plan} />
+            </div>
           ))}
+          {plans.length === 0 && (
+            <div className="col-span-full flex h-40 items-center justify-center text-muted-foreground">
+              <p className="text-sm font-medium sm:text-base">
+                Nenhum plano disponível
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

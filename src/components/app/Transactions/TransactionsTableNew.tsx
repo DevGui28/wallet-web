@@ -126,21 +126,27 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
         <Table className="w-full rounded-2xl">
           <TableHeader>
             <TableRow className="border-muted">
-              <TableHead className="px-4 py-4 text-left">Data</TableHead>
-              <TableHead className="px-4 py-4 text-left">Descrição</TableHead>
-              <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
+              <TableHead className="px-2 py-3 text-left sm:px-4 sm:py-4">
+                Data
+              </TableHead>
+              <TableHead className="px-2 py-3 text-left sm:px-4 sm:py-4">
+                Descrição
+              </TableHead>
+              <TableHead className="hidden px-4 py-4 text-left md:table-cell">
                 Categoria
               </TableHead>
-              <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
+              <TableHead className="hidden px-4 py-4 text-left lg:table-cell">
                 Tipo
               </TableHead>
               <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
                 Recorrência
               </TableHead>
-              <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
+              <TableHead className="hidden px-4 py-4 text-left lg:table-cell">
                 Status
               </TableHead>
-              <TableHead className="px-4 py-4 text-right">Valor</TableHead>
+              <TableHead className="px-2 py-3 text-right sm:px-4 sm:py-4">
+                Valor
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -164,34 +170,44 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
                   key={transaction.id}
                   className="border-b border-muted"
                 >
-                  <TableCell className="px-4 py-4">
-                    {formatDateToString(transaction.date, 'dd MMM yyyy')}
+                  <TableCell className="px-2 py-3 sm:px-4 sm:py-4">
+                    <span className="text-xs sm:text-sm">
+                      {formatDateToString(transaction.date, 'dd MMM yyyy')}
+                    </span>
                   </TableCell>
-                  <TableCell className="px-4 py-4">
-                    <div className="flex items-center gap-3">
-                      {
-                        transactionTypeIcons[
-                          transaction.transaction_type as keyof typeof transactionTypeIcons
-                        ]
-                      }
-                      {transaction.description}
+                  <TableCell className="px-2 py-3 sm:px-4 sm:py-4">
+                    <div className="flex items-center gap-1 sm:gap-3">
+                      <span className="flex-shrink-0">
+                        {
+                          transactionTypeIcons[
+                            transaction.transaction_type as keyof typeof transactionTypeIcons
+                          ]
+                        }
+                      </span>
+                      <span className="truncate text-xs sm:text-sm">
+                        {transaction.description}
+                      </span>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden px-4 py-4 xl:table-cell">
-                    {transaction.category}
+                  <TableCell className="hidden px-4 py-4 md:table-cell">
+                    <span className="text-xs sm:text-sm">
+                      {transaction.category}
+                    </span>
                   </TableCell>
-                  <TableCell className="hidden px-4 py-4 xl:table-cell">
-                    {
-                      transactionTypeLabels[
-                        transaction.transaction_type as keyof typeof transactionTypeLabels
-                      ]
-                    }
+                  <TableCell className="hidden px-4 py-4 lg:table-cell">
+                    <span className="text-xs sm:text-sm">
+                      {
+                        transactionTypeLabels[
+                          transaction.transaction_type as keyof typeof transactionTypeLabels
+                        ]
+                      }
+                    </span>
                   </TableCell>
                   <TableCell className="hidden px-4 py-4 xl:table-cell">
                     {transaction.is_recurring &&
                     transaction.recurrence_pattern ? (
                       <div className="space-y-1">
-                        <span className="text-sm font-medium">
+                        <span className="text-xs font-medium sm:text-sm">
                           {
                             recurrencePatternLabels[
                               transaction.recurrence_pattern as keyof typeof recurrencePatternLabels
@@ -206,12 +222,14 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
                         )}
                       </div>
                     ) : (
-                      <span className="text-sm text-muted-foreground">-</span>
+                      <span className="text-xs text-muted-foreground sm:text-sm">
+                        -
+                      </span>
                     )}
                   </TableCell>
-                  <TableCell className="hidden px-4 py-4 xl:table-cell">
+                  <TableCell className="hidden px-4 py-4 lg:table-cell">
                     <span
-                      className={`rounded-full px-2 py-1 text-sm ${
+                      className={`rounded-full px-1.5 py-0.5 text-xs sm:px-2 sm:py-1 sm:text-sm ${
                         statusColors[
                           transaction.status as keyof typeof statusColors
                         ]
@@ -224,15 +242,16 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
                       }
                     </span>
                   </TableCell>
-                  <TableCell
-                    className={`px-4 py-4 text-right font-medium ${
-                      transaction.transaction_type === 'INCOME'
-                        ? 'text-green-500'
-                        : 'text-red-500'
-                    }`}
-                  >
-                    {transaction.transaction_type === 'INCOME' ? '+' : '-'}
-                    {formatCurrency(transaction.amount.toFixed(2))}
+                  <TableCell className="px-2 py-3 text-right sm:px-4 sm:py-4">
+                    <span
+                      className={`text-xs font-medium sm:text-sm ${
+                        transaction.transaction_type === 'INCOME'
+                          ? 'text-green-500'
+                          : 'text-red-500'
+                      }`}
+                    >
+                      {formatCurrency(transaction.amount)}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}

@@ -114,9 +114,9 @@ export function InstallmentsTable() {
   return (
     <>
       {creditCards && (
-        <div className="mb-4 flex w-full flex-col gap-4 md:items-center lg:flex-row lg:justify-end">
+        <div className="mb-4 flex w-full flex-col gap-3 sm:gap-4 md:items-center lg:flex-row lg:justify-end">
           <CustomSelect
-            className="w-full items-center justify-center md:max-w-[500px] md:flex-row"
+            className="w-full items-center justify-center text-sm sm:text-base md:max-w-[500px] md:flex-row"
             label="Selecione o cartão de crédito"
             placeholder="Selecione um cartão"
             classinput="w-1/2"
@@ -135,7 +135,7 @@ export function InstallmentsTable() {
           </div>
           {creditCardId && (
             <div className="flex-col items-center gap-2 md:flex-row lg:flex">
-              <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <p className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 sm:text-sm">
                 Vencimento da Fatura:{' '}
                 {dueDay && dueDay <= 9 ? `0${dueDay}` : dueDay}/
                 {`${date.split('-')[1]}/${date.split('-')[0]}`}
@@ -146,7 +146,7 @@ export function InstallmentsTable() {
             <div className="flex flex-col items-center gap-2 md:flex-row">
               <Button
                 disabled={incomePayed}
-                className="w-full md:w-auto"
+                className="h-8 w-full text-xs sm:h-9 sm:text-sm md:w-auto"
                 onClick={onPayIncome}
               >
                 {incomePayed ? 'Fatura paga' : 'Pagar fatura'}
@@ -155,22 +155,25 @@ export function InstallmentsTable() {
           )}
         </div>
       )}
-      <Table>
-        <TableHeader className="sticky top-0 z-10 cursor-default">
-          <TableRow className="text-xs font-bold text-card-foreground">
-            {(columns[screenCurrent as keyof typeof columns] || columns.xl).map(
-              (column) => (
-                <TableHead key={column}>{column}</TableHead>
-              )
-            )}
-          </TableRow>
-        </TableHeader>
+      <div className="w-full overflow-x-auto">
+        <Table className="min-w-full">
+          <TableHeader className="sticky top-0 z-10 cursor-default bg-background">
+            <TableRow className="text-xs font-bold text-card-foreground">
+              {(
+                columns[screenCurrent as keyof typeof columns] || columns.xl
+              ).map((column) => (
+                <TableHead key={column} className="px-2 py-3 sm:px-4 sm:py-4">
+                  {column}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
         <TableBody>
           {!!data?.installments.length &&
             !isLoading &&
             data.installments.map((installment) => (
               <TableRow key={installment.id}>
-                <TableCell className="text-left text-card-foreground">
+                <TableCell className="px-2 py-3 text-left text-xs text-card-foreground sm:px-4 sm:py-4 sm:text-sm">
                   {installment.name}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
@@ -179,20 +182,20 @@ export function InstallmentsTable() {
                 <TableCell className="hidden lg:table-cell">
                   {installment.category.name}
                 </TableCell>
-                <TableCell className="hidden text-left text-card-foreground lg:table-cell">
+                <TableCell className="hidden px-4 py-4 text-left text-xs text-card-foreground sm:text-sm lg:table-cell">
                   {installment.installmentNumber}/
                   {installment.totalInstallments}
                 </TableCell>
-                <TableCell className="hidden md:table-cell">
+                <TableCell className="hidden px-4 py-4 text-xs sm:text-sm md:table-cell">
                   {formatDateToString(installment.date, 'dd MMM yyyy')}
                 </TableCell>
-                <TableCell className="font-semibold text-card-foreground">
+                <TableCell className="px-2 py-3 text-xs font-semibold text-card-foreground sm:px-4 sm:py-4 sm:text-sm">
                   {formatCurrency(installment.amount)}
                 </TableCell>
-                <TableCell>
+                <TableCell className="px-2 py-3 sm:px-4 sm:py-4">
                   <Link href={`/installments/${installment.id}`}>
-                    <div className="ml-2 flex w-1/2 justify-center rounded-full hover:bg-card-foreground/5">
-                      <CaretRight size={25} />
+                    <div className="flex justify-center rounded-full hover:bg-card-foreground/5">
+                      <CaretRight size={20} className="sm:size-6" />
                     </div>
                   </Link>
                 </TableCell>
@@ -230,11 +233,14 @@ export function InstallmentsTable() {
                 colSpan={(
                   columns[screenCurrent as keyof typeof columns] || columns.xl
                 ).findIndex((column) => column === 'Valor')}
-                className="text-left font-bold text-card-foreground"
+                className="px-2 py-3 text-left text-xs font-bold text-card-foreground sm:px-4 sm:py-4 sm:text-sm"
               >
                 Total
               </TableCell>
-              <TableCell className="font-bold" colSpan={columns.xl.length}>
+              <TableCell
+                className="px-2 py-3 text-xs font-bold sm:px-4 sm:py-4 sm:text-sm"
+                colSpan={columns.xl.length}
+              >
                 {formatCurrency(data.total)}
               </TableCell>
               <TableCell />
@@ -242,6 +248,7 @@ export function InstallmentsTable() {
           )}
         </TableBody>
       </Table>
+      </div>
     </>
   )
 }

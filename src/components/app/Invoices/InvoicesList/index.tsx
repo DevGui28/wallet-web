@@ -230,18 +230,26 @@ export default function InvoicesList() {
           value={activeTab}
           onValueChange={setActiveTab}
         >
-          <TabsList className="mb-4">
-            <TabsTrigger value="current">Faturas Abertas</TabsTrigger>
-            <TabsTrigger value="paid">Faturas Pagas</TabsTrigger>
+          <TabsList className="mb-4 flex w-full">
+            <TabsTrigger value="current" className="flex-1">
+              Faturas Abertas
+            </TabsTrigger>
+            <TabsTrigger value="paid" className="flex-1">
+              Faturas Pagas
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="current">
             <div className="grid gap-4">
               {currentInvoices.map((invoice) => (
-                <InvoiceCard key={invoice.id} invoice={invoice} />
+                <div key={invoice.id} className="w-full">
+                  <InvoiceCard invoice={invoice} />
+                </div>
               ))}
               {currentInvoices.length === 0 && (
                 <div className="flex h-40 items-center justify-center text-muted-foreground">
-                  Nenhuma fatura aberta encontrada
+                  <p className="text-base font-medium">
+                    Nenhuma fatura aberta encontrada
+                  </p>
                 </div>
               )}
             </div>
@@ -249,11 +257,15 @@ export default function InvoicesList() {
           <TabsContent value="paid">
             <div className="grid gap-4">
               {paidInvoices.map((invoice) => (
-                <InvoiceCard key={invoice.id} invoice={invoice} />
+                <div key={invoice.id} className="w-full">
+                  <InvoiceCard invoice={invoice} />
+                </div>
               ))}
               {paidInvoices.length === 0 && (
                 <div className="flex h-40 items-center justify-center text-muted-foreground">
-                  Nenhuma fatura paga encontrada
+                  <p className="text-base font-medium">
+                    Nenhuma fatura paga encontrada
+                  </p>
                 </div>
               )}
             </div>

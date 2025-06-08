@@ -70,13 +70,13 @@ export function InvoiceCard({ invoice }: Props) {
       )}
     >
       <CardContent className="p-0">
-        <div className="flex flex-col p-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col p-3 sm:p-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-              <CreditCard size={20} className="text-primary" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 sm:h-10 sm:w-10">
+              <CreditCard size={16} className="text-primary sm:size-5" />
             </div>
             <div>
-              <h3 className="font-medium">
+              <h3 className="text-sm font-medium sm:text-base">
                 {invoice.cardName} •••• {invoice.cardLastDigits}
               </h3>
               <p className="text-sm text-muted-foreground">
@@ -85,7 +85,7 @@ export function InvoiceCard({ invoice }: Props) {
             </div>
           </div>
 
-          <div className="mt-3 flex items-center justify-between md:mt-0 md:gap-4">
+          <div className="mt-3 flex items-center justify-between gap-2 md:mt-0 md:gap-4">
             <div className="text-right">
               <p className="font-medium">R$ {invoice.totalAmount.toFixed(2)}</p>
               <p className="text-sm text-muted-foreground">
@@ -99,9 +99,9 @@ export function InvoiceCard({ invoice }: Props) {
                   onClick={handleToggleStatus}
                   size="sm"
                   variant="outline"
-                  className="gap-1"
+                  className="h-8 gap-1 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
                 >
-                  <Check size={16} />
+                  <Check size={14} className="sm:size-4" />
                   Pagar
                 </Button>
               ) : (
@@ -113,25 +113,32 @@ export function InvoiceCard({ invoice }: Props) {
               <Button
                 variant="ghost"
                 size="icon"
+                className="h-8 w-8 sm:h-9 sm:w-9"
                 onClick={() => setExpanded(!expanded)}
               >
-                {expanded ? <CaretUp size={16} /> : <CaretDown size={16} />}
+                {expanded ? (
+                  <CaretUp size={14} className="sm:size-4" />
+                ) : (
+                  <CaretDown size={14} className="sm:size-4" />
+                )}
               </Button>
             </div>
           </div>
         </div>
 
         {expanded && (
-          <div className="border-t px-4 py-3">
-            <h4 className="mb-2 font-medium">Transações</h4>
+          <div className="border-t px-3 py-2 sm:px-4 sm:py-3">
+            <h4 className="mb-2 text-sm font-medium sm:text-base">
+              Transações
+            </h4>
             <div className="space-y-2">
               {invoice.transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between gap-2"
                 >
                   <div>
-                    <p className="text-sm font-medium">
+                    <p className="max-w-[180px] truncate text-xs font-medium sm:max-w-none sm:text-sm">
                       {transaction.description}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -140,7 +147,7 @@ export function InvoiceCard({ invoice }: Props) {
                         ` • Parcela ${transaction.installment}`}
                     </p>
                   </div>
-                  <p className="font-medium">
+                  <p className="whitespace-nowrap text-xs font-medium sm:text-sm">
                     R$ {transaction.amount.toFixed(2)}
                   </p>
                 </div>
@@ -150,8 +157,10 @@ export function InvoiceCard({ invoice }: Props) {
             <Separator className="my-3" />
 
             <div className="flex items-center justify-between">
-              <p className="font-medium">Total</p>
-              <p className="font-medium">R$ {invoice.totalAmount.toFixed(2)}</p>
+              <p className="text-sm font-medium sm:text-base">Total</p>
+              <p className="text-sm font-medium sm:text-base">
+                R$ {invoice.totalAmount.toFixed(2)}
+              </p>
             </div>
           </div>
         )}

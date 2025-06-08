@@ -17,7 +17,7 @@ type Budget = {
 
 export default function BudgetsList() {
   const [open, setOpen] = useState(false)
-  
+
   const mockBudgets: Budget[] = [
     {
       id: '1',
@@ -58,22 +58,31 @@ export default function BudgetsList() {
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl">Orçamentos Mensais</CardTitle>
+      <CardHeader className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <CardTitle className="text-lg sm:text-xl">Orçamentos Mensais</CardTitle>
         <Button
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2"
+          className="flex h-8 w-full items-center justify-center gap-1 text-xs sm:h-9 sm:w-auto sm:gap-2 sm:text-sm"
           size="sm"
         >
-          <Plus size={16} weight="bold" />
+          <Plus size={14} className="sm:size-4" weight="bold" />
           Novo Orçamento
         </Button>
       </CardHeader>
-      <CardContent>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <CardContent className="p-3 sm:p-6">
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
           {mockBudgets.map((budget) => (
-            <BudgetItem key={budget.id} budget={budget} />
+            <div key={budget.id} className="w-full">
+              <BudgetItem budget={budget} />
+            </div>
           ))}
+          {mockBudgets.length === 0 && (
+            <div className="col-span-full flex h-40 items-center justify-center text-muted-foreground">
+              <p className="text-sm font-medium sm:text-base">
+                Nenhum orçamento encontrado
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
       <BudgetDialog open={open} setOpen={setOpen} />
