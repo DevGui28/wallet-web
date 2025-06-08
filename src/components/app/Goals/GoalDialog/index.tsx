@@ -93,7 +93,6 @@ export function GoalDialog({ open, setOpen }: Props) {
             <Select value={icon} onValueChange={setIcon}>
               <SelectTrigger>
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">{icon}</span>
                   <SelectValue />
                 </div>
               </SelectTrigger>
