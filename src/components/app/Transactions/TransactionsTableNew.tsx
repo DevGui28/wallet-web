@@ -2,7 +2,7 @@
 
 import { ArrowDown, ArrowUp, CreditCard, TrendUp } from '@phosphor-icons/react'
 import { format } from 'date-fns'
-import { formatCurrency, formatDateToString } from '../../../../lib/utils'
+import { formatCurrency, formatDateToString } from '../../../lib/utils'
 import {
   Table,
   TableBody,
@@ -10,11 +10,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../../ui/table'
+} from '../../ui/table'
 
 const transactions = [
   {
-    id: '550e8400-e29b-41d4-a716-446655440000', // UUID example
+    id: '550e8400-e29b-41d4-a716-446655440000',
     category_id: 'a234b567-c89d-4e5f-6g7h-8i9j0k1l2m3n',
     user_id: 'b234c567-d89e-4f5g-6h7i-8j9k0l1m2n3o',
     description: 'Salário',
@@ -119,7 +119,7 @@ type TransactionsTableProps = {
   search: string
 }
 
-export function TransactionsTable({ search }: TransactionsTableProps) {
+export default function TransactionsTable({ search }: TransactionsTableProps) {
   return (
     <div className="w-full rounded-lg">
       <div className="overflow-x-auto">

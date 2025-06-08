@@ -2,7 +2,7 @@ import { jwtDecode } from 'jwt-decode'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import TopNav from '../../components/app/Header/TopNav'
-import TransactionsTable from '../../components/app/Transactions/TransactionsTable'
+import TransactionsList from '../../components/app/Transactions/TransactionsListNew'
 import { tokenName } from '../../constants/cookies'
 import { JwtPayload } from '../../types/jwt.interface'
 
@@ -23,7 +23,7 @@ export default function TransactionsPage() {
       />
       <div className="mt-4 flex w-full items-center justify-center px-4">
         <div className="mb-6 w-full">
-          <TransactionsTable />
+          <TransactionsList />
         </div>
       </div>
     </>
