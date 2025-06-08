@@ -44,6 +44,10 @@ const config = {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
+        },
         expense: {
           DEFAULT: 'hsl(var(--expense))',
           foreground: 'hsl(var(--expense-foreground))',
