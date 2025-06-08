@@ -111,7 +111,7 @@ export function BillsTable() {
                   {installment.category.name}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {formatDateToString(installment.dueDate)}
+                  {formatDateToString(installment.dueDate, 'dd MMM yyyy')}
                 </TableCell>
                 <TableCell className="text-center font-semibold text-card-foreground md:text-left">
                   {formatCurrency(installment.totalAmount)}

@@ -184,7 +184,7 @@ export function InstallmentsTable() {
                   {installment.totalInstallments}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {formatDateToString(installment.date)}
+                  {formatDateToString(installment.date, 'dd MMM yyyy')}
                 </TableCell>
                 <TableCell className="font-semibold text-card-foreground">
                   {formatCurrency(installment.amount)}
