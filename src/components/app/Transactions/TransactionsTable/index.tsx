@@ -107,10 +107,13 @@ const statusColors = {
   LATE: 'bg-red-300 text-red-800 dark:bg-red-700 dark:text-red-300',
 }
 
+const statusLabels = {
+  PENDING: 'Pendente',
+  PAID: 'Pago',
+  LATE: 'Atrasado',
+}
+
 const recurrencePatternLabels = {
-  DAILY: 'Diário',
-  WEEKLY: 'Semanal',
-  BIWEEKLY: 'Quinzenal',
   MONTHLY: 'Mensal',
   YEARLY: 'Anual',
 }
@@ -182,7 +185,11 @@ export default function TransactionsTable() {
                     </TableCell>
                     <TableCell className="px-4 py-4">
                       <div className="flex items-center gap-3">
-                        {transactionTypeIcons[transaction.transaction_type]}
+                        {
+                          transactionTypeIcons[
+                            transaction.transaction_type as keyof typeof transactionTypeIcons
+                          ]
+                        }
                         {transaction.description}
                       </div>
                     </TableCell>
@@ -190,15 +197,20 @@ export default function TransactionsTable() {
                       {transaction.category}
                     </TableCell>
                     <TableCell className="hidden px-4 py-4 xl:table-cell">
-                      {transactionTypeLabels[transaction.transaction_type]}
+                      {
+                        transactionTypeLabels[
+                          transaction.transaction_type as keyof typeof transactionTypeLabels
+                        ]
+                      }
                     </TableCell>
                     <TableCell className="hidden px-4 py-4 xl:table-cell">
-                      {transaction.is_recurring ? (
+                      {transaction.is_recurring &&
+                      transaction.recurrence_pattern ? (
                         <div className="space-y-1">
                           <span className="text-sm font-medium">
                             {
                               recurrencePatternLabels[
-                                transaction.recurrence_pattern
+                                transaction.recurrence_pattern as keyof typeof recurrencePatternLabels
                               ]
                             }
                           </span>
@@ -219,10 +231,16 @@ export default function TransactionsTable() {
                     <TableCell className="hidden px-4 py-4 xl:table-cell">
                       <span
                         className={`rounded-full px-2 py-1 text-sm ${
-                          statusColors[transaction.status]
+                          statusColors[
+                            transaction.status as keyof typeof statusColors
+                          ]
                         }`}
                       >
-                        {transaction.status}
+                        {
+                          statusLabels[
+                            transaction.status as keyof typeof statusLabels
+                          ]
+                        }
                       </span>
                     </TableCell>
                     <TableCell

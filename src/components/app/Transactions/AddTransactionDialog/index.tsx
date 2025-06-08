@@ -1,13 +1,3 @@
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import { Plus } from '@phosphor-icons/react'
 import { addYears } from 'date-fns'
 import { useState } from 'react'
@@ -15,7 +5,18 @@ import { useForm } from 'react-hook-form'
 import FormDatePicker from '../../../shared/Form/FormDatePicker'
 import FormInput from '../../../shared/Form/FormInput'
 import FormSelect from '../../../shared/Form/FormSelect'
+import { Button } from '../../../ui/button'
 import { Checkbox } from '../../../ui/checkbox'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../../../ui/dialog'
 import { Form } from '../../../ui/form'
 
 type TransactionType = 'INCOME' | 'EXPENSE' | 'INVESTMENT' | 'TRANSFER'
@@ -39,7 +40,6 @@ const transactionTypes: {
   { value: 'INCOME', label: 'Receita' },
   { value: 'EXPENSE', label: 'Despesa' },
   { value: 'INVESTMENT', label: 'Investimento' },
-  { value: 'TRANSFER', label: 'Transferência' },
 ]
 
 const paymentStatus: {
@@ -176,7 +176,7 @@ export function NewTransactionModal() {
               </label>
 
               {isRecurring && (
-                <div className="space-y-4">
+                <div className="mb-4 space-y-4">
                   <FormSelect
                     label="Frequência de Recorrência"
                     name="recurrencePattern"
@@ -244,12 +244,14 @@ export function NewTransactionModal() {
               )}
             </div>
             <DialogFooter>
-              <Button
-                type="button"
-                className="rounded-lg bg-transparent px-4 py-2 text-foreground transition-colors hover:bg-transparent hover:text-foreground/70"
-              >
-                Cancelar
-              </Button>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  className="rounded-lg bg-transparent px-4 py-2 text-foreground transition-colors hover:bg-transparent hover:text-foreground/70"
+                >
+                  Cancelar
+                </Button>
+              </DialogClose>
               <Button type="submit">Criar Transação</Button>
             </DialogFooter>
           </form>

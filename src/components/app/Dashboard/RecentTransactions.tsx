@@ -110,7 +110,7 @@ export function RecentTransactions() {
                     {transaction.description}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDateToString(transaction.date)}
+                    {formatDateToString(transaction.date, 'dd MMM yyyy')}
                   </p>
                 </div>
               </div>
