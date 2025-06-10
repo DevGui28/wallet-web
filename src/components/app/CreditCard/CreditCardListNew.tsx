@@ -2,13 +2,17 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus } from '@phosphor-icons/react'
-import Link from 'next/link'
-import { useQuery } from 'react-query'
-import { handleGetCreditCards } from '../../../api'
+import { useState } from 'react'
+import { useQuery, useQueryClient } from 'react-query'
+import { handleCreateCreditCard, handleGetCreditCards } from '../../../api'
 import { Button } from '../../ui/button'
 import { CreditCard } from './CreditCardList'
+import { AddCreditCardDialog } from './AddCreditCardDialog'
 
 export default function CreditCardListNew() {
+  const [openAddCardDialog, setOpenAddCardDialog] = useState(false)
+  const queryClient = useQueryClient()
+
   const { data: creditCards, isLoading } = useQuery({
     queryKey: ['credit-cards-detail'],
     queryFn: handleGetCreditCards,
@@ -19,16 +23,30 @@ export default function CreditCardListNew() {
       <CardHeader>
         <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <CardTitle className="text-xl">Cartões de Crédito</CardTitle>
-          <Link href="/credit-card/create" className="w-full sm:w-auto">
-            <Button
-              variant="default"
-              size="sm"
-              className="flex w-full items-center justify-center gap-2 sm:w-auto"
-            >
-              <Plus className="h-5 w-5" />
-              Adicionar cartão
-            </Button>
-          </Link>
+          <Button
+            variant="default"
+            size="sm"
+            className="flex w-full items-center justify-center gap-2 sm:w-auto"
+            onClick={() => setOpenAddCardDialog(true)}
+          >
+            <Plus className="h-5 w-5" />
+            Adicionar cartão
+          </Button>
+
+          <AddCreditCardDialog
+            open={openAddCardDialog}
+            setOpen={setOpenAddCardDialog}
+            onAddCreditCard={async (data) => {
+              try {
+                await handleCreateCreditCard(data)
+                queryClient.invalidateQueries('credit-cards')
+                queryClient.invalidateQueries('credit-cards-detail')
+                return Promise.resolve()
+              } catch (error) {
+                return Promise.reject(error)
+              }
+            }}
+          />
         </div>
       </CardHeader>
       <CardContent>

@@ -1,53 +1,57 @@
 'use client'
 
-import { Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { useQuery, useQueryClient } from 'react-query'
-import { AddCreditCardDialog } from '../../../components/app/CreditCard/AddCreditCardDialog'
+import { addYears } from 'date-fns'
+
 import {
-  handleCreateTransaction,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import FormInput from '@/components/shared/Form/FormInput'
+import FormSelect from '@/components/shared/Form/FormSelect'
+import FormDatePicker from '@/components/shared/Form/FormDatePicker'
+import { Form } from '@/components/ui/form'
+import { CustomSelect } from '@/components/shared/CustomSelect'
+import { Plus } from '@phosphor-icons/react'
+import { AddCreditCardDialog } from '../../CreditCard/AddCreditCardDialog'
+import {
+  handleCreateCreditCard,
   handleGetCategories,
   handleGetCreditCards,
-} from '../../../api'
-import FormInput from '../../../components/shared/Form/FormInput'
-import { Button } from '../../../components/ui/button'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import { addYears } from 'date-fns'
-import { jwtDecode } from 'jwt-decode'
-import { useRouter } from 'next/navigation'
-import { parseCookies } from 'nookies'
-import { toast } from 'sonner'
-import { paymentMethodMapper } from '../../../components/../lib/mappers'
-import TopNav from '../../../components/app/Header/TopNav'
-import { CustomSelect } from '../../../components/shared/CustomSelect'
-import FormDatePicker from '../../../components/shared/Form/FormDatePicker'
-import FormSelect from '../../../components/shared/Form/FormSelect'
-import { Form } from '../../../components/ui/form'
-import { tokenName } from '../../../constants/cookies'
+} from '@/api'
+import { paymentMethodMapper } from '@/lib/mappers'
 import {
   FormAddTransaction,
   formAddTransactionSchema,
-} from '../../../schemas/add-transaction'
-import { JwtPayload } from '../../../types/jwt.interface'
-import {
-  PaymentMethod,
-  TransactionType,
-} from '../../../types/transactions.interface'
+} from '@/schemas/add-transaction'
+import { PaymentMethod, TransactionType } from '@/types/transactions.interface'
 
-export default function AddTransactionPage() {
-  const cookies = parseCookies()
-  const token = cookies[tokenName]
-  const payload = jwtDecode<JwtPayload>(token)
-  const name = payload.user.name
+type Props = {
+  open: boolean
+  setOpen: (open: boolean) => void
+  onAddTransaction: (data: any) => Promise<void>
+}
 
-  const router = useRouter()
-
+export function NewTransactionDialog({
+  open,
+  setOpen,
+  onAddTransaction,
+}: Props) {
   const [type, setType] = useState<TransactionType | null>(null)
   const [typeIncome, setTypeIncome] = useState<string | null>(null)
   const [isSubmitting, setSubmitting] = useState(false)
   const [openAddCardDialog, setOpenAddCardDialog] = useState(false)
+
+  const queryClient = useQueryClient()
 
   const { data: categories } = useQuery({
     queryKey: ['categories', type],
@@ -71,8 +75,6 @@ export default function AddTransactionPage() {
       }))
     },
   })
-
-  const queryClient = useQueryClient()
 
   const form = useForm<FormAddTransaction>({
     resolver: zodResolver(formAddTransactionSchema),
@@ -104,7 +106,7 @@ export default function AddTransactionPage() {
       data.paymentMethod === PaymentMethod.CREDIT_CARD
     try {
       setSubmitting(true)
-      await handleCreateTransaction({
+      await onAddTransaction({
         ...data,
         totalAmount: Number(data.totalAmount),
         totalInstallments: data.totalInstallments
@@ -118,6 +120,7 @@ export default function AddTransactionPage() {
       queryClient.invalidateQueries('bills')
       queryClient.invalidateQueries('installments')
       toast.success('Transação adicionada com sucesso!')
+      setOpen(false)
     } catch (error: any) {
       toast.error('Erro ao adicionar transação!')
     } finally {
@@ -126,10 +129,17 @@ export default function AddTransactionPage() {
   }
 
   return (
-    <>
-      <TopNav title="Adicionar uma nova transação" name={name} />
-      <div className="mt-4 flex w-full items-center justify-center px-4">
-        <div className="mb-6 w-full max-w-4xl">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle className="text-lg sm:text-xl">
+            Nova Transação
+          </DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm">
+            Preencha os campos para adicionar uma nova transação
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mb-4 w-full">
           <CustomSelect
             className="mb-4"
             label="Tipo de transação"
@@ -161,7 +171,7 @@ export default function AddTransactionPage() {
               className="flex flex-col"
             >
               {type && (
-                <div className="mb-4 grid gap-4 lg:grid-cols-2">
+                <div className="mb-4 grid gap-4 sm:grid-cols-2">
                   <FormInput
                     label="Identificação"
                     name="name"
@@ -276,21 +286,27 @@ export default function AddTransactionPage() {
                   />
                 </div>
               )}
-              <div className="flex w-full items-center justify-end gap-4">
-                <span
-                  className="cursor-pointer text-sm text-foreground hover:text-card-foreground hover:underline"
-                  onClick={() => router.back()}
+              <DialogFooter className="sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                  className="h-8 text-xs sm:h-9 sm:text-sm"
                 >
-                  Voltar
-                </span>
-                <Button className="px-8" type="submit" disabled={isSubmitting}>
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || !type}
+                  className="h-8 text-xs sm:h-9 sm:text-sm"
+                >
                   {isSubmitting ? 'Adicionando...' : 'Adicionar'}
                 </Button>
-              </div>
+              </DialogFooter>
             </form>
           </Form>
         </div>
-      </div>
-    </>
+      </DialogContent>
+    </Dialog>
   )
 }

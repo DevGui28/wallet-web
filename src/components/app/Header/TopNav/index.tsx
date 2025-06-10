@@ -11,7 +11,7 @@ export default function TopNav({ title, name, subtitle }: Props) {
   return (
     <div className="flex w-full items-center justify-between px-2 py-4 md:px-4 md:py-8">
       <div>
-        <h1 className="inter-700 mr-3 text-xl md:text-3xl">{title}</h1>
+        <h1 className="inter-700 text-xl md:text-3xl">{title}</h1>
         <p className="inter-400 text-lg">{subtitle}</p>
       </div>
       <div className="flex items-center justify-center space-x-6">

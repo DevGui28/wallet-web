@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { CoinVertical, PencilSimpleLine, Trash } from '@phosphor-icons/react'
+import { AddValueDialog } from '../AddValueDialog'
 
 type Goal = {
   id: string
@@ -19,12 +21,18 @@ type Props = {
 }
 
 export function GoalCard({ goal }: Props) {
+  const [openAddValueDialog, setOpenAddValueDialog] = useState(false)
   const percentage = Math.round((goal.currentAmount / goal.targetAmount) * 100)
   const remaining = goal.targetAmount - goal.currentAmount
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return new Intl.DateTimeFormat('pt-BR').format(date)
+  }
+
+  const handleAddValue = async (goalId: string, amount: number) => {
+    console.log(`Adicionando ${amount} ao objetivo ${goalId}`)
+    return Promise.resolve()
   }
 
   return (
@@ -70,10 +78,17 @@ export function GoalCard({ goal }: Props) {
         <Button
           className="mt-3 flex h-8 w-full items-center justify-center gap-1 text-xs sm:mt-4 sm:h-9 sm:gap-2 sm:text-sm"
           size="sm"
+          onClick={() => setOpenAddValueDialog(true)}
         >
           <CoinVertical size={14} weight="bold" className="sm:size-4" />
           Adicionar Valor
         </Button>
+        <AddValueDialog
+          open={openAddValueDialog}
+          setOpen={setOpenAddValueDialog}
+          goal={goal}
+          onAddValue={handleAddValue}
+        />
       </CardContent>
     </Card>
   )

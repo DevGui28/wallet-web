@@ -12,7 +12,13 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 type Props = {
   open: boolean
@@ -93,10 +99,6 @@ export function BudgetDialog({ open, setOpen }: Props) {
             <Select value={color} onValueChange={setColor}>
               <SelectTrigger>
                 <div className="flex items-center gap-2">
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: color }}
-                  />
                   <SelectValue />
                 </div>
               </SelectTrigger>

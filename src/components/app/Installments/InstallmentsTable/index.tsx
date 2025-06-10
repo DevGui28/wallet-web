@@ -168,86 +168,90 @@ export function InstallmentsTable() {
               ))}
             </TableRow>
           </TableHeader>
-        <TableBody>
-          {!!data?.installments.length &&
-            !isLoading &&
-            data.installments.map((installment) => (
-              <TableRow key={installment.id}>
-                <TableCell className="px-2 py-3 text-left text-xs text-card-foreground sm:px-4 sm:py-4 sm:text-sm">
-                  {installment.name}
-                </TableCell>
-                <TableCell className="hidden lg:table-cell">
-                  {transformToCammelCase(installment.description || '-')}
-                </TableCell>
-                <TableCell className="hidden lg:table-cell">
-                  {installment.category.name}
-                </TableCell>
-                <TableCell className="hidden px-4 py-4 text-left text-xs text-card-foreground sm:text-sm lg:table-cell">
-                  {installment.installmentNumber}/
-                  {installment.totalInstallments}
-                </TableCell>
-                <TableCell className="hidden px-4 py-4 text-xs sm:text-sm md:table-cell">
-                  {formatDateToString(installment.date, 'dd MMM yyyy')}
-                </TableCell>
-                <TableCell className="px-2 py-3 text-xs font-semibold text-card-foreground sm:px-4 sm:py-4 sm:text-sm">
-                  {formatCurrency(installment.amount)}
-                </TableCell>
-                <TableCell className="px-2 py-3 sm:px-4 sm:py-4">
-                  <Link href={`/installments/${installment.id}`}>
-                    <div className="flex justify-center rounded-full hover:bg-card-foreground/5">
-                      <CaretRight size={20} className="sm:size-6" />
-                    </div>
-                  </Link>
+          <TableBody>
+            {!!data?.installments.length &&
+              !isLoading &&
+              data.installments.map((installment) => (
+                <TableRow key={installment.id}>
+                  <TableCell className="px-2 py-3 text-left text-xs text-card-foreground sm:px-4 sm:py-4 sm:text-sm">
+                    {installment.name}
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    {transformToCammelCase(installment.description || '-')}
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    {installment.category.name}
+                  </TableCell>
+                  <TableCell className="hidden px-4 py-4 text-left text-xs text-card-foreground sm:text-sm lg:table-cell">
+                    {installment.installmentNumber}/
+                    {installment.totalInstallments}
+                  </TableCell>
+                  <TableCell className="hidden px-4 py-4 text-xs sm:text-sm md:table-cell">
+                    {formatDateToString(installment.date, 'dd MMM yyyy')}
+                  </TableCell>
+                  <TableCell className="px-2 py-3 text-xs font-semibold text-card-foreground sm:px-4 sm:py-4 sm:text-sm">
+                    {formatCurrency(installment.amount)}
+                  </TableCell>
+                  <TableCell className="px-2 py-3 sm:px-4 sm:py-4">
+                    <Link href={`/installments/${installment.id}`}>
+                      <div className="flex justify-center rounded-full hover:bg-card-foreground/5">
+                        <CaretRight size={20} className="sm:size-6" />
+                      </div>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            {!data?.installments.length && creditCardId && !isLoading && (
+              <TableRow>
+                <TableCell
+                  colSpan={
+                    (
+                      columns[screenCurrent as keyof typeof columns] ||
+                      columns.xl
+                    ).length
+                  }
+                  className="text-center text-card-foreground"
+                >
+                  Nenhum parcelamento encontrado
                 </TableCell>
               </TableRow>
-            ))}
-          {!data?.installments.length && creditCardId && !isLoading && (
-            <TableRow>
-              <TableCell
-                colSpan={
-                  (columns[screenCurrent as keyof typeof columns] || columns.xl)
-                    .length
-                }
-                className="text-center text-card-foreground"
-              >
-                Nenhum parcelamento encontrado
-              </TableCell>
-            </TableRow>
-          )}
-          {!creditCardId && !isLoading && (
-            <TableRow>
-              <TableCell
-                colSpan={
-                  (columns[screenCurrent as keyof typeof columns] || columns.xl)
-                    .length
-                }
-                className="text-center text-card-foreground"
-              >
-                Selecione um cartão de crédito
-              </TableCell>
-            </TableRow>
-          )}
-          {!!data?.installments.length && !isLoading && (
-            <TableRow className="bg-card-foreground/5 hover:bg-card-foreground/10">
-              <TableCell
-                colSpan={(
-                  columns[screenCurrent as keyof typeof columns] || columns.xl
-                ).findIndex((column) => column === 'Valor')}
-                className="px-2 py-3 text-left text-xs font-bold text-card-foreground sm:px-4 sm:py-4 sm:text-sm"
-              >
-                Total
-              </TableCell>
-              <TableCell
-                className="px-2 py-3 text-xs font-bold sm:px-4 sm:py-4 sm:text-sm"
-                colSpan={columns.xl.length}
-              >
-                {formatCurrency(data.total)}
-              </TableCell>
-              <TableCell />
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            )}
+            {!creditCardId && !isLoading && (
+              <TableRow>
+                <TableCell
+                  colSpan={
+                    (
+                      columns[screenCurrent as keyof typeof columns] ||
+                      columns.xl
+                    ).length
+                  }
+                  className="text-center text-card-foreground"
+                >
+                  Selecione um cartão de crédito
+                </TableCell>
+              </TableRow>
+            )}
+            {!!data?.installments.length && !isLoading && (
+              <TableRow className="bg-card-foreground/5 hover:bg-card-foreground/10">
+                <TableCell
+                  colSpan={(
+                    columns[screenCurrent as keyof typeof columns] || columns.xl
+                  ).findIndex((column) => column === 'Valor')}
+                  className="px-2 py-3 text-left text-xs font-bold text-card-foreground sm:px-4 sm:py-4 sm:text-sm"
+                >
+                  Total
+                </TableCell>
+                <TableCell
+                  className="px-2 py-3 text-xs font-bold sm:px-4 sm:py-4 sm:text-sm"
+                  colSpan={columns.xl.length}
+                >
+                  {formatCurrency(data.total)}
+                </TableCell>
+                <TableCell />
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </>
   )

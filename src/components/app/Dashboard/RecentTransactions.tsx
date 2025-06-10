@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Card,
@@ -16,7 +17,11 @@ import {
   ShoppingBag,
   Utensils,
 } from 'lucide-react'
+import { Plus } from '@phosphor-icons/react'
 import { formatCurrency, formatDateToString } from '../../../lib/utils'
+import { Button } from '@/components/ui/button'
+import { NewTransactionDialog } from '../../app/Transactions/NewTransactionDialog'
+import { handleCreateTransaction } from '@/api'
 
 interface Transaction {
   id: string
@@ -86,11 +91,34 @@ const getCategoryIcon = (category: string) => {
 }
 
 export function RecentTransactions() {
+  const [openNewTransactionDialog, setOpenNewTransactionDialog] = useState(false)
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Transações recentes</CardTitle>
-        <CardDescription>Suas últimas atividades financeiras</CardDescription>
+        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+          <div>
+            <CardTitle>Transações recentes</CardTitle>
+            <CardDescription>
+              Suas últimas atividades financeiras
+            </CardDescription>
+          </div>
+          <Button
+            variant="default"
+            size="sm"
+            className="flex w-full items-center justify-center gap-2 sm:w-auto"
+            onClick={() => setOpenNewTransactionDialog(true)}
+          >
+            <Plus className="h-4 w-4" />
+            Nova transação
+          </Button>
+
+          <NewTransactionDialog
+            open={openNewTransactionDialog}
+            setOpen={setOpenNewTransactionDialog}
+            onAddTransaction={handleCreateTransaction}
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
