@@ -8,6 +8,7 @@ type AuthContextType = {
   isLoading: boolean
   isLogged: boolean
   updateToken: (token: string) => void
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
@@ -30,10 +31,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(token)
   }
 
+  async function logout() {
+    try {
+      await fetch('/api/logout')
+      setToken('')
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+    }
+  }
+
   const isLogged = !!token
 
   return (
-    <AuthContext.Provider value={{ isLoading, isLogged, updateToken }}>
+    <AuthContext.Provider value={{ isLoading, isLogged, updateToken, logout }}>
       {children}
     </AuthContext.Provider>
   )

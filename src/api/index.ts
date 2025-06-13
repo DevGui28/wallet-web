@@ -175,3 +175,9 @@ export const handleGetDashboard = async () => {
   const { data } = await apiWallet.get<DashboardData>('/dashboard')
   return data
 }
+
+// Método para logout
+export const handleLogout = async () => {
+  const response = await fetch('/api/logout')
+  return response.json()
+}

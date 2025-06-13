@@ -18,7 +18,7 @@ export default function DashboardInvoices({ data }: DashboardInvoicesProps) {
           <CreditCard className="h-5 w-5 text-primary" />
         </CardHeader>
         <CardContent>
-          {!data.length ? (
+          {!data?.length ? (
             <p className="text-center text-sm text-muted-foreground">
               Nenhuma fatura pendente.
             </p>

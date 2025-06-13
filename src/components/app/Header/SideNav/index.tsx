@@ -15,7 +15,8 @@ import {
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useAuth } from '../../../../hooks/useAuth'
 
 interface MenuItem {
   link: string
@@ -84,6 +85,13 @@ export function SideNav({ className }: Props) {
   const pathname = usePathname()
   const pageName = pathname.split('/')[1]
   const { theme } = useTheme()
+  const { logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/login')
+  }
 
   return (
     <div
@@ -122,10 +130,13 @@ export function SideNav({ className }: Props) {
           ))}
         </nav>
       </div>
-      <div className="text-background-foreground flex h-12 w-full cursor-pointer items-center justify-center gap-5 rounded-md bg-background font-semibold hover:border hover:border-destructive hover:bg-destructive/40 hover:text-destructive">
+      <button
+        onClick={handleLogout}
+        className="text-background-foreground flex h-12 w-full cursor-pointer items-center justify-center gap-5 rounded-md bg-background font-semibold hover:border hover:border-destructive hover:bg-destructive/40 hover:text-destructive"
+      >
         <SignOut size={18} weight="bold" />
         <span className="text-xs">Sair</span>
-      </div>
+      </button>
     </div>
   )
 }

@@ -1,9 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { cn } from '../../../../lib/utils'
+import { useAuth } from '../../../../hooks/useAuth'
 import { menuItems } from '../SideNav'
+import { SignOut } from '@phosphor-icons/react'
 
 type Props = {
   className?: string
@@ -11,6 +14,14 @@ type Props = {
 
 export function MobileNav({ className }: Props) {
   const [isOpen, setIsOpen] = useState(false)
+  const { logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/login')
+  }
+
   return (
     <nav
       className={cn(
@@ -42,16 +53,26 @@ export function MobileNav({ className }: Props) {
         />
       </div>
       <div className="flex w-full flex-col gap-1">
-        {isOpen &&
-          menuItems.map((item) => (
-            <Link
-              href={`/${item.link}`}
-              key={item.link}
-              className="rounded-md bg-secondary p-1 px-4 text-center text-secondary-foreground hover:bg-primary/20 hover:text-primary"
+        {isOpen && (
+          <>
+            {menuItems.map((item) => (
+              <Link
+                href={`/${item.link}`}
+                key={item.link}
+                className="rounded-md bg-secondary p-1 px-4 text-center text-secondary-foreground hover:bg-primary/20 hover:text-primary"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <button
+              onClick={handleLogout}
+              className="mt-2 flex items-center justify-center gap-2 rounded-md bg-secondary p-1 px-4 text-center text-secondary-foreground hover:bg-destructive/20 hover:text-destructive"
             >
-              {item.label}
-            </Link>
-          ))}
+              <SignOut size={16} weight="bold" />
+              Sair
+            </button>
+          </>
+        )}
       </div>
     </nav>
   )
