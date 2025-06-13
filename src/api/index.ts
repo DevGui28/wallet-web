@@ -17,8 +17,6 @@ import {
 import { SubscriptionPlan } from '../types/subscription-plans.interface'
 import {
   CreateTransaction,
-  InstallmentsResponse,
-  PendingPaymentsResponse,
   TransactionFilters,
   TransactionResponse,
   TransactionType,
@@ -84,12 +82,14 @@ export const handleGetCategoriesAll = async () => {
 }
 
 export const handleGetCreditCards = async () => {
-  const { data } = await apiWallet.get<CreditCardResponse[]>('/credit-card')
+  const { data } = await apiWallet.get<CreditCardResponse[]>('/credit-cards')
   return data
 }
 
 export const handleFindCreditCard = async (id: string) => {
-  const { data } = await apiWallet.get<CreditCardResponse>(`/credit-card/${id}`)
+  const { data } = await apiWallet.get<CreditCardResponse>(
+    `/credit-cards/${id}`
+  )
   return data
 }
 
@@ -112,7 +112,7 @@ export const handleDeleteTransaction = async (id: string) => {
 }
 
 export const handleCreateCreditCard = async (payload: CreateCreditCard) => {
-  const { data } = await apiWallet.post('/credit-card', payload)
+  const { data } = await apiWallet.post('/credit-cards', payload)
   return data
 }
 
@@ -120,70 +120,15 @@ export const handleUpdateCreditCard = async (
   id: string,
   payload: UpdateCreditCard
 ) => {
-  const { data } = await apiWallet.put(`/credit-card/${id}`, payload)
+  const { data } = await apiWallet.put(`/credit-cards/${id}`, payload)
   return data
 }
 
 export const handleDeleteCreditCard = async (id: string) => {
-  const { data } = await apiWallet.delete(`/credit-card/${id}`)
+  const { data } = await apiWallet.delete(`/credit-cards/${id}`)
   return data
 }
 
-export const handlePaySplitOrRecurrence = async (id: string, paidAt: Date) => {
-  const { data } = await apiWallet.patch(`/pending-payment/${id}/pay`, {
-    paidAt,
-  })
-  return data
-}
-
-export const handlePayIncome = async ({
-  creditCardId,
-  paidAt,
-  dueDate,
-}: {
-  creditCardId: string
-  paidAt: Date
-  dueDate: Date
-}) => {
-  const { data } = await apiWallet.patch(
-    `/split-or-recurrence/credit-card/${creditCardId}/pay`,
-    {
-      paidAt,
-      dueDate,
-    }
-  )
-  return data
-}
-
-export const handleGetInstallments = async ({
-  creditcardId,
-  date,
-}: {
-  creditcardId?: string
-  date: string
-}) => {
-  if (!creditcardId) {
-    return
-  }
-
-  const params = new URLSearchParams()
-  params.append('date', date)
-  const { data } = await apiWallet.get<InstallmentsResponse>(
-    `/credit-card-expense/${creditcardId}?${params}`
-  )
-  return data
-}
-
-export const handleGetBills = async ({ date }: { date: string }) => {
-  const params = new URLSearchParams()
-  params.append('date', date)
-  const { data } = await apiWallet.get<PendingPaymentsResponse>(
-    `/pending-payment?${params}`
-  )
-  return data
-}
-
-// Métodos para orçamentos
 export const handleGetBudgets = async (filters: BudgetFilters) => {
   const params = new URLSearchParams()
   if (filters.month) params.append('month', filters.month.toString())
