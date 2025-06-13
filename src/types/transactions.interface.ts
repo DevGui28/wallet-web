@@ -13,6 +13,7 @@ export enum PaymentMethod {
 export enum TransactionType {
   EXPENSE = 'EXPENSE',
   INCOME = 'INCOME',
+  INVESTMENT = 'INVESTMENT',
 }
 
 export enum TransactionStatus {

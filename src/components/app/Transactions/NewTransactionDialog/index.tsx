@@ -147,23 +147,10 @@ export function NewTransactionDialog({
             options={[
               { value: TransactionType.EXPENSE, label: 'Despesa' },
               { value: TransactionType.INCOME, label: 'Receita' },
+              { value: TransactionType.INVESTMENT, label: 'Investimento' },
             ]}
             onChange={(value) => setType(value as TransactionType)}
           />
-          {type === TransactionType.EXPENSE && (
-            <CustomSelect
-              className="mb-4"
-              label="Qual o tipo da despesa?"
-              placeholder="Essa despesa é normal ou fixa?"
-              value={typeIncome}
-              options={[
-                { value: 'NORMAL', label: 'Normal' },
-                { value: 'RECURRING', label: 'Conta Fixa' },
-              ]}
-              description="As despesas fixas serão adicionadas automaticamente todo mês pelo proximo 1 ano."
-              onChange={(value) => setTypeIncome(value)}
-            />
-          )}
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
