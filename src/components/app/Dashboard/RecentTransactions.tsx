@@ -91,7 +91,8 @@ const getCategoryIcon = (category: string) => {
 }
 
 export function RecentTransactions() {
-  const [openNewTransactionDialog, setOpenNewTransactionDialog] = useState(false)
+  const [openNewTransactionDialog, setOpenNewTransactionDialog] =
+    useState(false)
 
   return (
     <Card>

@@ -31,6 +31,9 @@ export function formatDateToString(date: Date | string, format: string) {
 }
 
 export function formatCurrency(value: number | string) {
+  if (isNaN(Number(value))) {
+    return 'R$ 0,00'
+  }
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',

@@ -1,17 +1,25 @@
 import axios, { Axios } from 'axios'
 import { Login } from '../app/login/page'
-import { TransactionFilters } from '../components/app/Transactions/TransactionsTable'
 import { urls } from '../constants/urls'
+import {
+  Budget,
+  BudgetFilters,
+  CreateBudgetDTO,
+  UpdateBudgetDTO,
+} from '../types/budgets.interface'
 import { CategoriesResponse } from '../types/categories.interface'
+import { DashboardData } from '../types/dashboard.interface'
 import {
   CreateCreditCard,
   CreditCardResponse,
   UpdateCreditCard,
 } from '../types/credit-card.interface'
+import { SubscriptionPlan } from '../types/subscription-plans.interface'
 import {
   CreateTransaction,
   InstallmentsResponse,
   PendingPaymentsResponse,
+  TransactionFilters,
   TransactionResponse,
   TransactionType,
 } from '../types/transactions.interface'
@@ -70,8 +78,13 @@ export const handleGetCategories = async (type: TransactionType) => {
   return data
 }
 
+export const handleGetCategoriesAll = async () => {
+  const { data } = await apiWallet.get<CategoriesResponse[]>('/categories/all')
+  return data
+}
+
 export const handleGetCreditCards = async () => {
-  const { data } = await apiWallet.get<CreditCardResponse[]>(`/credit-card`)
+  const { data } = await apiWallet.get<CreditCardResponse[]>('/credit-card')
   return data
 }
 
@@ -82,6 +95,19 @@ export const handleFindCreditCard = async (id: string) => {
 
 export const handleCreateTransaction = async (payload: CreateTransaction) => {
   const { data } = await apiWallet.post('/transactions', payload)
+  return data
+}
+
+export const handleUpdateTransaction = async (
+  id: string,
+  payload: Partial<CreateTransaction>
+) => {
+  const { data } = await apiWallet.put(`/transactions/${id}`, payload)
+  return data
+}
+
+export const handleDeleteTransaction = async (id: string) => {
+  const { data } = await apiWallet.delete(`/transactions/${id}`)
   return data
 }
 
@@ -154,5 +180,53 @@ export const handleGetBills = async ({ date }: { date: string }) => {
   const { data } = await apiWallet.get<PendingPaymentsResponse>(
     `/pending-payment?${params}`
   )
+  return data
+}
+
+// Métodos para orçamentos
+export const handleGetBudgets = async (filters: BudgetFilters) => {
+  const params = new URLSearchParams()
+  if (filters.month) params.append('month', filters.month.toString())
+  if (filters.year) params.append('year', filters.year.toString())
+
+  const { data } = await apiWallet.get<Budget[]>(`/budgets?${params}`)
+  return data
+}
+
+export const handleCreateBudget = async (payload: CreateBudgetDTO) => {
+  const { data } = await apiWallet.post<{ budget: Budget }>('/budgets', payload)
+  return data.budget
+}
+
+export const handleUpdateBudget = async (
+  id: string,
+  payload: UpdateBudgetDTO
+) => {
+  const { data } = await apiWallet.patch<{ budget: Budget }>(
+    `/budgets/${id}`,
+    payload
+  )
+  return data.budget
+}
+
+export const handleDeleteBudget = async (id: string) => {
+  const { data } = await apiWallet.delete(`/budgets/${id}`)
+  return data
+}
+
+// Métodos para planos de assinatura
+export const handleGetSubscriptionPlans = async () => {
+  const { data } = await apiWallet.get<SubscriptionPlan[]>('/plans')
+  return data
+}
+
+export const handleUpdateUserPlan = async (planId: string) => {
+  const { data } = await apiWallet.patch(`/plans/${planId}`)
+  return data
+}
+
+// Método para dashboard
+export const handleGetDashboard = async () => {
+  const { data } = await apiWallet.get<DashboardData>('/dashboard')
   return data
 }

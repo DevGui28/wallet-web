@@ -1,24 +1,51 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Search } from 'lucide-react'
 import { useState } from 'react'
 import { Plus } from '@phosphor-icons/react'
 import TransactionsTable from './TransactionsTableNew'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '../../ui/button'
+import { Dialog, DialogTrigger } from '../../ui/dialog'
 import { NewTransactionDialog } from './NewTransactionDialog'
+import {
+  CreateTransaction,
+  TransactionFilters,
+} from '../../../types/transactions.interface'
+import { toast } from 'sonner'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { handleCreateTransaction, handleGetCategoriesAll } from '../../../api'
+import { CustomSelect } from '../../shared/CustomSelect'
 
 export default function TransactionsList() {
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState({} as TransactionFilters)
   const [open, setOpen] = useState(false)
+  const queryClient = useQueryClient()
 
-  const onAddTransaction = async (data: any) => {
-    try {
-      console.log('onAddTransaction', data)
-    } catch (error) {
-      console.error('Erro ao adicionar transação:', error)
-    }
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const data = await handleGetCategoriesAll()
+      return data.map((category) => ({
+        label: category.name,
+        value: category.id,
+      }))
+    },
+  })
+
+  const createTransactionMutation = useMutation({
+    mutationFn: (data: CreateTransaction) => handleCreateTransaction(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      toast.success('Transação adicionada com sucesso')
+    },
+    onError: () => {
+      toast.error('Erro ao criar transação')
+    },
+  })
+
+  const onAddTransaction = async (data: CreateTransaction) => {
+    await createTransactionMutation.mutateAsync(data)
   }
 
   return (
@@ -48,13 +75,12 @@ export default function TransactionsList() {
       <CardContent>
         <div className="mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Buscar transações..."
-              className="w-full rounded-md border border-input bg-background py-2 pl-8 pr-4 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+            <CustomSelect
+              label="Filtrar por categoria"
+              placeholder="Selecione uma categoria"
+              options={categories || []}
+              value={search.categoryId || null}
+              onChange={(value) => setSearch({ ...search, categoryId: value })}
             />
           </div>
         </div>

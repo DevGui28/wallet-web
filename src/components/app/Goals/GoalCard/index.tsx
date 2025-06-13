@@ -6,15 +6,9 @@ import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { CoinVertical, PencilSimpleLine, Trash } from '@phosphor-icons/react'
 import { AddValueDialog } from '../AddValueDialog'
-
-type Goal = {
-  id: string
-  title: string
-  targetAmount: number
-  currentAmount: number
-  deadline: string
-  icon: string
-}
+import { GoalEditDialog } from '../GoalEditDialog'
+import { Goal } from '../../../../api/goals'
+import { useAddValueToGoal, useDeleteGoal } from '../../../../hooks/useGoals'
 
 type Props = {
   goal: Goal
@@ -22,6 +16,7 @@ type Props = {
 
 export function GoalCard({ goal }: Props) {
   const [openAddValueDialog, setOpenAddValueDialog] = useState(false)
+  const [openEditDialog, setOpenEditDialog] = useState(false)
   const percentage = Math.round((goal.currentAmount / goal.targetAmount) * 100)
   const remaining = goal.targetAmount - goal.currentAmount
 
@@ -30,9 +25,25 @@ export function GoalCard({ goal }: Props) {
     return new Intl.DateTimeFormat('pt-BR').format(date)
   }
 
+  const addValueMutation = useAddValueToGoal()
+  const deleteGoalMutation = useDeleteGoal()
+
   const handleAddValue = async (goalId: string, amount: number) => {
-    console.log(`Adicionando ${amount} ao objetivo ${goalId}`)
-    return Promise.resolve()
+    try {
+      await addValueMutation.mutateAsync({ id: goalId, amount })
+      return Promise.resolve()
+    } catch (error) {
+      console.error('Erro ao adicionar valor ao objetivo:', error)
+      return Promise.reject(error)
+    }
+  }
+
+  const handleDeleteGoal = async () => {
+    try {
+      await deleteGoalMutation.mutateAsync(goal.id)
+    } catch (error) {
+      console.error('Erro ao excluir objetivo:', error)
+    }
   }
 
   return (
@@ -49,10 +60,12 @@ export function GoalCard({ goal }: Props) {
             <PencilSimpleLine
               size={14}
               className="cursor-pointer text-muted-foreground hover:text-primary sm:size-4"
+              onClick={() => setOpenEditDialog(true)}
             />
             <Trash
               size={14}
               className="cursor-pointer text-muted-foreground hover:text-destructive sm:size-4"
+              onClick={handleDeleteGoal}
             />
           </div>
         </div>
@@ -88,6 +101,11 @@ export function GoalCard({ goal }: Props) {
           setOpen={setOpenAddValueDialog}
           goal={goal}
           onAddValue={handleAddValue}
+        />
+        <GoalEditDialog
+          open={openEditDialog}
+          setOpen={setOpenEditDialog}
+          goal={goal}
         />
       </CardContent>
     </Card>

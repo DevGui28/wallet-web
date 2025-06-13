@@ -76,6 +76,15 @@ export type TransactionResponse = {
   }
   creditCard?: CreditCardResponse
 }
+
+export interface TransactionFilters {
+  categoryId?: string
+  paymentMethod?: string
+  creditCardId?: string
+  type?: string
+  date?: string
+}
+
 export interface PendingPayments {
   id: string
   userId: string

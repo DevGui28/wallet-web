@@ -1,15 +1,9 @@
-import { BudgetProgress } from '../../components/app/Dashboard/BudgetProgress'
-import { ExpensesCategory } from '../../components/app/Dashboard/ExpensesCategory'
-import { RecentTransactions } from '../../components/app/Dashboard/RecentTransactions'
-import { Summary } from '../../components/app/Dashboard/Summary'
+import DashboardContent from '../../components/app/Dashboard/DashboardContent'
 
 function Page() {
   return (
-    <div className="grid h-full w-full grid-cols-1 gap-6 lg:grid-cols-2">
-      <Summary />
-      <RecentTransactions />
-      <BudgetProgress />
-      <ExpensesCategory />
+    <div className="mt-4 w-full px-4">
+      <DashboardContent />
     </div>
   )
 }

@@ -47,7 +47,7 @@ export const menuItems: MenuItem[] = [
   {
     link: 'goals',
     icon: <Target weight="fill" size={18} />,
-    label: 'Objetivos',
+    label: 'Metas',
   },
   {
     link: 'credit-card',

@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { useAddValueToGoal } from '../../../../hooks/useGoals'
+import { Goal } from '../../../../api/goals'
 
 import {
   Dialog,
@@ -24,15 +25,6 @@ const addValueSchema = z.object({
 
 type FormAddValue = z.infer<typeof addValueSchema>
 
-type Goal = {
-  id: string
-  title: string
-  targetAmount: number
-  currentAmount: number
-  deadline: string
-  icon: string
-}
-
 type Props = {
   open: boolean
   setOpen: (open: boolean) => void
@@ -41,7 +33,7 @@ type Props = {
 }
 
 export function AddValueDialog({ open, setOpen, goal, onAddValue }: Props) {
-  const [isSubmitting, setSubmitting] = useState(false)
+  const addValueMutation = useAddValueToGoal()
 
   const form = useForm<FormAddValue>({
     resolver: zodResolver(addValueSchema),
@@ -52,16 +44,18 @@ export function AddValueDialog({ open, setOpen, goal, onAddValue }: Props) {
 
   const onSubmit = async (data: FormAddValue) => {
     try {
-      setSubmitting(true)
       const amount = Number(data.amount.replace(/\D/g, '')) / 100
-      await onAddValue(goal.id, amount)
+      // Usar tanto o hook personalizado quanto a função onAddValue para compatibilidade
+      await Promise.all([
+        addValueMutation.mutateAsync({ id: goal.id, amount }),
+        onAddValue(goal.id, amount),
+      ])
       toast.success('Valor adicionado com sucesso!')
       form.reset()
       setOpen(false)
     } catch (error) {
       toast.error('Erro ao adicionar valor')
-    } finally {
-      setSubmitting(false)
+      console.error('Erro ao adicionar valor:', error)
     }
   }
 
@@ -106,10 +100,10 @@ export function AddValueDialog({ open, setOpen, goal, onAddValue }: Props) {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={addValueMutation.isPending}
                 className="h-8 text-xs sm:h-9 sm:text-sm"
               >
-                {isSubmitting ? 'Adicionando...' : 'Adicionar'}
+                {addValueMutation.isPending ? 'Adicionando...' : 'Adicionar'}
               </Button>
             </DialogFooter>
           </form>

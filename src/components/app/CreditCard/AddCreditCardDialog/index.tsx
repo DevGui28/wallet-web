@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 import {
   Dialog,
@@ -80,8 +80,8 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
       setSubmitting(true)
       await onAddCreditCard(payload)
       toast.success('Cartão de crédito cadastrado com sucesso')
-      queryClient.invalidateQueries('credit-cards')
-      queryClient.invalidateQueries('credit-cards-detail')
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
       form.reset()
       setOpen(false)
     } catch (error) {

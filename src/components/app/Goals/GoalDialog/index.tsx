@@ -31,12 +31,18 @@ export function GoalDialog({ open, setOpen }: Props) {
   const [deadline, setDeadline] = useState('')
   const [icon, setIcon] = useState('✈️')
 
-  const handleSubmit = () => {
-    setOpen(false)
-    setTitle('')
-    setTargetAmount('')
-    setDeadline('')
-    setIcon('✈️')
+  const handleSubmit = async () => {
+    try {
+      if (!title || !targetAmount || !deadline) return
+
+      setOpen(false)
+      setTitle('')
+      setTargetAmount('')
+      setDeadline('')
+      setIcon('✈️')
+    } catch (error) {
+      console.error('Erro ao criar objetivo:', error)
+    }
   }
 
   const icons = [
@@ -113,7 +119,12 @@ export function GoalDialog({ open, setOpen }: Props) {
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleSubmit}>Salvar</Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={!title || !targetAmount || !deadline}
+          >
+            Salvar
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

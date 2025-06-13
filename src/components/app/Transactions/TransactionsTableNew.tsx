@@ -1,7 +1,6 @@
 'use client'
 
 import { ArrowDown, ArrowUp, CreditCard, TrendUp } from '@phosphor-icons/react'
-import { format } from 'date-fns'
 import { formatCurrency, formatDateToString } from '../../../lib/utils'
 import {
   Table,
@@ -11,77 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from '../../ui/table'
-
-const transactions = [
-  {
-    id: '550e8400-e29b-41d4-a716-446655440000',
-    category_id: 'a234b567-c89d-4e5f-6g7h-8i9j0k1l2m3n',
-    user_id: 'b234c567-d89e-4f5g-6h7i-8j9k0l1m2n3o',
-    description: 'Salário',
-    amount: 5000,
-    date: new Date(),
-    transaction_type: 'INCOME',
-    is_recurring: true,
-    recurrence_pattern: 'MONTHLY',
-    recurrence_start_date: new Date(2024, 0, 1),
-    recurrence_end_date: new Date(2024, 11, 31),
-    next_occurrence: new Date(2024, 3, 1),
-    status: 'PAID',
-    created_at: new Date(),
-    category: 'Salário',
-  },
-  {
-    id: '660e8400-e29b-41d4-a716-446655440001',
-    category_id: 'c234d567-e89f-4g5h-6i7j-8k9l0m1n2o3p',
-    user_id: 'd234e567-f89g-4h5i-6j7k-8l9m0n1o2p3q',
-    description: 'Aluguel',
-    amount: 1500,
-    date: new Date(),
-    transaction_type: 'EXPENSE',
-    is_recurring: true,
-    recurrence_pattern: 'MONTHLY',
-    recurrence_start_date: new Date(2024, 0, 1),
-    recurrence_end_date: new Date(2024, 11, 31),
-    next_occurrence: new Date(2024, 3, 1),
-    status: 'PENDING',
-    created_at: new Date(),
-    category: 'Moradia',
-  },
-  {
-    id: '770e8400-e29b-41d4-a716-446655440002',
-    category_id: 'e234f567-g89h-4i5j-6k7l-8m9n0o1p2q3r',
-    user_id: 'f234g567-h89i-4j5k-6l7m-8n9o0p1q2r3s',
-    description: 'Investimento em CDB',
-    amount: 2000,
-    date: new Date(),
-    transaction_type: 'INVESTMENT',
-    is_recurring: false,
-    recurrence_pattern: null,
-    recurrence_start_date: null,
-    recurrence_end_date: null,
-    next_occurrence: null,
-    status: 'PAID',
-    created_at: new Date(),
-    category: 'Investimentos',
-  },
-  {
-    id: '880e8400-e29b-41d4-a716-446655440003',
-    category_id: 'g234h567-i89j-4k5l-6m7n-8o9p0q1r2s3t',
-    user_id: 'h234i567-j89k-4l5m-6n7o-8p9q0r1s2t3u',
-    description: 'Fatura do Cartão de Crédito',
-    amount: 1000,
-    date: new Date(),
-    transaction_type: 'INVOICE',
-    is_recurring: false,
-    recurrence_pattern: null,
-    recurrence_start_date: null,
-    recurrence_end_date: null,
-    next_occurrence: null,
-    status: 'PAID',
-    created_at: new Date(),
-    category: 'Transferências',
-  },
-]
+import { TransactionResponse } from '../../../types/transactions.interface'
+import { useQuery } from '@tanstack/react-query'
+import { handleGetTransactions } from '../../../api'
+import { TransactionFilters } from '../../../types/transactions.interface'
 
 const transactionTypeIcons = {
   INCOME: <ArrowUp className="h-5 w-5 text-green-500" />,
@@ -110,16 +42,28 @@ const statusLabels = {
   LATE: 'Atrasado',
 }
 
-const recurrencePatternLabels = {
-  MONTHLY: 'Mensal',
-  YEARLY: 'Anual',
-}
-
 type TransactionsTableProps = {
-  search: string
+  search: TransactionFilters
 }
 
 export default function TransactionsTable({ search }: TransactionsTableProps) {
+  const { data: transactions, isLoading } = useQuery({
+    queryKey: ['transactions', search],
+    queryFn: () => handleGetTransactions(search),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  })
+
+  if (isLoading) {
+    return (
+      <div className="flex h-40 w-full items-center justify-center">
+        <p className="text-sm font-medium sm:text-base">
+          Carregando transações...
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full rounded-lg">
       <div className="overflow-x-auto">
@@ -138,9 +82,6 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
               <TableHead className="hidden px-4 py-4 text-left lg:table-cell">
                 Tipo
               </TableHead>
-              <TableHead className="hidden px-4 py-4 text-left xl:table-cell">
-                Recorrência
-              </TableHead>
               <TableHead className="hidden px-4 py-4 text-left lg:table-cell">
                 Status
               </TableHead>
@@ -150,111 +91,64 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions
-              .filter(
-                (transaction) =>
-                  search === '' ||
-                  transaction.description
-                    .toLowerCase()
-                    .includes(search.toLowerCase()) ||
-                  transaction.category
-                    .toLowerCase()
-                    .includes(search.toLowerCase()) ||
-                  transaction.date
-                    .toLocaleString('pt-BR')
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-              )
-              .map((transaction) => (
-                <TableRow
-                  key={transaction.id}
-                  className="border-b border-muted"
-                >
+            {transactions?.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center">
+                  Nenhuma transação encontrada.
+                </TableCell>
+              </TableRow>
+            ) : (
+              transactions?.map((transaction: TransactionResponse) => (
+                <TableRow key={transaction.id} className="border-muted">
                   <TableCell className="px-2 py-3 sm:px-4 sm:py-4">
                     <span className="text-xs sm:text-sm">
-                      {formatDateToString(transaction.date, 'dd MMM yyyy')}
+                      {formatDateToString(
+                        new Date(transaction.date),
+                        'dd MMM yyyy'
+                      )}
                     </span>
                   </TableCell>
                   <TableCell className="px-2 py-3 sm:px-4 sm:py-4">
                     <div className="flex items-center gap-1 sm:gap-3">
-                      <span className="flex-shrink-0">
-                        {
-                          transactionTypeIcons[
-                            transaction.transaction_type as keyof typeof transactionTypeIcons
-                          ]
-                        }
-                      </span>
-                      <span className="truncate text-xs sm:text-sm">
-                        {transaction.description}
+                      <span className="text-xs sm:text-sm">
+                        {transaction.name}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell className="hidden px-4 py-4 md:table-cell">
                     <span className="text-xs sm:text-sm">
-                      {transaction.category}
+                      {transaction.category?.name}
                     </span>
                   </TableCell>
                   <TableCell className="hidden px-4 py-4 lg:table-cell">
-                    <span className="text-xs sm:text-sm">
-                      {
-                        transactionTypeLabels[
-                          transaction.transaction_type as keyof typeof transactionTypeLabels
-                        ]
-                      }
-                    </span>
-                  </TableCell>
-                  <TableCell className="hidden px-4 py-4 xl:table-cell">
-                    {transaction.is_recurring &&
-                    transaction.recurrence_pattern ? (
-                      <div className="space-y-1">
-                        <span className="text-xs font-medium sm:text-sm">
-                          {
-                            recurrencePatternLabels[
-                              transaction.recurrence_pattern as keyof typeof recurrencePatternLabels
-                            ]
-                          }
-                        </span>
-                        {transaction.next_occurrence && (
-                          <p className="text-xs text-muted-foreground">
-                            Próximo:{' '}
-                            {format(transaction.next_occurrence, 'dd/MM/yyyy')}
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-muted-foreground sm:text-sm">
-                        -
+                    <div className="flex items-center gap-2">
+                      {transaction.type &&
+                        transactionTypeIcons[
+                          transaction.type as keyof typeof transactionTypeIcons
+                        ]}
+                      <span className="text-xs sm:text-sm">
+                        {transaction.type &&
+                          transactionTypeLabels[
+                            transaction.type as keyof typeof transactionTypeLabels
+                          ]}
                       </span>
-                    )}
+                    </div>
                   </TableCell>
                   <TableCell className="hidden px-4 py-4 lg:table-cell">
                     <span
-                      className={`rounded-full px-1.5 py-0.5 text-xs sm:px-2 sm:py-1 sm:text-sm ${
-                        statusColors[
-                          transaction.status as keyof typeof statusColors
-                        ]
-                      }`}
+                      className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${statusColors.PAID}`}
                     >
-                      {
-                        statusLabels[
-                          transaction.status as keyof typeof statusLabels
-                        ]
-                      }
+                      {statusLabels.PAID}
                     </span>
                   </TableCell>
                   <TableCell className="px-2 py-3 text-right sm:px-4 sm:py-4">
-                    <span
-                      className={`text-xs font-medium sm:text-sm ${
-                        transaction.transaction_type === 'INCOME'
-                          ? 'text-green-500'
-                          : 'text-red-500'
-                      }`}
-                    >
-                      {formatCurrency(transaction.amount)}
+                    <span className="text-xs sm:text-sm">
+                      {formatCurrency(Number(transaction.totalAmount))}
                     </span>
                   </TableCell>
                 </TableRow>
-              ))}
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

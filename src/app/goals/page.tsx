@@ -17,7 +17,7 @@ export default function GoalsPage() {
   return (
     <>
       <TopNav
-        title="Objetivos"
+        title="Metas"
         name={name}
         subtitle="Defina e acompanhe suas metas financeiras"
       />

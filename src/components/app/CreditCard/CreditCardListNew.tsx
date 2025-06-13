@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { handleCreateCreditCard, handleGetCreditCards } from '../../../api'
 import { Button } from '../../ui/button'
 import { CreditCard } from './CreditCardList'
@@ -39,8 +39,10 @@ export default function CreditCardListNew() {
             onAddCreditCard={async (data) => {
               try {
                 await handleCreateCreditCard(data)
-                queryClient.invalidateQueries('credit-cards')
-                queryClient.invalidateQueries('credit-cards-detail')
+                queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
+                queryClient.invalidateQueries({
+                  queryKey: ['credit-cards-detail'],
+                })
                 return Promise.resolve()
               } catch (error) {
                 return Promise.reject(error)

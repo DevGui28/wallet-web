@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { addYears } from 'date-fns'
 
 import {
@@ -46,12 +46,11 @@ export function NewTransactionDialog({
   setOpen,
   onAddTransaction,
 }: Props) {
+  const queryClient = useQueryClient()
   const [type, setType] = useState<TransactionType | null>(null)
   const [typeIncome, setTypeIncome] = useState<string | null>(null)
   const [isSubmitting, setSubmitting] = useState(false)
   const [openAddCardDialog, setOpenAddCardDialog] = useState(false)
-
-  const queryClient = useQueryClient()
 
   const { data: categories } = useQuery({
     queryKey: ['categories', type],
@@ -116,9 +115,9 @@ export function NewTransactionDialog({
         type,
       })
       handleResetForm()
-      queryClient.invalidateQueries('transactions')
-      queryClient.invalidateQueries('bills')
-      queryClient.invalidateQueries('installments')
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['bills'] })
+      queryClient.invalidateQueries({ queryKey: ['installments'] })
       toast.success('Transação adicionada com sucesso!')
       setOpen(false)
     } catch (error: any) {
@@ -258,7 +257,9 @@ export function NewTransactionDialog({
                           onAddCreditCard={async (data) => {
                             try {
                               await handleCreateCreditCard(data)
-                              queryClient.invalidateQueries('credit-cards')
+                              queryClient.invalidateQueries({
+                                queryKey: ['credit-cards'],
+                              })
                               return Promise.resolve()
                             } catch (error) {
                               return Promise.reject(error)
