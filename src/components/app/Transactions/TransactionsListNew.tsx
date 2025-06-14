@@ -18,9 +18,10 @@ import {
   handleCreateTransaction,
   handleGetCategoriesAll,
   handleGetTransactions,
+  handleGetCreditCards,
 } from '../../../api'
-import { CustomSelect } from '../../shared/CustomSelect'
 import { TransactionCard } from './TransactionCard'
+import TransactionsFilter from './TransactionsFilter'
 
 function MobileTransactionsList({ search }: { search: TransactionFilters }) {
   const { data: transactions, isLoading } = useQuery({
@@ -61,18 +62,16 @@ function MobileTransactionsList({ search }: { search: TransactionFilters }) {
 
 export default function TransactionsList() {
   const [search, setSearch] = useState({} as TransactionFilters)
-  const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: categories } = useQuery({
+  const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
-    queryFn: async () => {
-      const data = await handleGetCategoriesAll()
-      return data.map((category) => ({
-        label: category.name,
-        value: category.id,
-      }))
-    },
+    queryFn: handleGetCategoriesAll,
+  })
+
+  const { data: creditCards, isLoading: creditCardsLoading } = useQuery({
+    queryKey: ['credit-cards'],
+    queryFn: handleGetCreditCards,
   })
 
   const createTransactionMutation = useMutation({
@@ -90,6 +89,20 @@ export default function TransactionsList() {
     } catch (error) {
       toast.error('Erro ao criar transação')
     }
+  }
+
+  const isLoading = categoriesLoading || creditCardsLoading
+
+  const [open, setOpen] = useState(false)
+
+  if (isLoading) {
+    return (
+      <div className="flex h-40 w-full items-center justify-center">
+        <p className="text-sm font-medium sm:text-base">
+          Carregando transações...
+        </p>
+      </div>
+    )
   }
 
   return (
@@ -117,17 +130,24 @@ export default function TransactionsList() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="mb-6">
-          <div className="relative flex-1">
-            <CustomSelect
-              label="Filtrar por categoria"
-              placeholder="Selecione uma categoria"
-              options={categories || []}
-              value={search.categoryId || null}
-              onChange={(value) => setSearch({ ...search, categoryId: value })}
-            />
-          </div>
-        </div>
+        {!isLoading && categories && creditCards && (
+          <TransactionsFilter
+            search={search}
+            setSearch={setSearch}
+            categories={
+              categories?.map((category) => ({
+                label: category.name,
+                value: category.id,
+              })) || []
+            }
+            creditCards={
+              creditCards?.map((card) => ({
+                label: card.cardName,
+                value: card.id,
+              })) || []
+            }
+          />
+        )}
         <div className="hidden overflow-x-auto md:block">
           <TransactionsTable search={search} />
         </div>
