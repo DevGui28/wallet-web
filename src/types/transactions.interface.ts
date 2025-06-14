@@ -1,4 +1,6 @@
 import { CreditCardResponse } from './credit-card.interface'
+import { BillToPayResponse } from './bill-to-pay.interface'
+import { InvoiceResponse } from './invoice.interface'
 
 export enum PaymentMethod {
   CREDIT_CARD = 'CREDIT_CARD',
@@ -72,10 +74,19 @@ export type TransactionResponse = {
   creditCardId?: string
   createdAt: string
   updatedAt: string
+  isPaid: boolean
+  isRecurring: boolean
+  paidAt: string | Date | null
+  invoiceId?: string
+  totalInstallments?: number
+  installmentNumber?: number
+  billToPayId?: string
   category: {
     name: string
   }
   creditCard?: CreditCardResponse
+  billToPay?: BillToPayResponse
+  invoice?: InvoiceResponse
 }
 
 export interface TransactionFilters {
