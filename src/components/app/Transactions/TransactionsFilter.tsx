@@ -9,8 +9,7 @@ import {
   TransactionFilters,
   TransactionType,
 } from '../../../types/transactions.interface'
-import { format, getMonth, getYear, setMonth, setYear } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { getMonth, getYear } from 'date-fns'
 import { CalendarBlank } from '@phosphor-icons/react'
 import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover'
 import {
@@ -20,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../ui/select'
+import { formatDateToString } from '../../../lib/utils'
 
 interface TransactionsFilterProps {
   search: TransactionFilters
@@ -54,10 +54,12 @@ export default function TransactionsFilter({
   const paymentMethods = [
     { label: 'Todos', value: 'ALL' },
     { label: 'Dinheiro', value: 'CASH' },
+    { label: 'Boleto', value: 'BANK_SLIP' },
     { label: 'Pix', value: 'PIX' },
     { label: 'Cartão de Crédito', value: 'CREDIT_CARD' },
     { label: 'Cartão de Débito', value: 'DEBIT_CARD' },
-    { label: 'Transferência', value: 'TRANSFER' },
+    { label: 'Transferência', value: 'BANK_TRANSFER' },
+    { label: 'Outro', value: 'OTHER' },
   ]
 
   const clearFilters = () => {
@@ -99,26 +101,32 @@ export default function TransactionsFilter({
           )}
         </div>
 
-        <div className="3xl:grid-cols-5 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="3xl:grid-cols-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
           <div>
             <CustomSelect
-              label="Tipo de transação"
+              label="Tipo"
               placeholder="Todos os tipos"
               options={transactionTypes}
               value={search.type || 'ALL'}
-              onChange={(value) => setSearch({ ...search, type: value })}
+              onChange={(value) =>
+                setSearch({ ...search, type: value as TransactionType })
+              }
             />
           </div>
 
-          <div>
-            <CustomSelect
-              label="Categoria"
-              placeholder="Todas as categorias"
-              options={categories || []}
-              value={search.categoryId || null}
-              onChange={(value) => setSearch({ ...search, categoryId: value })}
-            />
-          </div>
+          {search.type !== 'ALL' && search.type !== undefined && (
+            <div>
+              <CustomSelect
+                label="Categoria"
+                placeholder="Todas as categorias"
+                options={categories || []}
+                value={search.categoryId || null}
+                onChange={(value) =>
+                  setSearch({ ...search, categoryId: value })
+                }
+              />
+            </div>
+          )}
 
           <div>
             <CustomSelect
@@ -150,8 +158,8 @@ export default function TransactionsFilter({
             </div>
           )}
 
-          <div>
-            <div className="flex flex-col gap-1">
+          <div className="flex flex-col justify-end">
+            <div className="flex max-h-[70px] flex-col gap-2">
               <span className="text-sm font-medium">Data</span>
               <div className="relative">
                 <Popover modal={true}>
@@ -161,7 +169,7 @@ export default function TransactionsFilter({
                       className="flex w-full items-center justify-between pl-3 text-left font-normal"
                     >
                       {dateFilter ? (
-                        format(dateFilter, 'MMMM yyyy', { locale: ptBR })
+                        formatDateToString(dateFilter, 'MMMM yyyy')
                       ) : (
                         <span>Selecione mês/ano</span>
                       )}
@@ -203,12 +211,13 @@ export default function TransactionsFilter({
                             onValueChange={(value) => {
                               const month = parseInt(value)
                               setCurrentMonth(month)
-                              const newDate = dateFilter || new Date()
-                              const updatedDate = setMonth(newDate, month)
+                              const year =
+                                currentYear || new Date().getFullYear()
+                              const updatedDate = new Date(year, month)
                               setDateFilter(updatedDate)
                               setSearch({
                                 ...search,
-                                date: format(updatedDate, 'yyyy-MM'),
+                                date: updatedDate.toISOString(),
                               })
                             }}
                           >
@@ -238,12 +247,13 @@ export default function TransactionsFilter({
                             onValueChange={(value) => {
                               const year = parseInt(value)
                               setCurrentYear(year)
-                              const newDate = dateFilter || new Date()
-                              const updatedDate = setYear(newDate, year)
+                              const month =
+                                currentMonth || new Date().getMonth()
+                              const updatedDate = new Date(year, month)
                               setDateFilter(updatedDate)
                               setSearch({
                                 ...search,
-                                date: format(updatedDate, 'yyyy-MM'),
+                                date: updatedDate.toISOString(),
                               })
                             }}
                           >

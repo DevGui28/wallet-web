@@ -56,22 +56,31 @@ export const handleFindTransaction = async (id: string) => {
 export const handleGetTransactions = async (filters: TransactionFilters) => {
   const params = new URLSearchParams({
     ...(filters.categoryId && { categoryId: filters.categoryId }),
-    ...(filters.paymentMethod && { paymentMethod: filters.paymentMethod }),
+    ...(filters.paymentMethod && {
+      paymentMethod:
+        filters.paymentMethod !== 'ALL' ? filters.paymentMethod : '',
+    }),
     ...(filters.creditCardId && { creditCardId: filters.creditCardId }),
     ...(filters.type && { type: filters.type !== 'ALL' ? filters.type : '' }),
     ...(filters.date && { date: filters.date }),
   })
 
-  const { data } = await apiWallet.get<TransactionResponse[]>(
-    `/transactions?${params}`
-  )
+  const { data } = await apiWallet.get<{
+    transactions: TransactionResponse[]
+    total: {
+      income: number
+      expense: number
+      balance: number
+      investment: number
+    }
+  }>(`/transactions?${params}`)
 
   return data
 }
 
-export const handleGetCategories = async (type: TransactionType) => {
+export const handleGetCategories = async (type: TransactionType | 'ALL') => {
   const { data } = await apiWallet.get<CategoriesResponse[]>(
-    `/categories?type=${type}`
+    type === 'ALL' ? '/categories/all' : `/categories?type=${type}`
   )
   return data
 }

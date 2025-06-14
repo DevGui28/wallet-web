@@ -54,12 +54,14 @@ type TransactionsTableProps = {
 }
 
 export default function TransactionsTable({ search }: TransactionsTableProps) {
-  const { data: transactions, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['transactions', search],
     queryFn: () => handleGetTransactions(search),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
   })
+
+  const transactions = data?.transactions
 
   if (isLoading) {
     return (

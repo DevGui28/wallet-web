@@ -93,7 +93,7 @@ export interface TransactionFilters {
   categoryId?: string
   paymentMethod?: string
   creditCardId?: string
-  type?: string
+  type?: TransactionType | 'ALL'
   date?: string
 }
 

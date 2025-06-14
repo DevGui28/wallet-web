@@ -1,35 +1,38 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
 import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { Plus } from '@phosphor-icons/react'
-import TransactionsTable from './TransactionsTableNew'
 import { Button } from '../../ui/button'
 import { Dialog, DialogTrigger } from '../../ui/dialog'
 import { NewTransactionDialog } from './NewTransactionDialog'
+import { formatCurrency } from '../../../lib/utils'
 import {
   CreateTransaction,
   TransactionFilters,
   TransactionResponse,
 } from '../../../types/transactions.interface'
-import { toast } from 'sonner'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  handleCreateTransaction,
-  handleGetCategoriesAll,
-  handleGetTransactions,
-  handleGetCreditCards,
-} from '../../../api'
+import TransactionsTable from './TransactionsTableNew'
 import { TransactionCard } from './TransactionCard'
 import TransactionsFilter from './TransactionsFilter'
+import {
+  handleCreateTransaction,
+  handleGetTransactions,
+  handleGetCreditCards,
+  handleGetCategories,
+} from '../../../api'
 
 function MobileTransactionsList({ search }: { search: TransactionFilters }) {
-  const { data: transactions, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['transactions', search],
     queryFn: () => handleGetTransactions(search),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
   })
+
+  const transactions = data?.transactions
 
   if (isLoading) {
     return (
@@ -64,9 +67,16 @@ export default function TransactionsList() {
   const [search, setSearch] = useState({} as TransactionFilters)
   const queryClient = useQueryClient()
 
+  const { data: transactionsData, isLoading: transactionsLoading } = useQuery({
+    queryKey: ['transactions', search],
+    queryFn: () => handleGetTransactions(search),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  })
+
   const { data: categories, isLoading: categoriesLoading } = useQuery({
-    queryKey: ['categories'],
-    queryFn: handleGetCategoriesAll,
+    queryKey: ['categories', search.type],
+    queryFn: () => handleGetCategories(search.type || 'ALL'),
   })
 
   const { data: creditCards, isLoading: creditCardsLoading } = useQuery({
@@ -91,7 +101,8 @@ export default function TransactionsList() {
     }
   }
 
-  const isLoading = categoriesLoading || creditCardsLoading
+  const isLoading =
+    categoriesLoading || creditCardsLoading || transactionsLoading
 
   const [open, setOpen] = useState(false)
 
@@ -109,7 +120,34 @@ export default function TransactionsList() {
     <Card className="w-full">
       <CardHeader>
         <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-          <CardTitle className="text-xl">Transações</CardTitle>
+          <div className="flex flex-col gap-1">
+            <CardTitle className="text-xl">Transações</CardTitle>
+            {transactionsData?.total && (
+              <div className="flex gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Receita: {formatCurrency(transactionsData.total.income)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Despesa: {formatCurrency(transactionsData.total.expense)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Investimento:{' '}
+                    {formatCurrency(transactionsData.total.investment)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Total: {formatCurrency(transactionsData.total.balance)}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button
