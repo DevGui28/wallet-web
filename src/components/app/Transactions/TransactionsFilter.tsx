@@ -53,11 +53,11 @@ export default function TransactionsFilter({
 
   const paymentMethods = [
     { label: 'Todos', value: 'ALL' },
-    { label: 'Dinheiro', value: 'CASH' },
     { label: 'Boleto', value: 'BANK_SLIP' },
-    { label: 'Pix', value: 'PIX' },
     { label: 'Cartão de Crédito', value: 'CREDIT_CARD' },
     { label: 'Cartão de Débito', value: 'DEBIT_CARD' },
+    { label: 'Dinheiro', value: 'CASH' },
+    { label: 'Pix', value: 'PIX' },
     { label: 'Transferência', value: 'BANK_TRANSFER' },
     { label: 'Outro', value: 'OTHER' },
   ]
@@ -114,19 +114,17 @@ export default function TransactionsFilter({
             />
           </div>
 
-          {search.type !== 'ALL' && search.type !== undefined && (
-            <div>
-              <CustomSelect
-                label="Categoria"
-                placeholder="Todas as categorias"
-                options={categories || []}
-                value={search.categoryId || null}
-                onChange={(value) =>
-                  setSearch({ ...search, categoryId: value })
-                }
-              />
-            </div>
-          )}
+          {/* {search.type !== 'ALL' && search.type !== undefined && ( */}
+          <div>
+            <CustomSelect
+              label="Categoria"
+              placeholder="Todas as categorias"
+              options={categories || []}
+              value={search.categoryId || null}
+              onChange={(value) => setSearch({ ...search, categoryId: value })}
+            />
+          </div>
+          {/* )} */}
 
           <div>
             <CustomSelect
