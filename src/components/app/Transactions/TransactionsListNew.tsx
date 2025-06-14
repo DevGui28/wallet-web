@@ -80,15 +80,16 @@ export default function TransactionsList() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success('Transação adicionada com sucesso')
-    },
-    onError: () => {
-      toast.error('Erro ao criar transação')
     },
   })
 
   const onAddTransaction = async (data: CreateTransaction) => {
-    await createTransactionMutation.mutateAsync(data)
+    try {
+      await createTransactionMutation.mutateAsync(data)
+      toast.success('Transação adicionada com sucesso!')
+    } catch (error) {
+      toast.error('Erro ao criar transação')
+    }
   }
 
   return (
