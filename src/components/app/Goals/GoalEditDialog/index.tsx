@@ -104,7 +104,9 @@ export function GoalEditDialog({ open, setOpen, goal }: Props) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-lg sm:text-xl">Editar Objetivo</DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">
+            Editar Objetivo
+          </DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
             Atualize os detalhes do seu objetivo financeiro.
           </DialogDescription>

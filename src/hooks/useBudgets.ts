@@ -36,7 +36,8 @@ export function useUpdateBudget() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateBudgetDTO }) => handleUpdateBudget(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateBudgetDTO }) =>
+      handleUpdateBudget(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgets'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
