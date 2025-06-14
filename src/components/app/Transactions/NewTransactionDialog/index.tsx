@@ -64,15 +64,9 @@ export function NewTransactionDialog({
     },
   })
 
-  const { data: creditCards, isLoading } = useQuery({
+  const { data: creditCards, isLoading: creditCardsLoading } = useQuery({
     queryKey: ['credit-cards'],
-    queryFn: async () => {
-      const creditCard = await handleGetCreditCards()
-      return creditCard.map((card) => ({
-        value: card.id,
-        label: card.cardName,
-      }))
-    },
+    queryFn: handleGetCreditCards,
   })
 
   const form = useForm<FormAddTransaction>({
@@ -201,12 +195,15 @@ export function NewTransactionDialog({
                     label="Método de pagamento"
                   />
                   {form.watch('paymentMethod') === 'CREDIT_CARD' &&
-                    (!isLoading && creditCards?.length ? (
+                    (!creditCardsLoading && creditCards?.length ? (
                       <>
                         <FormSelect
                           form={form}
                           name="creditCardId"
-                          data={creditCards}
+                          data={creditCards.map((card) => ({
+                            label: card.cardName,
+                            value: card.id,
+                          }))}
                           label="Selecione o cartão de crédito"
                         />
                         <FormInput
