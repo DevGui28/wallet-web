@@ -1,6 +1,13 @@
 'use client'
 
-import { ArrowDown, ArrowUp, CreditCard, TrendUp } from '@phosphor-icons/react'
+import {
+  ArrowDown,
+  ArrowUp,
+  CreditCard,
+  Eye,
+  TrendUp,
+} from '@phosphor-icons/react'
+import Link from 'next/link'
 import { formatCurrency, formatDateToString } from '../../../lib/utils'
 import {
   Table,
@@ -88,10 +95,13 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
               <TableHead className="px-2 py-3 text-right sm:px-4 sm:py-4">
                 Valor
               </TableHead>
+              <TableHead className="px-2 py-3 text-center sm:px-4 sm:py-4">
+                Ações
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions?.length === 0 ? (
+            {transactions?.length === 0 || !transactions ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
                   Nenhuma transação encontrada.
@@ -136,15 +146,33 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
                   </TableCell>
                   <TableCell className="hidden px-4 py-4 lg:table-cell">
                     <span
-                      className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${statusColors.PAID}`}
+                      className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${statusColors[transaction.isPaid ? 'PAID' : new Date(transaction.date).getTime() < new Date().getTime() ? 'LATE' : 'PENDING']}`}
                     >
-                      {statusLabels.PAID}
+                      {
+                        statusLabels[
+                          transaction.isPaid
+                            ? 'PAID'
+                            : new Date(transaction.date).getTime() <
+                                new Date().getTime()
+                              ? 'LATE'
+                              : 'PENDING'
+                        ]
+                      }
                     </span>
                   </TableCell>
                   <TableCell className="px-2 py-3 text-right sm:px-4 sm:py-4">
                     <span className="text-xs sm:text-sm">
                       {formatCurrency(Number(transaction.totalAmount))}
                     </span>
+                  </TableCell>
+                  <TableCell className="px-2 py-3 text-center sm:px-4 sm:py-4">
+                    <Link
+                      href={`/transactions/${transaction.id}`}
+                      className="inline-flex items-center justify-center rounded-md bg-primary p-2 text-primary-foreground hover:bg-primary/90"
+                      title="Ver detalhes"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))

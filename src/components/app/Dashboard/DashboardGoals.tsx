@@ -24,7 +24,7 @@ export default function DashboardGoals({ data }: DashboardGoalsProps) {
               Nenhuma meta financeira encontrada.
             </p>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {data?.map((goal) => {
                 const progress = (goal.currentAmount / goal.targetAmount) * 100
                 const isExpired = isBefore(new Date(goal.deadline), new Date())
@@ -72,7 +72,7 @@ export default function DashboardGoals({ data }: DashboardGoalsProps) {
           )}
         </CardContent>
       </div>
-      <div className="mt-4 flex justify-end p-6">
+      <div className="flex justify-end p-6">
         <DashboardButtomSeeMore link="/goals" />
       </div>
     </Card>

@@ -10,11 +10,54 @@ import { NewTransactionDialog } from './NewTransactionDialog'
 import {
   CreateTransaction,
   TransactionFilters,
+  TransactionResponse,
 } from '../../../types/transactions.interface'
 import { toast } from 'sonner'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { handleCreateTransaction, handleGetCategoriesAll } from '../../../api'
+import {
+  handleCreateTransaction,
+  handleGetCategoriesAll,
+  handleGetTransactions,
+} from '../../../api'
 import { CustomSelect } from '../../shared/CustomSelect'
+import { TransactionCard } from './TransactionCard'
+
+function MobileTransactionsList({ search }: { search: TransactionFilters }) {
+  const { data: transactions, isLoading } = useQuery({
+    queryKey: ['transactions', search],
+    queryFn: () => handleGetTransactions(search),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  })
+
+  if (isLoading) {
+    return (
+      <div className="flex h-40 w-full items-center justify-center">
+        <p className="text-sm font-medium sm:text-base">
+          Carregando transações...
+        </p>
+      </div>
+    )
+  }
+
+  if (transactions?.length === 0 || !transactions) {
+    return (
+      <div className="flex h-40 w-full items-center justify-center">
+        <p className="text-sm font-medium sm:text-base">
+          Nenhuma transação encontrada.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-full">
+      {transactions.map((transaction: TransactionResponse) => (
+        <TransactionCard key={transaction.id} transaction={transaction} />
+      ))}
+    </div>
+  )
+}
 
 export default function TransactionsList() {
   const [search, setSearch] = useState({} as TransactionFilters)
@@ -84,8 +127,12 @@ export default function TransactionsList() {
             />
           </div>
         </div>
-        <div className="overflow-x-auto">
+        <div className="hidden overflow-x-auto md:block">
           <TransactionsTable search={search} />
+        </div>
+
+        <div className="block md:hidden">
+          <MobileTransactionsList search={search} />
         </div>
       </CardContent>
     </Card>

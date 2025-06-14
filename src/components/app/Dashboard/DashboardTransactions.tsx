@@ -51,7 +51,7 @@ export default function DashboardTransactions({
             ))}
           </div>
         )}
-        <div className="mt-4 flex justify-end">
+        <div className="flex justify-end">
           <DashboardButtomSeeMore link="/transactions" />
         </div>
       </CardContent>

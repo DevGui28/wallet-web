@@ -12,7 +12,7 @@ export default function DashboardButtomSeeMore({
   text = 'Ver mais',
 }: DashboardButtomSeeMoreProps) {
   return (
-    <div className="mt-4 flex justify-end">
+    <div className="flex justify-end">
       <Link href={link}>
         <Button variant="outline" size="sm" className="flex items-center">
           {text}

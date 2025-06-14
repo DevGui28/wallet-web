@@ -129,7 +129,7 @@ export function NewTransactionDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="max-h-[90vh] sm:max-w-2xl 2xl:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">
             Nova Transação
@@ -157,7 +157,7 @@ export function NewTransactionDialog({
               className="flex flex-col"
             >
               {type && (
-                <div className="mb-4 grid gap-4 sm:grid-cols-2">
+                <div className="mb-4 grid gap-4 2xl:grid-cols-2">
                   <FormInput
                     label="Identificação"
                     name="name"
@@ -274,7 +274,7 @@ export function NewTransactionDialog({
                   />
                 </div>
               )}
-              <DialogFooter className="sm:justify-end">
+              <DialogFooter className="gap-2 sm:justify-end">
                 <Button
                   type="button"
                   variant="outline"

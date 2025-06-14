@@ -49,7 +49,7 @@ export default function DashboardBudgets({ data }: DashboardBudgetsProps) {
             ))}
           </div>
         )}
-        <div className="mt-4 flex justify-end">
+        <div className="flex justify-end">
           <DashboardButtomSeeMore link="/budgets" />
         </div>
       </CardContent>
