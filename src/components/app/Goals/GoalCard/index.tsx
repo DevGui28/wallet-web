@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CoinVertical, PencilSimpleLine, Trash } from '@phosphor-icons/react'
 import { AddValueDialog } from '../AddValueDialog'
 import { GoalEditDialog } from '../GoalEditDialog'
-import { Goal } from '../../../../api/goals'
-import { useAddValueToGoal, useDeleteGoal } from '../../../../hooks/useGoals'
+import { useAddValueToGoal, Goal } from '../../../../hooks/useGoals'
 
 type Props = {
   goal: Goal
@@ -26,7 +25,6 @@ export function GoalCard({ goal }: Props) {
   }
 
   const addValueMutation = useAddValueToGoal()
-  const deleteGoalMutation = useDeleteGoal()
 
   const handleAddValue = async (goalId: string, amount: number) => {
     try {
@@ -35,14 +33,6 @@ export function GoalCard({ goal }: Props) {
     } catch (error) {
       console.error('Erro ao adicionar valor ao objetivo:', error)
       return Promise.reject(error)
-    }
-  }
-
-  const handleDeleteGoal = async () => {
-    try {
-      await deleteGoalMutation.mutateAsync(goal.id)
-    } catch (error) {
-      console.error('Erro ao excluir objetivo:', error)
     }
   }
 
@@ -65,7 +55,6 @@ export function GoalCard({ goal }: Props) {
             <Trash
               size={14}
               className="cursor-pointer text-muted-foreground hover:text-destructive sm:size-4"
-              onClick={handleDeleteGoal}
             />
           </div>
         </div>
@@ -75,7 +64,7 @@ export function GoalCard({ goal }: Props) {
             {percentage}% concluído
           </span>
           <span className="text-muted-foreground">
-            Meta: {formatDate(goal.deadline)}
+            Meta: {formatDate(goal.deadline?.toISOString() || '')}
           </span>
         </div>
 

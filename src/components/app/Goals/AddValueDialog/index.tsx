@@ -4,8 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { useAddValueToGoal } from '../../../../hooks/useGoals'
-import { Goal } from '../../../../api/goals'
+import { useAddValueToGoal, Goal } from '../../../../hooks/useGoals'
 
 import {
   Dialog,

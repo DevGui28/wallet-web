@@ -3,10 +3,8 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { z } from 'zod'
-import { useUpdateGoal } from '../../../../hooks/useGoals'
-import { Goal } from '../../../../api/goals'
+import { Goal } from '../../../../hooks/useGoals'
 
 import {
   Dialog,
@@ -44,8 +42,6 @@ type Props = {
 }
 
 export function GoalEditDialog({ open, setOpen, goal }: Props) {
-  const updateGoalMutation = useUpdateGoal()
-
   const form = useForm<FormEditGoal>({
     resolver: zodResolver(editGoalSchema),
     defaultValues: {
@@ -61,33 +57,11 @@ export function GoalEditDialog({ open, setOpen, goal }: Props) {
       form.reset({
         title: goal.title,
         targetAmount: goal.targetAmount.toString(),
-        deadline: goal.deadline,
+        deadline: goal.deadline?.toISOString() || '',
         icon: goal.icon,
       })
     }
   }, [goal, open, form])
-
-  const onSubmit = async (data: FormEditGoal) => {
-    if (!goal) return
-
-    try {
-      await updateGoalMutation.mutateAsync({
-        id: goal.id,
-        data: {
-          title: data.title,
-          targetAmount: parseFloat(data.targetAmount),
-          deadline: data.deadline,
-          icon: data.icon,
-        },
-      })
-
-      toast.success('Objetivo atualizado com sucesso!')
-      setOpen(false)
-    } catch (error) {
-      toast.error('Erro ao atualizar objetivo')
-      console.error('Erro ao atualizar objetivo:', error)
-    }
-  }
 
   const icons = [
     { value: '✈️', label: 'Viagem' },
@@ -112,7 +86,7 @@ export function GoalEditDialog({ open, setOpen, goal }: Props) {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4">
             <div className="grid gap-2">
               <Label htmlFor="title">Título</Label>
               <Input
@@ -166,12 +140,8 @@ export function GoalEditDialog({ open, setOpen, goal }: Props) {
               >
                 Cancelar
               </Button>
-              <Button
-                type="submit"
-                disabled={updateGoalMutation.isPending}
-                className="h-8 text-xs sm:h-9 sm:text-sm"
-              >
-                {updateGoalMutation.isPending ? 'Salvando...' : 'Salvar'}
+              <Button type="submit" className="h-8 text-xs sm:h-9 sm:text-sm">
+                Salvar
               </Button>
             </DialogFooter>
           </form>
