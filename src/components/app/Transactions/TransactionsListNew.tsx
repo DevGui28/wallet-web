@@ -123,7 +123,7 @@ export default function TransactionsList() {
           <div className="flex flex-col gap-1">
             <CardTitle className="text-xl">Transações</CardTitle>
             {transactionsData?.total && (
-              <div className="flex gap-4">
+              <div className="flex flex-col gap-2 lg:flex-row">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-muted-foreground">
                     Receita: {formatCurrency(transactionsData.total.income)}

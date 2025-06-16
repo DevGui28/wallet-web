@@ -6,6 +6,7 @@ import {
   CreditCard,
   Eye,
   TrendUp,
+  CurrencyCircleDollar,
 } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { formatCurrency, formatDateToString } from '../../../lib/utils'
@@ -18,9 +19,16 @@ import {
   TableRow,
 } from '../../ui/table'
 import { TransactionResponse } from '../../../types/transactions.interface'
-import { useQuery } from '@tanstack/react-query'
-import { handleGetTransactions } from '../../../api'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  handleGetTransactions,
+  handlePayTransaction,
+  handlePayInvoice,
+} from '../../../api'
 import { TransactionFilters } from '../../../types/transactions.interface'
+import { useState } from 'react'
+import { PayTransactionDialog } from './PayTransactionDialog'
+import { toast } from 'sonner'
 
 const transactionTypeIcons = {
   INCOME: <ArrowUp className="h-5 w-5 text-green-500" />,
@@ -54,12 +62,56 @@ type TransactionsTableProps = {
 }
 
 export default function TransactionsTable({ search }: TransactionsTableProps) {
+  const [payDialogOpen, setPayDialogOpen] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<TransactionResponse | null>(null)
+  const queryClient = useQueryClient()
+
   const { data, isLoading } = useQuery({
     queryKey: ['transactions', search],
     queryFn: () => handleGetTransactions(search),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
   })
+
+  const payTransactionMutation = useMutation({
+    mutationFn: (id: string) => handlePayTransaction(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      toast.success('Transação paga com sucesso!')
+    },
+    onError: () => {
+      toast.error('Erro ao pagar transação')
+    },
+  })
+
+  const payInvoiceMutation = useMutation({
+    mutationFn: (id: string) => handlePayInvoice(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
+      queryClient.invalidateQueries({ queryKey: ['invoices'] })
+      toast.success('Fatura paga com sucesso!')
+    },
+    onError: () => {
+      toast.error('Erro ao pagar fatura')
+    },
+  })
+
+  const handleOpenPayDialog = (transaction: TransactionResponse) => {
+    setSelectedTransaction(transaction)
+    setPayDialogOpen(true)
+  }
+
+  const onPayTransaction = async (id: string) => {
+    await payTransactionMutation.mutateAsync(id)
+  }
+
+  const onPayInvoice = async (id: string) => {
+    await payInvoiceMutation.mutateAsync(id)
+  }
 
   const transactions = data?.transactions
 
@@ -75,6 +127,18 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
 
   return (
     <div className="w-full rounded-lg">
+      {selectedTransaction && (
+        <PayTransactionDialog
+          open={payDialogOpen}
+          setOpen={setPayDialogOpen}
+          transaction={selectedTransaction}
+          onPayTransaction={onPayTransaction}
+          onPayInvoice={onPayInvoice}
+          isLoading={
+            payTransactionMutation.isPending || payInvoiceMutation.isPending
+          }
+        />
+      )}
       <div className="overflow-x-auto">
         <Table className="w-full rounded-2xl">
           <TableHeader>
@@ -148,14 +212,16 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
                   </TableCell>
                   <TableCell className="hidden px-4 py-4 lg:table-cell">
                     <span
-                      className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${statusColors[transaction.isPaid ? 'PAID' : new Date(transaction.date).getTime() < new Date().getTime() ? 'LATE' : 'PENDING']}`}
+                      className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${statusColors[transaction.isPaid ? 'PAID' : new Date(transaction.invoice?.dueDate || transaction.date).getTime() < new Date().getTime() ? 'LATE' : 'PENDING']}`}
                     >
                       {
                         statusLabels[
                           transaction.isPaid
                             ? 'PAID'
-                            : new Date(transaction.date).getTime() <
-                                new Date().getTime()
+                            : new Date(
+                                  transaction.invoice?.dueDate ||
+                                    transaction.date
+                                ).getTime() < new Date().getTime()
                               ? 'LATE'
                               : 'PENDING'
                         ]
@@ -168,13 +234,24 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
                     </span>
                   </TableCell>
                   <TableCell className="px-2 py-3 text-center sm:px-4 sm:py-4">
-                    <Link
-                      href={`/transactions/${transaction.id}`}
-                      className="inline-flex items-center justify-center rounded-md bg-primary p-2 text-primary-foreground hover:bg-primary/90"
-                      title="Ver detalhes"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Link>
+                    <div className="flex items-center justify-center gap-2">
+                      {!transaction.isPaid && (
+                        <button
+                          onClick={() => handleOpenPayDialog(transaction)}
+                          className="inline-flex items-center justify-center rounded-md bg-green-600 p-2 text-white hover:bg-green-700"
+                          title="Pagar transação"
+                        >
+                          <CurrencyCircleDollar className="h-4 w-4" />
+                        </button>
+                      )}
+                      <Link
+                        href={`/transactions/${transaction.id}`}
+                        className="inline-flex items-center justify-center rounded-md bg-primary p-2 text-primary-foreground hover:bg-primary/90"
+                        title="Ver detalhes"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

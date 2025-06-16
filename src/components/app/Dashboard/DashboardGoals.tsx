@@ -72,7 +72,7 @@ export default function DashboardGoals({ data }: DashboardGoalsProps) {
           )}
         </CardContent>
       </div>
-      <div className="flex justify-end p-6">
+      <div className="flex justify-end pb-6 pr-6">
         <DashboardButtomSeeMore link="/goals" />
       </div>
     </Card>

@@ -1,9 +1,23 @@
 'use client'
 
-import { ArrowDown, ArrowUp, Eye, TrendUp } from '@phosphor-icons/react'
+import {
+  ArrowDown,
+  ArrowUp,
+  Eye,
+  TrendUp,
+  CurrencyCircleDollar,
+} from '@phosphor-icons/react'
 import Link from 'next/link'
 import { formatCurrency, formatDateToString } from '../../../lib/utils'
-import { TransactionResponse } from '../../../types/transactions.interface'
+import {
+  PaymentMethod,
+  TransactionResponse,
+} from '../../../types/transactions.interface'
+import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { handlePayTransaction, handlePayInvoice } from '../../../api'
+import { toast } from 'sonner'
+import { PayTransactionDialog } from './PayTransactionDialog'
 
 const transactionTypeIcons = {
   INCOME: <ArrowUp className="h-5 w-5 text-green-500" />,
@@ -36,8 +50,58 @@ type TransactionCardProps = {
 }
 
 export function TransactionCard({ transaction }: TransactionCardProps) {
+  const [payDialogOpen, setPayDialogOpen] = useState(false)
+  const queryClient = useQueryClient()
+
+  const payTransactionMutation = useMutation({
+    mutationFn: (id: string) => handlePayTransaction(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      toast.success('Transação paga com sucesso!')
+    },
+    onError: () => {
+      toast.error('Erro ao pagar transação')
+    },
+  })
+
+  const payInvoiceMutation = useMutation({
+    mutationFn: (id: string) => handlePayInvoice(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
+      queryClient.invalidateQueries({ queryKey: ['invoices'] })
+      toast.success('Fatura paga com sucesso!')
+    },
+    onError: () => {
+      toast.error('Erro ao pagar fatura')
+    },
+  })
+
+  const handleOpenPayDialog = () => {
+    setPayDialogOpen(true)
+  }
+
+  const onPayTransaction = async (id: string) => {
+    await payTransactionMutation.mutateAsync(id)
+  }
+
+  const onPayInvoice = async (id: string) => {
+    await payInvoiceMutation.mutateAsync(id)
+  }
   return (
     <div className="mb-4 rounded-lg border border-border bg-card p-4 shadow-sm">
+      <PayTransactionDialog
+        open={payDialogOpen}
+        setOpen={setPayDialogOpen}
+        transaction={transaction}
+        onPayTransaction={onPayTransaction}
+        onPayInvoice={onPayInvoice}
+        isLoading={
+          payTransactionMutation.isPending || payInvoiceMutation.isPending
+        }
+      />
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-sm font-medium">{transaction.name}</span>
@@ -76,14 +140,42 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
 
         <span
           className={`rounded-full px-2 py-1 text-xs font-medium ${
-            statusColors[transaction.isPaid ? 'PAID' : 'PENDING']
+            statusColors[
+              transaction.isPaid
+                ? 'PAID'
+                : new Date(
+                      transaction.invoice?.dueDate || transaction.date
+                    ).getTime() < new Date().getTime()
+                  ? 'LATE'
+                  : 'PENDING'
+            ]
           }`}
         >
-          {statusLabels[transaction.isPaid ? 'PAID' : 'PENDING']}
+          {
+            statusLabels[
+              transaction.isPaid
+                ? 'PAID'
+                : new Date(
+                      transaction.invoice?.dueDate || transaction.date
+                    ).getTime() < new Date().getTime()
+                  ? 'LATE'
+                  : 'PENDING'
+            ]
+          }
         </span>
       </div>
 
-      <div className="mt-3 flex justify-end">
+      <div className="mt-3 flex justify-end gap-2">
+        {!transaction.isPaid &&
+          transaction.paymentMethod !== PaymentMethod.CREDIT_CARD && (
+            <button
+              onClick={handleOpenPayDialog}
+              className="inline-flex items-center gap-1 rounded-md bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700"
+            >
+              <CurrencyCircleDollar className="h-3 w-3" />
+              Pagar
+            </button>
+          )}
         <Link
           href={`/transactions/${transaction.id}`}
           className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90"

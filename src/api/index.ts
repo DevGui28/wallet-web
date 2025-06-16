@@ -185,6 +185,18 @@ export const handleGetDashboard = async () => {
   return data
 }
 
+// Método para pagar uma transação
+export const handlePayTransaction = async (id: string) => {
+  const { data } = await apiWallet.patch(`/transactions/${id}/pay`)
+  return data
+}
+
+// Método para pagar uma fatura de cartão de crédito
+export const handlePayInvoice = async (id: string) => {
+  const { data } = await apiWallet.patch(`/invoices/${id}/pay`)
+  return data
+}
+
 // Método para logout
 export const handleLogout = async () => {
   const response = await fetch('/api/logout')

@@ -71,7 +71,7 @@ export default function DashboardInvoices({ data }: DashboardInvoicesProps) {
           )}
         </CardContent>
       </div>
-      <div className="flex justify-end p-6">
+      <div className="flex justify-end pb-6 pr-6">
         <DashboardButtomSeeMore link="/invoices" />
       </div>
     </Card>

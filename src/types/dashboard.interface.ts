@@ -8,6 +8,7 @@ export interface FinancialSummary {
 export interface RecentTransaction {
   id: string
   description: string
+  name: string
   amount: number
   date: string
   type: string

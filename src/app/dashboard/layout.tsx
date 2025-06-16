@@ -8,6 +8,7 @@ import { MobileNav } from '../../components/app/Header/MobileNav'
 import { tokenName } from '../../constants/cookies'
 import { withAuth } from '../../lib/with-auth'
 import { JwtPayload } from '../../types/jwt.interface'
+import { formatDateToString } from '../../lib/utils'
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
   const cookies = parseCookies()
@@ -24,7 +25,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
         <TopNav
           title="Dashboard"
           name={name}
-          subtitle="Bem-vindo! Aqui está uma visão geral das suas finanças."
+          subtitle={`Bom te ver por aqui! Este é seu resumo financeiro de ${formatDateToString(new Date(), 'MMMM')} - tudo organizado para você tomar as melhores decisões!`}
         />
         <div className="flex w-full items-center justify-between md:px-4">
           {children}

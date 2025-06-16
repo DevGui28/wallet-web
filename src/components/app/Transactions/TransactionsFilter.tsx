@@ -260,7 +260,7 @@ export default function TransactionsFilter({
                             </SelectTrigger>
                             <SelectContent>
                               {Array.from({ length: 10 }, (_, i) => {
-                                const year = new Date().getFullYear() - i
+                                const year = new Date().getFullYear() - i + 1
                                 return (
                                   <SelectItem key={year} value={String(year)}>
                                     {year}
