@@ -1,11 +1,11 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { handleFindCreditCard, handleUpdateCreditCard } from '../../../../api'
+import { handleFindCreditCard } from '../../../../api'
 import { FormAddCreditCard } from '../../../../schemas/add-credit-card'
 import FormInput from '../../../shared/Form/FormInput'
 import { Button } from '../../../ui/button'
@@ -13,19 +13,21 @@ import { Form } from '../../../ui/form'
 import { Skeleton } from '../../../ui/skeleton'
 import { CreditCard } from '../CreditCardList'
 import DeletedCardDialog from '../DeletedCardDialog'
+import { useUpdateCreditCard } from '../../../../hooks/useCreditCards'
 
 type CreditCardDetailProps = {
   id: string
 }
 
 export default function CreditCardDetail({ id }: CreditCardDetailProps) {
-  const [isSubmitting, setSubmitting] = useState(false)
-  const queryClient = useQueryClient()
   const router = useRouter()
+  const updateCreditCardMutation = useUpdateCreditCard()
 
   const { data: creditCard, isLoading } = useQuery({
     queryKey: ['credit-cards-detail', id],
     queryFn: () => handleFindCreditCard(id),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
   })
 
   const form = useForm<Partial<FormAddCreditCard>>()
@@ -43,7 +45,6 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
   }, [creditCard])
 
   async function onSubmit(data: Partial<FormAddCreditCard>) {
-    setSubmitting(true)
     const payload = {
       ...(data.cardName === creditCard?.cardName
         ? {}
@@ -63,14 +64,10 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
     }
 
     try {
-      await handleUpdateCreditCard(id, payload)
-      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
-      queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
+      await updateCreditCardMutation.mutateAsync({ id, data: payload })
       toast.success('Cartão atualizado com sucesso')
     } catch (error) {
       console.error(error)
-    } finally {
-      setSubmitting(false)
     }
   }
 
@@ -132,8 +129,12 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
               >
                 Voltar
               </span>
-              <Button className="px-8" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Salvando...' : 'Salvar'}
+              <Button
+                type="submit"
+                className="px-8"
+                disabled={updateCreditCardMutation.isPending}
+              >
+                {updateCreditCardMutation.isPending ? 'Salvando...' : 'Salvar'}
               </Button>
             </div>
           </div>

@@ -47,6 +47,7 @@ export function useUpdateCreditCard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['creditCards'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
     },
   })
 }
