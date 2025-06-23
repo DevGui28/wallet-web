@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function logout() {
     try {
-      await fetch('/api/logout')
+      document.cookie = `${tokenName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
       setToken('')
     } catch (error) {
       console.error('Erro ao fazer logout:', error)
