@@ -85,7 +85,7 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
       form.reset()
       setOpen(false)
     } catch (error) {
-      toast.error('Erro ao cadastrar cartão de crédito')
+      console.error(error)
     } finally {
       setSubmitting(false)
     }

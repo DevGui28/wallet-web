@@ -8,7 +8,6 @@ import {
   TransactionFilters,
   CreateTransaction,
 } from '../types/transactions.interface'
-import { toast } from 'sonner'
 
 export function useTransactions() {
   const queryClient = useQueryClient()
@@ -31,9 +30,6 @@ export function useTransactions() {
         queryClient.invalidateQueries({ queryKey: ['transactions'] })
         queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       },
-      onError: () => {
-        toast.error('Erro ao atualizar transação')
-      },
     })
   }
 
@@ -45,9 +41,6 @@ export function useTransactions() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['transactions'] })
         queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      },
-      onError: () => {
-        toast.error('Erro ao excluir transação')
       },
     })
   }

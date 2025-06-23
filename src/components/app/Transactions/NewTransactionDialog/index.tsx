@@ -115,7 +115,7 @@ export function NewTransactionDialog({
       toast.success('Transação adicionada com sucesso!')
       setOpen(false)
     } catch (error: any) {
-      toast.error('Erro ao adicionar transação!')
+      console.error('Erro ao adicionar transação:', error)
     } finally {
       setSubmitting(false)
     }

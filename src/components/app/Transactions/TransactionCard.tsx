@@ -60,9 +60,6 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       toast.success('Transação paga com sucesso!')
     },
-    onError: () => {
-      toast.error('Erro ao pagar transação')
-    },
   })
 
   const payInvoiceMutation = useMutation({
@@ -73,9 +70,6 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
       queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
       queryClient.invalidateQueries({ queryKey: ['invoices'] })
       toast.success('Fatura paga com sucesso!')
-    },
-    onError: () => {
-      toast.error('Erro ao pagar fatura')
     },
   })
 

@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { CurrencyCircleDollar } from '@phosphor-icons/react'
 import { Button } from '../../ui/button'
 import { paymentMethodMapper } from '../../../lib/mappers'
@@ -24,16 +23,36 @@ export function TransactionDetail({ transaction }: TransactionDetailProps) {
   const [payDialogOpen, setPayDialogOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  const statusLabel = transaction.isPaid
-    ? 'Pago'
-    : new Date(transaction.date).getTime() < new Date().getTime()
-      ? 'Atrasado'
-      : 'Pendente'
-  const statusColor = transaction.isPaid
-    ? 'text-green-500'
-    : new Date(transaction.date).getTime() < new Date().getTime()
-      ? 'text-red-500'
-      : 'text-amber-500'
+  const isCreditCardTransaction =
+    transaction.paymentMethod === PaymentMethod.CREDIT_CARD
+
+  const getStatusInfo = () => {
+    if (transaction.isPaid) {
+      return { label: 'Pago', color: 'text-green-500' }
+    }
+
+    if (isCreditCardTransaction && transaction.invoice) {
+      const invoiceDueDate = new Date(transaction.invoice.dueDate).getTime()
+      const now = new Date().getTime()
+
+      if (invoiceDueDate < now) {
+        return { label: 'Atrasado', color: 'text-red-500' }
+      } else {
+        return { label: 'Pendente', color: 'text-amber-500' }
+      }
+    } else {
+      const transactionDate = new Date(transaction.date).getTime()
+      const now = new Date().getTime()
+
+      if (transactionDate < now) {
+        return { label: 'Atrasado', color: 'text-red-500' }
+      } else {
+        return { label: 'Pendente', color: 'text-amber-500' }
+      }
+    }
+  }
+
+  const { label: statusLabel, color: statusColor } = getStatusInfo()
 
   const transactionTypeMap = {
     [TransactionType.INCOME]: 'Receita',
@@ -46,10 +65,6 @@ export function TransactionDetail({ transaction }: TransactionDetailProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success('Transação paga com sucesso!')
-    },
-    onError: () => {
-      toast.error('Erro ao pagar transação')
     },
   })
 
@@ -60,10 +75,6 @@ export function TransactionDetail({ transaction }: TransactionDetailProps) {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
       queryClient.invalidateQueries({ queryKey: ['invoices'] })
-      toast.success('Fatura paga com sucesso!')
-    },
-    onError: () => {
-      toast.error('Erro ao pagar fatura')
     },
   })
 
@@ -182,7 +193,9 @@ export function TransactionDetail({ transaction }: TransactionDetailProps) {
 
       {transaction.invoice && (
         <div className="mt-2 rounded-lg border border-border p-4">
-          <h2 className="mb-3 text-lg font-semibold">Detalhes da Fatura</h2>
+          <h2 className="mb-3 text-lg font-semibold">
+            Detalhes da Fatura do Cartão {transaction.creditCard?.cardName}
+          </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">Mês/Ano</span>
@@ -237,7 +250,7 @@ export function TransactionDetail({ transaction }: TransactionDetailProps) {
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-4 flex flex-col items-end justify-between gap-2 md:flex-row md:items-center">
             <Link
               href={`/invoices/${transaction.invoice.id}`}
               className="text-sm font-medium text-primary hover:underline"

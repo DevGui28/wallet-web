@@ -53,7 +53,6 @@ export function AddValueDialog({ open, setOpen, goal, onAddValue }: Props) {
       form.reset()
       setOpen(false)
     } catch (error) {
-      toast.error('Erro ao adicionar valor')
       console.error('Erro ao adicionar valor:', error)
     }
   }

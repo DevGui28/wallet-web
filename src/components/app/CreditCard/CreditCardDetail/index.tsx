@@ -68,7 +68,7 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
       queryClient.invalidateQueries('credit-cards')
       queryClient.invalidateQueries('credit-cards-detail')
     } catch (error) {
-      toast.error('Erro ao atualizar cartão')
+      console.error(error)
     } finally {
       setSubmitting(false)
     }

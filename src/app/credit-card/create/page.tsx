@@ -71,7 +71,7 @@ export default function AddCreditCardPage() {
       form.reset()
       router.push('/credit-card')
     } catch (error) {
-      toast.error('Erro ao cadastrar cartão de crédito')
+      console.error(error)
     } finally {
       setSubmitting(false)
     }

@@ -28,7 +28,7 @@ export default function DeletedCardDialog({ id }: DeletedCardDialogProps) {
       queryClient.invalidateQueries('credit-cards')
       redirect('/credit-card')
     } catch (error) {
-      toast.error('Erro ao excluir cartão')
+      console.error(error)
     }
   }
 

@@ -5,7 +5,7 @@ export function useDashboard() {
   return useQuery({
     queryKey: ['dashboard'],
     queryFn: handleGetDashboard,
-    staleTime: 5 * 60 * 1000, // 5 minutos
+    staleTime: 10 * 60 * 1000, // 10 minutos
     refetchOnWindowFocus: true,
   })
 }

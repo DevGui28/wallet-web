@@ -97,7 +97,7 @@ export default function TransactionsList() {
       await createTransactionMutation.mutateAsync(data)
       toast.success('Transação adicionada com sucesso!')
     } catch (error) {
-      toast.error('Erro ao criar transação')
+      console.error('Erro ao criar transação:', error)
     }
   }
 
