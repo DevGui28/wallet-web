@@ -16,7 +16,7 @@ export default function ChangeTheme({
     <button
       type="button"
       className={cn(
-        'flex cursor-pointer items-center justify-center gap-2',
+        'flex h-full cursor-pointer items-center justify-center gap-2',
         className
       )}
       onClick={() => setTheme((theme) => (theme === 'dark' ? 'light' : 'dark'))}
