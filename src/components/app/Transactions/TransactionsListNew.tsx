@@ -22,6 +22,7 @@ import {
   handleGetCreditCards,
   handleGetCategories,
 } from '../../../api'
+import { toast } from 'sonner'
 
 function MobileTransactionsList({ search }: { search: TransactionFilters }) {
   const { data, isLoading } = useQuery({
@@ -88,6 +89,9 @@ export default function TransactionsList() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['bills'] })
+      queryClient.invalidateQueries({ queryKey: ['installments'] })
+      toast.success('Transação adicionada com sucesso!')
     },
     onError: (error) => {
       throw error

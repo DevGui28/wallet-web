@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { addYears } from 'date-fns'
 
@@ -109,11 +108,6 @@ export function NewTransactionDialog({
         type,
       })
       handleResetForm()
-      queryClient.invalidateQueries({ queryKey: ['transactions'] })
-      queryClient.invalidateQueries({ queryKey: ['bills'] })
-      queryClient.invalidateQueries({ queryKey: ['installments'] })
-      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success('Transação adicionada com sucesso!')
       setOpen(false)
     } catch (error: any) {
       console.error('Erro ao adicionar transação:', error)

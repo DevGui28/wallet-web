@@ -14,7 +14,6 @@ import {
   PaymentMethod,
   TransactionResponse,
 } from '../../../types/transactions.interface'
-import { toast } from 'sonner'
 
 type PayTransactionDialogProps = {
   open: boolean
@@ -43,10 +42,8 @@ export function PayTransactionDialog({
     try {
       if (isInvoicePayment && transaction.invoiceId) {
         await onPayInvoice(transaction.invoiceId)
-        toast.success('Fatura paga com sucesso!')
       } else {
         await onPayTransaction(transaction.id)
-        toast.success('Transação paga com sucesso!')
       }
       setOpen(false)
     } catch (error) {
