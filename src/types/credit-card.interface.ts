@@ -19,7 +19,7 @@ export interface CreateCreditCard {
 
 export interface UpdateCreditCard {
   cardName?: string
-  limit?: number
+  limit?: number | null
   closingDay?: number
   dueDay?: number
   lastDigits?: number

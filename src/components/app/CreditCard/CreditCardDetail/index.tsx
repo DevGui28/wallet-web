@@ -50,7 +50,7 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
         : { cardName: data.cardName }),
       ...(data.limit === creditCard?.limit
         ? {}
-        : { limit: Number(data.limit) }),
+        : { limit: data.limit ? Number(data.limit) : null }),
       ...(data.closingDay === creditCard?.closingDay.toString()
         ? {}
         : { closingDay: Number(data.closingDay) }),
@@ -89,15 +89,6 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
             />
             <FormInput
               form={form}
-              name="limit"
-              label="Limite"
-              placeholder="Limite"
-              withMask
-              numeric
-              prefix="R$ "
-            />
-            <FormInput
-              form={form}
               name="closingDay"
               label="Dia de fechamento"
               placeholder="Dia de fechamento"
@@ -111,6 +102,16 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
               placeholder="Dia de vencimento"
               numeric
               withMask
+            />
+            <FormInput
+              form={form}
+              name="limit"
+              label="Limite"
+              placeholder="Limite"
+              withMask
+              numeric
+              prefix="R$ "
+              isOptional
             />
             <FormInput
               form={form}
