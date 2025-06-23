@@ -6,7 +6,6 @@ import { useQuery } from 'react-query'
 import { handleGetCreditCards } from '../../../../api'
 import { cn } from '../../../../lib/utils'
 import { CreditCardResponse } from '../../../../types/credit-card.interface'
-import { Button } from '../../../ui/button'
 import { Skeleton } from '../../../ui/skeleton'
 
 export default function CreditCardList() {
@@ -53,7 +52,7 @@ export function CreditCard({ key, creditCard, edit = false }: CreditCardProps) {
     <div
       key={key}
       className={cn(
-        'flex min-h-48 w-full min-w-[350px] max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 p-5',
+        'flex min-h-48 w-full max-w-[400px] flex-col justify-between rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 p-5 md:min-w-[350px]',
         {
           'from-purple-900 to-purple-950':
             creditCard.cardName?.includes('Nubank'),
@@ -103,7 +102,7 @@ export function CreditCard({ key, creditCard, edit = false }: CreditCardProps) {
             </span>
           </p>
         </div>
-        <div>
+        {/* <div>
           <Button
             variant="secondary"
             className="rounded-lg bg-secondary/30 p-2 text-xs hover:bg-secondary/20"
@@ -112,7 +111,7 @@ export function CreditCard({ key, creditCard, edit = false }: CreditCardProps) {
               Ver fatura
             </Link>
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   )
