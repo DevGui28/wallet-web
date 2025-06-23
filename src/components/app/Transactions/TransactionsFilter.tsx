@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FunnelSimple, X } from '@phosphor-icons/react'
 import { Button } from '../../ui/button'
 import { Badge } from '../../ui/badge'
@@ -9,17 +9,10 @@ import {
   TransactionFilters,
   TransactionType,
 } from '../../../types/transactions.interface'
-import { getMonth, getYear } from 'date-fns'
+import { differenceInDays, format } from 'date-fns'
 import { CalendarBlank } from '@phosphor-icons/react'
 import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../ui/select'
-import { formatDateToString } from '../../../lib/utils'
+import { Calendar } from '../../ui/calendar'
 
 interface TransactionsFilterProps {
   search: TransactionFilters
@@ -34,15 +27,13 @@ export default function TransactionsFilter({
   categories,
   creditCards,
 }: TransactionsFilterProps) {
-  const [dateFilter, setDateFilter] = useState<Date | undefined>(
-    search.date ? new Date(search.date) : undefined
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    search.startDate ? new Date(search.startDate) : undefined
   )
-  const [currentMonth, setCurrentMonth] = useState<number>(
-    dateFilter ? getMonth(dateFilter) : getMonth(new Date())
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    search.endDate ? new Date(search.endDate) : undefined
   )
-  const [currentYear, setCurrentYear] = useState<number>(
-    dateFilter ? getYear(dateFilter) : getYear(new Date())
-  )
+  const [dateError, setDateError] = useState<string | null>(null)
 
   const transactionTypes = [
     { label: 'Todos', value: 'ALL' },
@@ -64,14 +55,54 @@ export default function TransactionsFilter({
 
   const clearFilters = () => {
     setSearch({} as TransactionFilters)
-    setDateFilter(undefined)
+    setStartDate(undefined)
+    setEndDate(undefined)
+    setDateError(null)
   }
+
+  const handleDateChange = (start: Date | undefined, end: Date | undefined) => {
+    setDateError(null)
+
+    if (start && end) {
+      // Verificar se o período é maior que 60 dias
+      const diffDays = Math.abs(differenceInDays(end, start))
+      if (diffDays > 60) {
+        setDateError('O período máximo é de 60 dias')
+        return
+      }
+
+      setSearch({
+        ...search,
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      })
+    } else if (!start && !end) {
+      const newSearch = { ...search }
+      delete newSearch.startDate
+      delete newSearch.endDate
+      setSearch(newSearch)
+    }
+  }
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      handleDateChange(startDate, endDate)
+    }
+  }, [startDate, endDate])
 
   const activeFiltersCount = Object.keys(search).reduce((count, key) => {
     const k = key as keyof TransactionFilters
     if (k === 'type' && search[k] === 'ALL') return count
     if (k === 'paymentMethod' && search[k] === 'ALL') return count
-    if (search[k]) return count + 1
+    if (
+      (k === 'startDate' || k === 'endDate') &&
+      search.startDate &&
+      search.endDate
+    ) {
+      // Contar apenas uma vez para o filtro de data (quando ambos estão presentes)
+      return k === 'startDate' ? count + 1 : count
+    }
+    if (search[k] && k !== 'endDate') return count + 1
     return count
   }, 0)
 
@@ -157,8 +188,8 @@ export default function TransactionsFilter({
           )}
 
           <div className="flex flex-col justify-end">
-            <div className="flex max-h-[70px] flex-col gap-2">
-              <span className="text-sm font-medium">Data</span>
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium">Período</span>
               <div className="relative">
                 <Popover modal={true}>
                   <PopoverTrigger asChild>
@@ -166,10 +197,13 @@ export default function TransactionsFilter({
                       variant="outline"
                       className="flex w-full items-center justify-between pl-3 text-left font-normal"
                     >
-                      {dateFilter ? (
-                        formatDateToString(dateFilter, 'MMMM yyyy')
+                      {startDate && endDate ? (
+                        <span>
+                          {format(startDate, 'dd/MM/yyyy')} -{' '}
+                          {format(endDate, 'dd/MM/yyyy')}
+                        </span>
                       ) : (
-                        <span>Selecione mês/ano</span>
+                        <span>Selecione o período</span>
                       )}
                       <CalendarBlank
                         weight="bold"
@@ -184,16 +218,19 @@ export default function TransactionsFilter({
                   >
                     <div className="flex flex-col space-y-4">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-medium">Selecione mês e ano</h4>
-                        {dateFilter && (
+                        <h4 className="font-medium">Selecione o período</h4>
+                        {(startDate || endDate) && (
                           <Button
                             variant="ghost"
                             size="sm"
                             className="h-7 px-2 text-xs"
                             onClick={() => {
-                              setDateFilter(undefined)
+                              setStartDate(undefined)
+                              setEndDate(undefined)
+                              setDateError(null)
                               const newSearch = { ...search }
-                              delete newSearch.date
+                              delete newSearch.startDate
+                              delete newSearch.endDate
                               setSearch(newSearch)
                             }}
                           >
@@ -201,75 +238,65 @@ export default function TransactionsFilter({
                           </Button>
                         )}
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
+
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
-                          <label className="text-xs font-medium">Mês</label>
-                          <Select
-                            value={String(currentMonth)}
-                            onValueChange={(value) => {
-                              const month = parseInt(value)
-                              setCurrentMonth(month)
-                              const year =
-                                currentYear || new Date().getFullYear()
-                              const updatedDate = new Date(year, month)
-                              setDateFilter(updatedDate)
-                              setSearch({
-                                ...search,
-                                date: updatedDate.toISOString(),
-                              })
-                            }}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione o mês" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="0">Janeiro</SelectItem>
-                              <SelectItem value="1">Fevereiro</SelectItem>
-                              <SelectItem value="2">Março</SelectItem>
-                              <SelectItem value="3">Abril</SelectItem>
-                              <SelectItem value="4">Maio</SelectItem>
-                              <SelectItem value="5">Junho</SelectItem>
-                              <SelectItem value="6">Julho</SelectItem>
-                              <SelectItem value="7">Agosto</SelectItem>
-                              <SelectItem value="8">Setembro</SelectItem>
-                              <SelectItem value="9">Outubro</SelectItem>
-                              <SelectItem value="10">Novembro</SelectItem>
-                              <SelectItem value="11">Dezembro</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <label className="text-xs font-medium">
+                            Data inicial
+                          </label>
+                          <div className="mt-1">
+                            <Calendar
+                              mode="single"
+                              selected={startDate}
+                              onSelect={(date) => {
+                                setStartDate(date)
+                                // Verificar se a data final existe
+                                if (date && endDate) {
+                                  // Se a diferença entre as datas for maior que 60 dias, limpa a data final
+                                  const diffDays = Math.abs(
+                                    differenceInDays(date, endDate as Date)
+                                  )
+                                  if (diffDays > 60) {
+                                    setEndDate(undefined)
+                                  }
+                                }
+                              }}
+                              disabled={() => false}
+                              initialFocus
+                            />
+                          </div>
                         </div>
+
                         <div>
-                          <label className="text-xs font-medium">Ano</label>
-                          <Select
-                            value={String(currentYear)}
-                            onValueChange={(value) => {
-                              const year = parseInt(value)
-                              setCurrentYear(year)
-                              const month =
-                                currentMonth || new Date().getMonth()
-                              const updatedDate = new Date(year, month)
-                              setDateFilter(updatedDate)
-                              setSearch({
-                                ...search,
-                                date: updatedDate.toISOString(),
-                              })
-                            }}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione o ano" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Array.from({ length: 10 }, (_, i) => {
-                                const year = new Date().getFullYear() - i + 1
-                                return (
-                                  <SelectItem key={year} value={String(year)}>
-                                    {year}
-                                  </SelectItem>
-                                )
-                              })}
-                            </SelectContent>
-                          </Select>
+                          <label className="text-xs font-medium">
+                            Data final
+                          </label>
+                          <div className="mt-1">
+                            <Calendar
+                              mode="single"
+                              selected={endDate}
+                              onSelect={setEndDate}
+                              disabled={(date) => {
+                                if (startDate) {
+                                  // Verificar apenas o limite de 60 dias
+                                  const diffDays = differenceInDays(
+                                    date,
+                                    startDate
+                                  )
+                                  return Math.abs(diffDays) > 60
+                                }
+                                return false
+                              }}
+                              initialFocus
+                            />
+                          </div>
                         </div>
+
+                        {dateError && (
+                          <div className="text-sm font-medium text-red-500">
+                            {dateError}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </PopoverContent>

@@ -94,7 +94,8 @@ export interface TransactionFilters {
   paymentMethod?: string
   creditCardId?: string
   type?: TransactionType | 'ALL'
-  date?: string
+  startDate?: string
+  endDate?: string
 }
 
 export interface PendingPayments {

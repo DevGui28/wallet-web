@@ -64,7 +64,8 @@ export const handleGetTransactions = withErrorHandling(
       }),
       ...(filters.creditCardId && { creditCardId: filters.creditCardId }),
       ...(filters.type && { type: filters.type !== 'ALL' ? filters.type : '' }),
-      ...(filters.date && { date: filters.date }),
+      ...(filters.startDate && { startDate: filters.startDate }),
+      ...(filters.endDate && { endDate: filters.endDate }),
     })
 
     const { data } = await apiWallet.get<{
