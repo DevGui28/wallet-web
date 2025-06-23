@@ -98,7 +98,9 @@ export function CreditCard({ key, creditCard, edit = false }: CreditCardProps) {
           </p>
           <p>
             Limite:
-            <span className="ml-2 font-semibold">R$: {creditCard.limit}</span>
+            <span className="ml-2 font-semibold">
+              {creditCard.limit ? `R$: ${creditCard.limit}` : 'Sem limite'}
+            </span>
           </p>
         </div>
         <div>

@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { Plus } from '@phosphor-icons/react'
 import { Button } from '../../ui/button'
 import { Dialog, DialogTrigger } from '../../ui/dialog'
@@ -90,15 +89,13 @@ export default function TransactionsList() {
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     },
+    onError: (error) => {
+      throw error
+    },
   })
 
   const onAddTransaction = async (data: CreateTransaction) => {
-    try {
-      await createTransactionMutation.mutateAsync(data)
-      toast.success('Transação adicionada com sucesso!')
-    } catch (error) {
-      console.error('Erro ao criar transação:', error)
-    }
+    await createTransactionMutation.mutateAsync(data)
   }
 
   const isLoading =

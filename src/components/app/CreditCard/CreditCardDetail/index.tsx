@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { handleFindCreditCard, handleUpdateCreditCard } from '../../../../api'
 import { FormAddCreditCard } from '../../../../schemas/add-credit-card'
@@ -64,9 +64,9 @@ export default function CreditCardDetail({ id }: CreditCardDetailProps) {
 
     try {
       await handleUpdateCreditCard(id, payload)
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
       toast.success('Cartão atualizado com sucesso')
-      queryClient.invalidateQueries('credit-cards')
-      queryClient.invalidateQueries('credit-cards-detail')
     } catch (error) {
       console.error(error)
     } finally {

@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { handleDeleteCreditCard } from '../../../../api'
 import {
@@ -25,7 +25,7 @@ export default function DeletedCardDialog({ id }: DeletedCardDialogProps) {
     try {
       await handleDeleteCreditCard(id)
       toast.success('Cartão excluído com sucesso')
-      queryClient.invalidateQueries('credit-cards')
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
       redirect('/credit-card')
     } catch (error) {
       console.error(error)

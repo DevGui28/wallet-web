@@ -112,6 +112,7 @@ export function NewTransactionDialog({
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['bills'] })
       queryClient.invalidateQueries({ queryKey: ['installments'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       toast.success('Transação adicionada com sucesso!')
       setOpen(false)
     } catch (error: any) {
