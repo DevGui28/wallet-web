@@ -26,6 +26,7 @@ export default function DeletedCardDialog({ id }: DeletedCardDialogProps) {
       await handleDeleteCreditCard(id)
       toast.success('Cartão excluído com sucesso')
       queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
       redirect('/credit-card')
     } catch (error) {
       console.error(error)

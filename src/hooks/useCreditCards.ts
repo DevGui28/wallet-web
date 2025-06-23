@@ -18,7 +18,7 @@ export function useCreditCards(options: UseCreditCardsOptions = {}) {
   const { enabled = true } = options
 
   return useQuery({
-    queryKey: ['creditCards'],
+    queryKey: ['credit-cards'],
     queryFn: handleGetCreditCards,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
@@ -32,7 +32,7 @@ export function useCreateCreditCard() {
   return useMutation({
     mutationFn: (data: CreateCreditCard) => handleCreateCreditCard(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['creditCards'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     },
   })
@@ -45,7 +45,7 @@ export function useUpdateCreditCard() {
     mutationFn: ({ id, data }: { id: string; data: UpdateCreditCard }) =>
       handleUpdateCreditCard(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['creditCards'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
     },
@@ -58,7 +58,7 @@ export function useDeleteCreditCard() {
   return useMutation({
     mutationFn: (id: string) => handleDeleteCreditCard(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['creditCards'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     },
   })

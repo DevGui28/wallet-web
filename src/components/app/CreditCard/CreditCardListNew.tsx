@@ -3,18 +3,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { handleCreateCreditCard, handleGetCreditCards } from '../../../api'
+import { useQuery } from '@tanstack/react-query'
+import { handleGetCreditCards } from '../../../api'
 import { Button } from '../../ui/button'
 import { CreditCard } from './CreditCardList'
 import { AddCreditCardDialog } from './AddCreditCardDialog'
+import { useCreateCreditCard } from '../../../hooks/useCreditCards'
 
 export default function CreditCardListNew() {
   const [openAddCardDialog, setOpenAddCardDialog] = useState(false)
-  const queryClient = useQueryClient()
+  const createCreditCardMutation = useCreateCreditCard()
 
   const { data: creditCards, isLoading } = useQuery({
-    queryKey: ['credit-cards-detail'],
+    queryKey: ['credit-cards'],
     queryFn: handleGetCreditCards,
   })
 
@@ -37,16 +38,7 @@ export default function CreditCardListNew() {
             open={openAddCardDialog}
             setOpen={setOpenAddCardDialog}
             onAddCreditCard={async (data) => {
-              try {
-                await handleCreateCreditCard(data)
-                queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
-                queryClient.invalidateQueries({
-                  queryKey: ['credit-cards-detail'],
-                })
-                return Promise.resolve()
-              } catch (error) {
-                return Promise.reject(error)
-              }
+              await createCreditCardMutation.mutateAsync(data)
             }}
           />
         </div>

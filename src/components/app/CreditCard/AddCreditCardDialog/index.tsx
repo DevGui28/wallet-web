@@ -21,7 +21,7 @@ import { Form } from '@/components/ui/form'
 
 const addCreditCardSchema = z.object({
   cardName: z.string().min(1, 'Nome do cartão é obrigatório'),
-  limit: z.string().min(1, 'Limite do cartão é obrigatório'),
+  limit: z.string().optional(),
   closingDay: z.string().min(1, 'Dia de fechamento é obrigatório'),
   dueDay: z.string().min(1, 'Dia de vencimento é obrigatório'),
   lastDigits: z.string().optional(),
@@ -34,7 +34,7 @@ type Props = {
   setOpen: (open: boolean) => void
   onAddCreditCard: (data: {
     cardName: string
-    limit: number
+    limit?: number | null
     closingDay: number
     dueDay: number
     lastDigits?: number
@@ -60,7 +60,7 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
     const { cardName, limit, closingDay, dueDay, lastDigits } = data
     const payload = {
       cardName,
-      limit: Number(limit.replace(/\D/g, '')) / 100,
+      limit: Number(limit?.replace(/\D/g, '')) || null,
       closingDay: Number(closingDay),
       dueDay: Number(dueDay),
       ...(lastDigits && { lastDigits: Number(lastDigits) }),
@@ -79,9 +79,9 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
     try {
       setSubmitting(true)
       await onAddCreditCard(payload)
-      toast.success('Cartão de crédito cadastrado com sucesso')
       queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
       queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
+      toast.success('Cartão de crédito cadastrado com sucesso')
       form.reset()
       setOpen(false)
     } catch (error) {
@@ -93,7 +93,7 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">
             Cadastrar novo cartão de crédito
@@ -112,15 +112,6 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
                 name="cardName"
               />
               <FormInput
-                label="Limite do cartão"
-                name="limit"
-                placeholder="R$ 4.000,00"
-                prefix="R$ "
-                form={form}
-                withMask
-                numeric
-              />
-              <FormInput
                 label="Dia de fechamento"
                 name="closingDay"
                 form={form}
@@ -137,6 +128,16 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
                 withMask
                 maxLength={2}
                 numeric
+              />
+              <FormInput
+                label="Limite do cartão"
+                name="limit"
+                placeholder="R$ 4.000,00"
+                prefix="R$ "
+                form={form}
+                withMask
+                numeric
+                isOptional
               />
               <FormInput
                 label="Últimos 4 dígitos"
@@ -160,7 +161,7 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-8 text-xs sm:h-9 sm:text-sm"
+                className="mt-4 h-8 text-xs sm:h-9 sm:text-sm md:mt-0"
               >
                 {isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
               </Button>
