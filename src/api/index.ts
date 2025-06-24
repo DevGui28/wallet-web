@@ -3,7 +3,6 @@ import { Login } from '../app/login/page'
 import { urls } from '../constants/urls'
 import {
   Budget,
-  BudgetFilters,
   CreateBudgetDTO,
   UpdateBudgetDTO,
 } from '../types/budgets.interface'
@@ -146,16 +145,10 @@ export const handleDeleteCreditCard = withErrorHandling(async (id: string) => {
   return data
 })
 
-export const handleGetBudgets = withErrorHandling(
-  async (filters: BudgetFilters) => {
-    const params = new URLSearchParams()
-    if (filters.month) params.append('month', filters.month.toString())
-    if (filters.year) params.append('year', filters.year.toString())
-
-    const { data } = await apiWallet.get<Budget[]>(`/budgets?${params}`)
-    return data
-  }
-)
+export const handleGetBudgets = withErrorHandling(async () => {
+  const { data } = await apiWallet.get<Budget[]>(`/budgets`)
+  return data
+})
 
 export const handleCreateBudget = withErrorHandling(
   async (payload: CreateBudgetDTO) => {

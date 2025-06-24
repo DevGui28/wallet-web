@@ -17,7 +17,8 @@ export interface RecentTransaction {
 
 export interface BudgetSummary {
   id: string
-  category: string
+  categoryId: string
+  categoryName: string
   limit: number
   spent: number
   available: number

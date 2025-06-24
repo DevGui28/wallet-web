@@ -2,7 +2,7 @@ import { jwtDecode } from 'jwt-decode'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import TopNav from '../../components/app/Header/TopNav'
-import BudgetsList from '../../components/app/Budgets/BudgetsList'
+import { BudgetsList } from '../../components/app/Budgets/BudgetsList'
 import { tokenName } from '../../constants/cookies'
 import { JwtPayload } from '../../types/jwt.interface'
 

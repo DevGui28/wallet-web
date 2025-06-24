@@ -5,16 +5,12 @@ import {
   handleGetBudgets,
   handleUpdateBudget,
 } from '../api'
-import {
-  CreateBudgetDTO,
-  UpdateBudgetDTO,
-  BudgetFilters,
-} from '../types/budgets.interface'
+import { CreateBudgetDTO, UpdateBudgetDTO } from '../types/budgets.interface'
 
-export function useBudgets(filters?: BudgetFilters) {
+export function useBudgets() {
   return useQuery({
-    queryKey: ['budgets', filters],
-    queryFn: () => handleGetBudgets(filters || {}),
+    queryKey: ['budgets'],
+    queryFn: () => handleGetBudgets(),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
   })

@@ -1,21 +1,20 @@
+import { CategoriesResponse } from './categories.interface'
+
 export interface Budget {
   id: string
-  category: string
+  categoryId: string
   limit: number
-  month: number
-  year: number
   spent?: number
   available?: number
-  percentage?: number
+  percentUsed?: number
   createdAt: string
   updatedAt: string
+  category: CategoriesResponse
 }
 
 export interface CreateBudgetDTO {
-  category: string
+  categoryId: string
   limit: number
-  month: number
-  year: number
 }
 
 export interface UpdateBudgetDTO {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,26 +13,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../ui/form'
-import { Input } from '../../ui/input'
+import { Form } from '../../ui/form'
 import { Button } from '../../ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../ui/select'
+import FormInput from '../../../components/shared/Form/FormInput'
+import FormSelect from '../../../components/shared/Form/FormSelect'
+import { toast } from 'sonner'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const createBudgetSchema = z.object({
-  category: z.string().min(1, 'Categoria é obrigatória'),
+  categoryId: z.string().min(1, 'Categoria é obrigatória'),
   limit: z.coerce.number().min(1, 'Valor deve ser maior que zero'),
 })
 
@@ -41,61 +30,47 @@ type CreateBudgetFormValues = z.infer<typeof createBudgetSchema>
 interface CreateBudgetDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSuccess: () => void
-  currentMonth: number
-  currentYear: number
 }
 
 export function CreateBudgetDialog({
   open,
   onOpenChange,
-  onSuccess,
-  currentMonth,
-  currentYear,
 }: CreateBudgetDialogProps) {
-  const [categories, setCategories] = useState<CategoriesResponse[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const queryClient = useQueryClient()
 
   const form = useForm<CreateBudgetFormValues>({
     resolver: zodResolver(createBudgetSchema),
     defaultValues: {
-      category: '',
+      categoryId: '',
       limit: 0,
     },
   })
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await handleGetCategories(TransactionType.EXPENSE)
-        setCategories(data)
-      } catch (error) {
-        console.error('Erro ao buscar categorias:', error)
-      }
-    }
-
-    if (open) {
-      fetchCategories()
-      form.reset()
-    }
-  }, [open, form])
+  const { data: categories } = useQuery<CategoriesResponse[]>({
+    queryKey: ['categories-expense'],
+    queryFn: () => handleGetCategories(TransactionType.EXPENSE),
+  })
 
   const onSubmit = async (values: CreateBudgetFormValues) => {
     setIsLoading(true)
     try {
       await handleCreateBudget({
-        category: values.category,
+        categoryId: values.categoryId,
         limit: values.limit,
-        month: currentMonth,
-        year: currentYear,
       })
-      onSuccess()
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      toast.success('Orçamento criado com sucesso!')
+      onOpenChange(false)
     } catch (error) {
-      console.error('Erro ao criar orçamento:', error)
+      toast.error('Erro ao criar orçamento: ' + error)
     } finally {
       setIsLoading(false)
     }
   }
+
+  if (!categories) return null
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -105,52 +80,24 @@ export function CreateBudgetDialog({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Categoria</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma categoria" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <FormSelect
+              form={form}
+              name="categoryId"
+              label="Categoria"
+              placeholder="Selecione uma categoria"
+              data={categories.map((category) => ({
+                label: category.name,
+                value: category.id,
+              }))}
             />
-            <FormField
-              control={form.control}
+            <FormInput
+              form={form}
               name="limit"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Limite</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Limite"
+              placeholder="R$ 0,00"
+              prefix="R$ "
+              withMask
+              numeric
             />
             <div className="flex justify-end space-x-2 pt-4">
               <Button

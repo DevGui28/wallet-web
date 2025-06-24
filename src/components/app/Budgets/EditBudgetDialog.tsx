@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { handleUpdateBudget } from '../../../api'
-import { Budget } from '../../../types/budgets.interface'
+import { Budget, UpdateBudgetDTO } from '../../../types/budgets.interface'
 import {
   Dialog,
   DialogContent,
@@ -33,7 +33,7 @@ interface EditBudgetDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   budget: Budget
-  onSuccess: () => void
+  onSuccess: (id: string, data: UpdateBudgetDTO) => void
 }
 
 export function EditBudgetDialog({
@@ -57,7 +57,9 @@ export function EditBudgetDialog({
       await handleUpdateBudget(budget.id, {
         limit: values.limit,
       })
-      onSuccess()
+      onSuccess(budget.id, {
+        limit: values.limit,
+      })
     } catch (error) {
       console.error('Erro ao atualizar orçamento:', error)
     } finally {
@@ -75,7 +77,9 @@ export function EditBudgetDialog({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="mb-4">
               <p className="text-sm font-medium">Categoria</p>
-              <p className="text-sm text-muted-foreground">{budget.category}</p>
+              <p className="text-sm text-muted-foreground">
+                {budget.category.name}
+              </p>
             </div>
             <FormField
               control={form.control}

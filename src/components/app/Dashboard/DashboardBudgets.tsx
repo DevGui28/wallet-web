@@ -25,7 +25,7 @@ export default function DashboardBudgets({ data }: DashboardBudgetsProps) {
               {data.map((budget) => (
                 <div key={budget.id} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium">{budget.category}</span>
+                    <span className="font-medium">{budget.categoryName}</span>
                     <span className="text-sm">
                       {formatCurrency(budget.spent)} /{' '}
                       {formatCurrency(budget.limit)}{' '}
