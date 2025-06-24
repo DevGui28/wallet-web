@@ -18,7 +18,8 @@ import { Button } from '../../ui/button'
 import FormInput from '../../../components/shared/Form/FormInput'
 import FormSelect from '../../../components/shared/Form/FormSelect'
 import { toast } from 'sonner'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { CreateBudgetDTO } from '../../../types/budgets.interface'
 
 const createBudgetSchema = z.object({
   categoryId: z.string().min(1, 'Categoria é obrigatória'),
@@ -41,10 +42,6 @@ export function CreateBudgetDialog({
 
   const form = useForm<CreateBudgetFormValues>({
     resolver: zodResolver(createBudgetSchema),
-    defaultValues: {
-      categoryId: '',
-      limit: 0,
-    },
   })
 
   const { data: categories } = useQuery<CategoriesResponse[]>({
@@ -52,17 +49,31 @@ export function CreateBudgetDialog({
     queryFn: () => handleGetCategories(TransactionType.EXPENSE),
   })
 
-  const onSubmit = async (values: CreateBudgetFormValues) => {
-    setIsLoading(true)
-    try {
-      await handleCreateBudget({
-        categoryId: values.categoryId,
-        limit: values.limit,
-      })
+  const createBudgetMutation = useMutation({
+    mutationFn: (data: CreateBudgetDTO) => handleCreateBudget(data),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgets'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       toast.success('Orçamento criado com sucesso!')
+      form.reset()
       onOpenChange(false)
+    },
+    onError: (error) => {
+      throw error
+    },
+  })
+
+  const onAddBudget = async (data: CreateBudgetFormValues) => {
+    await createBudgetMutation.mutateAsync({
+      categoryId: data.categoryId,
+      limit: data.limit,
+    })
+  }
+
+  const onSubmit = async (values: CreateBudgetFormValues) => {
+    setIsLoading(true)
+    try {
+      await onAddBudget(values)
     } catch (error) {
       toast.error('Erro ao criar orçamento: ' + error)
     } finally {

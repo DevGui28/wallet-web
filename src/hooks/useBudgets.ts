@@ -1,11 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  handleCreateBudget,
   handleDeleteBudget,
   handleGetBudgets,
   handleUpdateBudget,
 } from '../api'
-import { CreateBudgetDTO, UpdateBudgetDTO } from '../types/budgets.interface'
+import { UpdateBudgetDTO } from '../types/budgets.interface'
 
 export function useBudgets() {
   return useQuery({
@@ -13,18 +12,6 @@ export function useBudgets() {
     queryFn: () => handleGetBudgets(),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
-  })
-}
-
-export function useCreateBudget() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: CreateBudgetDTO) => handleCreateBudget(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] })
-      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-    },
   })
 }
 
