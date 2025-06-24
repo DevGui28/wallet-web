@@ -64,7 +64,9 @@ function MobileTransactionsList({ search }: { search: TransactionFilters }) {
 }
 
 export default function TransactionsList() {
-  const [search, setSearch] = useState({} as TransactionFilters)
+  const [search, setSearch] = useState({
+    type: 'ALL',
+  } as TransactionFilters)
   const queryClient = useQueryClient()
 
   const { data: transactionsData, isLoading: transactionsLoading } = useQuery({
@@ -74,12 +76,12 @@ export default function TransactionsList() {
     refetchOnWindowFocus: true,
   })
 
-  const { data: categories, isLoading: categoriesLoading } = useQuery({
+  const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories', search.type],
     queryFn: () => handleGetCategories(search.type || 'ALL'),
   })
 
-  const { data: creditCards, isLoading: creditCardsLoading } = useQuery({
+  const { data: creditCardsData, isLoading: creditCardsLoading } = useQuery({
     queryKey: ['credit-cards'],
     queryFn: handleGetCreditCards,
   })
@@ -116,6 +118,19 @@ export default function TransactionsList() {
       </div>
     )
   }
+
+  const categories = [
+    { name: 'Todas categorias', id: 'ALL' },
+    ...(categoriesData || []),
+  ].map((category) => ({
+    label: category.name,
+    value: category.id,
+  }))
+
+  const creditCards = [...(creditCardsData || [])].map((card) => ({
+    label: card.cardName,
+    value: card.id,
+  }))
 
   return (
     <Card className="w-full">
@@ -173,18 +188,8 @@ export default function TransactionsList() {
           <TransactionsFilter
             search={search}
             setSearch={setSearch}
-            categories={
-              categories?.map((category) => ({
-                label: category.name,
-                value: category.id,
-              })) || []
-            }
-            creditCards={
-              creditCards?.map((card) => ({
-                label: card.cardName,
-                value: card.id,
-              })) || []
-            }
+            categories={categories}
+            creditCards={creditCards}
           />
         )}
         <div className="hidden overflow-x-auto md:block">

@@ -10,9 +10,11 @@ import {
   TransactionType,
 } from '../../../types/transactions.interface'
 import { differenceInDays, format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { CalendarBlank } from '@phosphor-icons/react'
 import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover'
 import { Calendar } from '../../ui/calendar'
+import { DateRange } from 'react-day-picker'
 
 interface TransactionsFilterProps {
   search: TransactionFilters
@@ -27,11 +29,13 @@ export default function TransactionsFilter({
   categories,
   creditCards,
 }: TransactionsFilterProps) {
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    search.startDate ? new Date(search.startDate) : undefined
-  )
-  const [endDate, setEndDate] = useState<Date | undefined>(
-    search.endDate ? new Date(search.endDate) : undefined
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    search.startDate && search.endDate
+      ? {
+          from: new Date(search.startDate),
+          to: new Date(search.endDate),
+        }
+      : undefined
   )
   const [dateError, setDateError] = useState<string | null>(null)
 
@@ -55,17 +59,15 @@ export default function TransactionsFilter({
 
   const clearFilters = () => {
     setSearch({} as TransactionFilters)
-    setStartDate(undefined)
-    setEndDate(undefined)
+    setDateRange(undefined)
     setDateError(null)
   }
 
-  const handleDateChange = (start: Date | undefined, end: Date | undefined) => {
+  const handleDateRangeChange = (range: DateRange | undefined) => {
     setDateError(null)
 
-    if (start && end) {
-      // Verificar se o período é maior que 60 dias
-      const diffDays = Math.abs(differenceInDays(end, start))
+    if (range?.from && range?.to) {
+      const diffDays = Math.abs(differenceInDays(range.to, range.from))
       if (diffDays > 60) {
         setDateError('O período máximo é de 60 dias')
         return
@@ -73,10 +75,10 @@ export default function TransactionsFilter({
 
       setSearch({
         ...search,
-        startDate: start.toISOString(),
-        endDate: end.toISOString(),
+        startDate: range.from.toISOString(),
+        endDate: range.to.toISOString(),
       })
-    } else if (!start && !end) {
+    } else if (!range || (!range.from && !range.to)) {
       const newSearch = { ...search }
       delete newSearch.startDate
       delete newSearch.endDate
@@ -85,10 +87,10 @@ export default function TransactionsFilter({
   }
 
   useEffect(() => {
-    if (startDate && endDate) {
-      handleDateChange(startDate, endDate)
+    if (dateRange?.from && dateRange?.to) {
+      handleDateRangeChange(dateRange)
     }
-  }, [startDate, endDate])
+  }, [dateRange])
 
   const activeFiltersCount = Object.keys(search).reduce((count, key) => {
     const k = key as keyof TransactionFilters
@@ -197,10 +199,10 @@ export default function TransactionsFilter({
                       variant="outline"
                       className="flex w-full items-center justify-between pl-3 text-left font-normal"
                     >
-                      {startDate && endDate ? (
+                      {dateRange?.from && dateRange?.to ? (
                         <span>
-                          {format(startDate, 'dd/MM/yyyy')} -{' '}
-                          {format(endDate, 'dd/MM/yyyy')}
+                          {format(dateRange.from, 'dd/MM/yyyy')} -{' '}
+                          {format(dateRange.to, 'dd/MM/yyyy')}
                         </span>
                       ) : (
                         <span>Selecione o período</span>
@@ -218,15 +220,19 @@ export default function TransactionsFilter({
                   >
                     <div className="flex flex-col space-y-4">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-medium">Selecione o período</h4>
-                        {(startDate || endDate) && (
+                        <h4 className="font-medium">
+                          Selecione o período
+                          <span className="ml-1 text-xs text-muted-foreground">
+                            (máximo 60 dias)
+                          </span>
+                        </h4>
+                        {dateRange && (
                           <Button
                             variant="ghost"
                             size="sm"
                             className="h-7 px-2 text-xs"
                             onClick={() => {
-                              setStartDate(undefined)
-                              setEndDate(undefined)
+                              setDateRange(undefined)
                               setDateError(null)
                               const newSearch = { ...search }
                               delete newSearch.startDate
@@ -239,51 +245,21 @@ export default function TransactionsFilter({
                         )}
                       </div>
 
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="grid grid-cols-1 gap-4">
                         <div>
-                          <label className="text-xs font-medium">
-                            Data inicial
-                          </label>
                           <div className="mt-1">
                             <Calendar
-                              mode="single"
-                              selected={startDate}
-                              onSelect={(date) => {
-                                setStartDate(date)
-                                // Verificar se a data final existe
-                                if (date && endDate) {
-                                  // Se a diferença entre as datas for maior que 60 dias, limpa a data final
-                                  const diffDays = Math.abs(
-                                    differenceInDays(date, endDate as Date)
-                                  )
-                                  if (diffDays > 60) {
-                                    setEndDate(undefined)
-                                  }
-                                }
-                              }}
-                              disabled={() => false}
-                              initialFocus
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="text-xs font-medium">
-                            Data final
-                          </label>
-                          <div className="mt-1">
-                            <Calendar
-                              mode="single"
-                              selected={endDate}
-                              onSelect={setEndDate}
+                              mode="range"
+                              selected={dateRange}
+                              onSelect={setDateRange}
+                              numberOfMonths={2}
+                              locale={ptBR}
                               disabled={(date) => {
-                                if (startDate) {
-                                  // Verificar apenas o limite de 60 dias
-                                  const diffDays = differenceInDays(
-                                    date,
-                                    startDate
+                                if (dateRange?.from && !dateRange.to) {
+                                  const diffDays = Math.abs(
+                                    differenceInDays(date, dateRange.from)
                                   )
-                                  return Math.abs(diffDays) > 60
+                                  return diffDays > 60
                                 }
                                 return false
                               }}
@@ -291,7 +267,6 @@ export default function TransactionsFilter({
                             />
                           </div>
                         </div>
-
                         {dateError && (
                           <div className="text-sm font-medium text-red-500">
                             {dateError}
