@@ -145,10 +145,16 @@ export const handleDeleteCreditCard = withErrorHandling(async (id: string) => {
   return data
 })
 
-export const handleGetBudgets = withErrorHandling(async () => {
-  const { data } = await apiWallet.get<Budget[]>(`/budgets`)
-  return data
-})
+export const handleGetBudgets = withErrorHandling(
+  async (month?: number, year?: number) => {
+    const params = {}
+    if (month && year) {
+      Object.assign(params, { month, year })
+    }
+    const { data } = await apiWallet.get<Budget[]>(`/budgets`, { params })
+    return data
+  }
+)
 
 export const handleCreateBudget = withErrorHandling(
   async (payload: CreateBudgetDTO) => {

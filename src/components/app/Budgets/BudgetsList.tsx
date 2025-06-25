@@ -16,6 +16,8 @@ import { CreateBudgetDialog } from '../../../components/app/Budgets/CreateBudget
 import { EditBudgetDialog } from '../../../components/app/Budgets/EditBudgetDialog'
 import { ConfirmationDialog } from '../Common/ConfirmationDialog'
 import { toast } from 'sonner'
+import { CustomSelect } from '../../shared/CustomSelect'
+import { months, getYearOptions } from '../../../lib/date-utils'
 
 export function BudgetsList() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -23,7 +25,13 @@ export function BudgetsList() {
   const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null)
   const [deletingBudgetId, setDeletingBudgetId] = useState<string | null>(null)
 
-  const { data: budgets, isLoading } = useBudgets()
+  const currentDate = new Date()
+  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1)
+  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear())
+
+  const yearOptions = getYearOptions(currentDate.getFullYear())
+
+  const { data: budgets, isLoading } = useBudgets(selectedMonth, selectedYear)
   const updateBudgetMutation = useUpdateBudget()
   const deleteBudgetMutation = useDeleteBudget()
 
@@ -68,11 +76,30 @@ export function BudgetsList() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:items-start sm:justify-between sm:space-y-0">
           <div className="flex flex-col gap-1">
             <CardTitle className="text-xl">Orçamentos</CardTitle>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-center gap-6 sm:flex-row md:items-end">
+            <div className="flex flex-row items-end gap-2">
+              <CustomSelect
+                label="Mês"
+                placeholder="Mês"
+                value={selectedMonth.toString()}
+                onChange={(value) => setSelectedMonth(parseInt(value))}
+                options={months}
+                className="w-[120px]"
+              />
+
+              <CustomSelect
+                label="Ano"
+                placeholder="Ano"
+                value={selectedYear.toString()}
+                onChange={(value) => setSelectedYear(parseInt(value))}
+                options={yearOptions}
+                className="w-[100px]"
+              />
+            </div>
             <Button size="sm" onClick={() => setIsCreateDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               Novo Orçamento

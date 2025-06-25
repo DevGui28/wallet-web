@@ -6,10 +6,10 @@ import {
 } from '../api'
 import { UpdateBudgetDTO } from '../types/budgets.interface'
 
-export function useBudgets() {
+export function useBudgets(month?: number, year?: number) {
   return useQuery({
-    queryKey: ['budgets'],
-    queryFn: () => handleGetBudgets(),
+    queryKey: ['budgets', month, year],
+    queryFn: () => handleGetBudgets(month, year),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
   })
