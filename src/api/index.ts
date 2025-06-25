@@ -23,6 +23,11 @@ import {
 import { authorizationInterceptor } from './interceptors/authorization'
 import { tokenInterceptor } from './interceptors/response'
 import { withErrorHandling } from './errorHandler'
+import {
+  CreateRecurringBillDTO,
+  RecurringBill,
+  UpdateRecurringBillDTO,
+} from '../types/recurring-bills.interface'
 
 export const apiWallet = new Axios({
   baseURL: urls.walletApi,
@@ -205,6 +210,38 @@ export const handlePayTransaction = withErrorHandling(async (id: string) => {
   const { data } = await apiWallet.patch(`/transactions/${id}/pay`)
   return data
 })
+
+// Métodos para contas fixas (recurring bills)
+export const handleFindRecurringBills = withErrorHandling(async () => {
+  const { data } = await apiWallet.get<RecurringBill[]>('/recurring-bills')
+  return data
+})
+
+export const handleCreateRecurringBill = withErrorHandling(
+  async (recurringBill: CreateRecurringBillDTO) => {
+    const { data } = await apiWallet.post<RecurringBill>(
+      '/recurring-bills',
+      recurringBill
+    )
+    return data
+  }
+)
+
+export const handleUpdateRecurringBill = withErrorHandling(
+  async (id: string, recurringBill: UpdateRecurringBillDTO) => {
+    const { data } = await apiWallet.put<RecurringBill>(
+      `/recurring-bills/${id}`,
+      recurringBill
+    )
+    return data
+  }
+)
+
+export const handleDeleteRecurringBill = withErrorHandling(
+  async (id: string) => {
+    await apiWallet.delete(`/recurring-bills/${id}`)
+  }
+)
 
 // Método para pagar uma fatura de cartão de crédito
 export const handlePayInvoice = withErrorHandling(async (id: string) => {

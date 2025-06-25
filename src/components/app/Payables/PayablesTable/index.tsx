@@ -2,138 +2,356 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Check, PencilSimpleLine, Trash } from '@phosphor-icons/react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  PencilSimpleLine,
+  Plus,
+  Trash,
+  CurrencyCircleDollar,
+  Calendar,
+} from '@phosphor-icons/react'
+import {
+  RecurringBill,
+  CreateRecurringBillDTO,
+  UpdateRecurringBillDTO,
+} from '../../../../types/recurring-bills.interface'
+import {
+  useRecurringBills,
+  useDeleteRecurringBill,
+  useCreateRecurringBill,
+  useUpdateRecurringBill,
+} from '../../../../hooks/useRecurringBills'
+import { toast } from 'sonner'
+import { formatCurrency } from '../../../../lib/utils'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form } from '@/components/ui/form'
+import FormInput from '../../../shared/Form/FormInput'
 
-type Payable = {
-  id: string
-  name: string
-  amount: number
-  dueDate: string
-  recurrence: string
-  status: 'paid' | 'pending'
+// Schema para validação do formulário
+const recurringBillFormSchema = z.object({
+  name: z.string().min(1, 'Nome é obrigatório'),
+  description: z.string().optional(),
+  amount: z.coerce.number().min(0.01, 'Valor deve ser maior que zero'),
+  recurrenceDay: z.coerce
+    .number()
+    .min(1, 'Dia deve ser entre 1 e 31')
+    .max(31, 'Dia deve ser entre 1 e 31'),
+})
+
+type RecurringBillFormValues = z.infer<typeof recurringBillFormSchema>
+
+interface RecurringBillFormModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  mode: 'create' | 'edit'
+  bill?: RecurringBill
 }
 
-export function PayablesTable() {
-  const [payables, setPayables] = useState<Payable[]>([
-    {
-      id: '1',
-      name: 'Aluguel',
-      amount: 1200,
-      dueDate: '2025-06-10',
-      recurrence: 'Mensal',
-      status: 'pending',
-    },
-    {
-      id: '2',
-      name: 'Internet',
-      amount: 120,
-      dueDate: '2025-06-15',
-      recurrence: 'Mensal',
-      status: 'pending',
-    },
-    {
-      id: '3',
-      name: 'Energia',
-      amount: 250,
-      dueDate: '2025-06-20',
-      recurrence: 'Mensal',
-      status: 'paid',
-    },
-    {
-      id: '4',
-      name: 'Água',
-      amount: 80,
-      dueDate: '2025-06-22',
-      recurrence: 'Mensal',
-      status: 'pending',
-    },
-    {
-      id: '5',
-      name: 'Seguro do Carro',
-      amount: 350,
-      dueDate: '2025-06-25',
-      recurrence: 'Anual',
-      status: 'pending',
-    },
-  ])
+function RecurringBillFormModal({
+  open,
+  onOpenChange,
+  mode,
+  bill,
+}: RecurringBillFormModalProps) {
+  const createRecurringBill = useCreateRecurringBill()
+  const updateRecurringBill = useUpdateRecurringBill()
 
-  const handleToggleStatus = (id: string) => {
-    setPayables(
-      payables.map((payable) =>
-        payable.id === id
-          ? {
-              ...payable,
-              status: payable.status === 'paid' ? 'pending' : 'paid',
-            }
-          : payable
+  const form = useForm<RecurringBillFormValues>({
+    resolver: zodResolver(recurringBillFormSchema),
+    defaultValues: {
+      name: bill?.name || '',
+      description: bill?.description || '',
+      amount: bill?.amount || undefined,
+      recurrenceDay: bill?.recurrenceDay || undefined,
+    },
+  })
+
+  const onSubmit = (data: RecurringBillFormValues) => {
+    if (mode === 'create') {
+      const newBill: CreateRecurringBillDTO = {
+        name: data.name,
+        description: data.description || '',
+        amount: data.amount,
+        recurrenceDay: data.recurrenceDay,
+      }
+
+      createRecurringBill.mutate(newBill, {
+        onSuccess: () => {
+          form.reset()
+          onOpenChange(false)
+        },
+      })
+    } else if (mode === 'edit' && bill) {
+      const updatedBill: UpdateRecurringBillDTO = {
+        id: bill.id,
+        name: bill.name,
+        description: bill.description || '',
+        amount: data.amount,
+        recurrenceDay: data.recurrenceDay,
+      }
+
+      updateRecurringBill.mutate(
+        { id: bill.id, data: updatedBill },
+        {
+          onSuccess: () => {
+            form.reset()
+            onOpenChange(false)
+          },
+        }
       )
-    )
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat('pt-BR').format(date)
+    }
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Status</TableHead>
-            <TableHead>Nome</TableHead>
-            <TableHead>Valor</TableHead>
-            <TableHead>Vencimento</TableHead>
-            <TableHead>Recorrência</TableHead>
-            <TableHead className="text-right">Ações</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {payables.map((payable) => (
-            <TableRow key={payable.id}>
-              <TableCell>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>
+            {mode === 'create' ? 'Nova Conta Fixa' : 'Editar Conta Fixa'}
+          </DialogTitle>
+          <DialogDescription>
+            {mode === 'create'
+              ? 'Adicione uma nova conta fixa ao sistema.'
+              : 'Edite os detalhes da conta fixa selecionada.'}
+          </DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormInput
+              name="name"
+              label="Nome"
+              placeholder="Aluguel"
+              form={form}
+              disabled={mode === 'edit'}
+            />
+
+            <FormInput
+              name="description"
+              label="Descrição"
+              placeholder="Descrição"
+              form={form}
+              isOptional
+              disabled={mode === 'edit'}
+            />
+
+            <FormInput
+              name="amount"
+              label="Valor"
+              placeholder="0.00"
+              form={form}
+              prefix="R$ "
+              numeric
+              withMask
+            />
+
+            <FormInput
+              name="recurrenceDay"
+              label="Dia de Vencimento"
+              placeholder="10"
+              form={form}
+              numeric
+            />
+
+            <DialogFooter className="pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={
+                  createRecurringBill.isPending || updateRecurringBill.isPending
+                }
+              >
+                {createRecurringBill.isPending || updateRecurringBill.isPending
+                  ? 'Salvando...'
+                  : mode === 'create'
+                    ? 'Criar'
+                    : 'Atualizar'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function PayablesTable() {
+  const { data: recurringBills, isLoading } = useRecurringBills()
+  const deleteRecurringBillMutation = useDeleteRecurringBill()
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [selectedBill, setSelectedBill] = useState<RecurringBill | null>(null)
+
+  const handleOpenEditModal = (bill: RecurringBill) => {
+    setSelectedBill(bill)
+    setIsEditModalOpen(true)
+  }
+
+  const handleOpenDeleteModal = (bill: RecurringBill) => {
+    setSelectedBill(bill)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleDeleteBill = () => {
+    if (!selectedBill) return
+
+    deleteRecurringBillMutation.mutate(selectedBill.id, {
+      onSuccess: () => {
+        toast.success('Conta fixa removida com sucesso')
+        setIsDeleteModalOpen(false)
+      },
+      onError: () => {
+        toast.error('Erro ao remover conta fixa')
+      },
+    })
+  }
+
+  return (
+    <>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Contas Fixas</h2>
+        <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Plus className="mr-2" size={16} />
+          Nova Conta Fixa
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="flex h-40 items-center justify-center">
+          <p>Carregando...</p>
+        </div>
+      ) : recurringBills?.length === 0 ? (
+        <div className="flex h-40 items-center justify-center">
+          <p>Nenhuma conta fixa encontrada</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+          {recurringBills?.map((bill) => (
+            <Card
+              key={bill.id}
+              className="overflow-hidden transition-all hover:shadow-md"
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between text-base">
+                  <span className="truncate">{bill.name}</span>
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 px-4 py-1 text-xs"
+                  >
+                    Dia {bill.recurrenceDay}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <CurrencyCircleDollar
+                      size={16}
+                      className="text-muted-foreground"
+                    />
+                    <span className="font-medium">
+                      {formatCurrency(bill.amount)}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Calendar
+                      size={16}
+                      className="mt-0.5 text-muted-foreground"
+                    />
+                    <p className="line-clamp-2 text-xs text-muted-foreground">
+                      {bill.description}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-end gap-1">
                 <Button
                   variant="ghost"
-                  size="icon"
-                  onClick={() => handleToggleStatus(payable.id)}
+                  size="sm"
+                  className="h-8 w-8 p-2"
+                  onClick={() => handleOpenEditModal(bill)}
                 >
-                  {payable.status === 'paid' ? (
-                    <Check size={18} className="text-success" weight="bold" />
-                  ) : (
-                    <Checkbox />
-                  )}
+                  <PencilSimpleLine size={14} />
                 </Button>
-              </TableCell>
-              <TableCell className="font-medium">{payable.name}</TableCell>
-              <TableCell>R$ {payable.amount.toFixed(2)}</TableCell>
-              <TableCell>{formatDate(payable.dueDate)}</TableCell>
-              <TableCell>
-                <Badge variant="outline">{payable.recurrence}</Badge>
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  <Button variant="ghost" size="icon">
-                    <PencilSimpleLine size={16} />
-                  </Button>
-                  <Button variant="ghost" size="icon">
-                    <Trash size={16} />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-2"
+                  onClick={() => handleOpenDeleteModal(bill)}
+                >
+                  <Trash size={14} />
+                </Button>
+              </CardFooter>
+            </Card>
           ))}
-        </TableBody>
-      </Table>
-    </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Exclusão */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar Exclusão</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir a conta fixa &quot;
+              {selectedBill?.name}&quot;? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteBill}>
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Criação de Conta Fixa */}
+      <RecurringBillFormModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        mode="create"
+      />
+
+      {/* Modal de Edição de Conta Fixa */}
+      {selectedBill && (
+        <RecurringBillFormModal
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          mode="edit"
+          bill={selectedBill}
+        />
+      )}
+    </>
   )
 }
