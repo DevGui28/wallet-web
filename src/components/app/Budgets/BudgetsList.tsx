@@ -80,15 +80,15 @@ export function BudgetsList() {
           <div className="flex flex-col gap-1">
             <CardTitle className="text-xl">Orçamentos</CardTitle>
           </div>
-          <div className="flex flex-col items-center gap-6 sm:flex-row md:items-end">
-            <div className="flex flex-row items-end gap-2">
+          <div className="flex flex-col items-center gap-6 sm:flex-row md:items-start">
+            <div className="flex flex-row items-end gap-4">
               <CustomSelect
                 label="Mês"
                 placeholder="Mês"
                 value={selectedMonth.toString()}
                 onChange={(value) => setSelectedMonth(parseInt(value))}
                 options={months}
-                className="w-[120px]"
+                className="w-auto flex-row items-center"
               />
 
               <CustomSelect
@@ -97,7 +97,7 @@ export function BudgetsList() {
                 value={selectedYear.toString()}
                 onChange={(value) => setSelectedYear(parseInt(value))}
                 options={yearOptions}
-                className="w-[100px]"
+                className="w-auto flex-row items-center"
               />
             </div>
             <Button size="sm" onClick={() => setIsCreateDialogOpen(true)}>
