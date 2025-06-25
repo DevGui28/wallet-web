@@ -13,7 +13,7 @@ export default function PayablesList() {
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl">Contas a Pagar</CardTitle>
+        <CardTitle className="text-xl">Contas Fixas</CardTitle>
         <Button
           onClick={() => setOpen(true)}
           className="flex items-center gap-2"

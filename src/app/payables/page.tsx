@@ -17,9 +17,9 @@ export default function PayablesPage() {
   return (
     <>
       <TopNav
-        title="Contas a Pagar"
+        title="Contas Fixas"
         name={name}
-        subtitle="Gerencie suas contas fixas e avulsas"
+        subtitle="Gerencie suas contas fixas"
       />
       <div className="mt-4 flex w-full items-center justify-center px-4">
         <div className="mb-6 w-full">

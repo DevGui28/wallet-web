@@ -43,7 +43,7 @@ export const menuItems: MenuItem[] = [
   {
     link: 'payables',
     icon: <ClipboardText weight="fill" size={18} />,
-    label: 'Contas a pagar',
+    label: 'Contas Fixas',
   },
   {
     link: 'goals',
