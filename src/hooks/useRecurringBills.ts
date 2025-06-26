@@ -27,6 +27,8 @@ export const useCreateRecurringBill = () => {
       handleCreateRecurringBill(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recurring-bills'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
       toast.success('Conta fixa criada com sucesso')
     },
     onError: () => {
@@ -43,6 +45,8 @@ export const useUpdateRecurringBill = () => {
       handleUpdateRecurringBill(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recurring-bills'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
       toast.success('Conta fixa atualizada com sucesso')
     },
     onError: () => {

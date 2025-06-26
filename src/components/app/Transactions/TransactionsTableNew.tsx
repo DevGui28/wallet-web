@@ -141,7 +141,7 @@ export default function TransactionsTable({ search }: TransactionsTableProps) {
                 Data
               </TableHead>
               <TableHead className="px-2 py-3 text-left sm:px-4 sm:py-4">
-                Descrição
+                Nome
               </TableHead>
               <TableHead className="hidden px-4 py-4 text-left md:table-cell">
                 Categoria
