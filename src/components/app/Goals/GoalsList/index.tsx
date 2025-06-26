@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus } from '@phosphor-icons/react'
-import { GoalDialog } from '../GoalDialog'
+import { CreateGoalDialog } from '../CreateGoalDialog'
 import { useGoals } from '../../../../hooks/useGoals'
 import { GoalCard } from '../GoalCard'
 
@@ -34,7 +34,7 @@ export default function GoalsList() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
             {goals?.map((goal) => (
               <div key={goal.id} className="w-full">
                 <GoalCard goal={goal} />
@@ -50,7 +50,7 @@ export default function GoalsList() {
           </div>
         )}
       </CardContent>
-      <GoalDialog open={open} setOpen={setOpen} />
+      <CreateGoalDialog open={open} setOpen={setOpen} />
     </Card>
   )
 }

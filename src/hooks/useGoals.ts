@@ -18,6 +18,7 @@ interface CreateGoalDTO {
   name: string
   description?: string
   targetValue: number
+  savedValue?: number
   deadline?: string
 }
 

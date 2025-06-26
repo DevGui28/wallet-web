@@ -132,6 +132,7 @@ export function GoalEditDialog({ open, setOpen, goal }: Props) {
                 minDate={new Date()}
                 maxDate={new Date(2050, 11, 31)}
                 optional
+                modal
               />
             </div>
             <DialogFooter className="sm:justify-end">

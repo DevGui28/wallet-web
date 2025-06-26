@@ -125,12 +125,12 @@ export default function FormDatePicker<
               </FormControl>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start" side="bottom">
-              <div className="flex items-center justify-between space-x-2 p-3">
+              <div className="flex items-center justify-between gap-2 space-x-2 p-3">
                 <Select
                   value={date ? months[getMonth(date)] : undefined}
                   onValueChange={handleMonthChange}
                 >
-                  <SelectTrigger className="w-[120px]">
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Mês" />
                   </SelectTrigger>
                   <SelectContent>
@@ -146,7 +146,7 @@ export default function FormDatePicker<
                   value={date ? getYear(date).toString() : undefined}
                   onValueChange={handleYearChange}
                 >
-                  <SelectTrigger className="w-[90px]">
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Ano" />
                   </SelectTrigger>
                   <SelectContent>
