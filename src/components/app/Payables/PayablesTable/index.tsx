@@ -289,30 +289,25 @@ export function PayablesTable() {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-end gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-2"
+              <CardFooter className="flex justify-end gap-2">
+                <PencilSimpleLine
+                  size={14}
+                  className="cursor-pointer text-muted-foreground hover:text-primary sm:size-4"
                   onClick={() => handleOpenEditModal(bill)}
-                >
-                  <PencilSimpleLine size={14} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-2"
+                  weight="bold"
+                />
+                <Trash
+                  size={14}
+                  className="cursor-pointer text-muted-foreground hover:text-destructive sm:size-4"
                   onClick={() => handleOpenDeleteModal(bill)}
-                >
-                  <Trash size={14} />
-                </Button>
+                  weight="bold"
+                />
               </CardFooter>
             </Card>
           ))}
         </div>
       )}
 
-      {/* Modal de Confirmação de Exclusão */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent>
           <DialogHeader>
@@ -336,14 +331,12 @@ export function PayablesTable() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Criação de Conta Fixa */}
       <RecurringBillFormModal
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
         mode="create"
       />
 
-      {/* Modal de Edição de Conta Fixa */}
       {selectedBill && (
         <RecurringBillFormModal
           open={isEditModalOpen}

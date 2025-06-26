@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button'
 import { CoinVertical, PencilSimpleLine, Trash } from '@phosphor-icons/react'
 import { AddValueDialog } from '../AddValueDialog'
 import { GoalEditDialog } from '../GoalEditDialog'
-import { useAddValueToGoal, Goal } from '../../../../hooks/useGoals'
+import { DeleteGoalDialog } from '../DeleteGoalDialog'
+import { Goal } from '../../../../hooks/useGoals'
+import { formatCurrency } from '../../../../lib/utils'
 
 type Props = {
   goal: Goal
@@ -16,45 +18,43 @@ type Props = {
 export function GoalCard({ goal }: Props) {
   const [openAddValueDialog, setOpenAddValueDialog] = useState(false)
   const [openEditDialog, setOpenEditDialog] = useState(false)
-  const percentage = Math.round((goal.currentAmount / goal.targetAmount) * 100)
-  const remaining = goal.targetAmount - goal.currentAmount
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const percentage = Math.round(
+    (Number(goal.savedValue) / Number(goal.targetValue)) * 100
+  )
+  const remaining = Number(goal.targetValue) - Number(goal.savedValue)
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return new Intl.DateTimeFormat('pt-BR').format(date)
   }
 
-  const addValueMutation = useAddValueToGoal()
-
-  const handleAddValue = async (goalId: string, amount: number) => {
-    try {
-      await addValueMutation.mutateAsync({ id: goalId, amount })
-      return Promise.resolve()
-    } catch (error) {
-      console.error('Erro ao adicionar valor ao objetivo:', error)
-      return Promise.reject(error)
-    }
-  }
-
   return (
     <Card className="overflow-hidden">
-      <div className="flex h-20 items-center justify-center bg-primary/10 text-3xl sm:h-24 sm:text-4xl">
-        {goal.icon}
-      </div>
       <CardContent className="p-3 sm:p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <h3 className="truncate text-sm font-medium sm:text-base">
-            {goal.title}
-          </h3>
+          <div className="flex flex-col">
+            <h3 className="truncate text-sm font-medium sm:text-base">
+              {goal.name}
+            </h3>
+            {goal.description && (
+              <p className="truncate text-xs text-muted-foreground sm:text-sm">
+                {goal.description}
+              </p>
+            )}
+          </div>
           <div className="flex shrink-0 gap-1 sm:gap-2">
             <PencilSimpleLine
               size={14}
               className="cursor-pointer text-muted-foreground hover:text-primary sm:size-4"
               onClick={() => setOpenEditDialog(true)}
+              weight="bold"
             />
             <Trash
               size={14}
               className="cursor-pointer text-muted-foreground hover:text-destructive sm:size-4"
+              onClick={() => setOpenDeleteDialog(true)}
+              weight="bold"
             />
           </div>
         </div>
@@ -64,18 +64,18 @@ export function GoalCard({ goal }: Props) {
             {percentage}% concluído
           </span>
           <span className="text-muted-foreground">
-            Meta: {formatDate(goal.deadline?.toISOString() || '')}
+            Meta: {formatDate(goal.deadline?.toString() || '')}
           </span>
         </div>
 
         <Progress value={percentage} className="h-2" />
 
         <div className="mt-2 text-xs text-muted-foreground">
-          R$ {goal.currentAmount.toFixed(2)} de R${' '}
-          {goal.targetAmount.toFixed(2)}
+          {formatCurrency(goal.savedValue)} de{' '}
+          {formatCurrency(goal.targetValue)}
         </div>
 
-        <div className="mt-2 text-xs">Faltam R$ {remaining.toFixed(2)}</div>
+        <div className="mt-2 text-xs">Faltam {formatCurrency(remaining)}</div>
 
         <Button
           className="mt-3 flex h-8 w-full items-center justify-center gap-1 text-xs sm:mt-4 sm:h-9 sm:gap-2 sm:text-sm"
@@ -89,11 +89,15 @@ export function GoalCard({ goal }: Props) {
           open={openAddValueDialog}
           setOpen={setOpenAddValueDialog}
           goal={goal}
-          onAddValue={handleAddValue}
         />
         <GoalEditDialog
           open={openEditDialog}
           setOpen={setOpenEditDialog}
+          goal={goal}
+        />
+        <DeleteGoalDialog
+          open={openDeleteDialog}
+          setOpen={setOpenDeleteDialog}
           goal={goal}
         />
       </CardContent>

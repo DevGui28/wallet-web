@@ -1,8 +1,9 @@
 'use client'
 
 import { CalendarBlank } from '@phosphor-icons/react'
-import { format } from 'date-fns'
+import { format, getMonth, getYear, setMonth, setYear } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { useState } from 'react'
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form'
 import { cn } from '../../../../lib/utils'
 import { Button } from '../../../ui/button'
@@ -16,6 +17,13 @@ import {
   FormMessage,
 } from '../../../ui/form'
 import { Popover, PopoverContent, PopoverTrigger } from '../../../ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../../ui/select'
 
 type Props<T extends FieldValues, K extends Path<T>> = {
   readonly form: UseFormReturn<T>
@@ -27,6 +35,7 @@ type Props<T extends FieldValues, K extends Path<T>> = {
   readonly maxDate?: Date
   readonly description?: string
   readonly modal?: boolean
+  readonly future?: boolean
   readonly optional?: boolean
 }
 
@@ -43,7 +52,44 @@ export default function FormDatePicker<
   description,
   modal,
   optional = false,
+  future = false,
 }: Props<T, K>) {
+  const [date, setDate] = useState<Date | undefined>(
+    form.getValues(name) as Date | undefined
+  )
+
+  const years = Array.from(
+    { length: maxDate.getFullYear() - minDate.getFullYear() + 1 },
+    (_, i) => minDate.getFullYear() + i
+  )
+
+  const months = [
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
+  ]
+
+  const handleMonthChange = (month: string) => {
+    if (!date) return
+    const monthIndex = months.findIndex((m) => m === month)
+    const newDate = setMonth(date, monthIndex)
+    setDate(newDate)
+  }
+
+  const handleYearChange = (year: string) => {
+    if (!date) return
+    const newDate = setYear(date, parseInt(year))
+    setDate(newDate)
+  }
   return (
     <FormField
       control={form.control}
@@ -79,13 +125,55 @@ export default function FormDatePicker<
               </FormControl>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start" side="bottom">
+              <div className="flex items-center justify-between space-x-2 p-3">
+                <Select
+                  value={date ? months[getMonth(date)] : undefined}
+                  onValueChange={handleMonthChange}
+                >
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Mês" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {months.map((month) => (
+                      <SelectItem key={month} value={month}>
+                        {month}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={date ? getYear(date).toString() : undefined}
+                  onValueChange={handleYearChange}
+                >
+                  <SelectTrigger className="w-[90px]">
+                    <SelectValue placeholder="Ano" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <Calendar
                 mode="single"
                 selected={field.value}
-                onSelect={field.onChange}
+                onSelect={(date) => {
+                  field.onChange(date)
+                  setDate(date)
+                }}
                 locale={ptBR}
-                disabled={(date) => date > maxDate || date < minDate}
+                disabled={
+                  future
+                    ? (date) => date > maxDate
+                    : (date) => date > maxDate || date < minDate
+                }
                 initialFocus
+                month={date}
               />
             </PopoverContent>
           </Popover>

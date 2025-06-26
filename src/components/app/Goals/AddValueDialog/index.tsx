@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { useAddValueToGoal, Goal } from '../../../../hooks/useGoals'
+import { Goal } from '../../../../hooks/useGoals'
 
 import {
   Dialog,
@@ -17,9 +17,11 @@ import {
 import { Button } from '@/components/ui/button'
 import FormInput from '@/components/shared/Form/FormInput'
 import { Form } from '@/components/ui/form'
+import { formatCurrency } from '../../../../lib/utils'
+import { useAddValueToGoal } from '../../../../hooks/useGoals'
 
 const addValueSchema = z.object({
-  amount: z.string().min(1, 'Valor é obrigatório'),
+  amount: z.coerce.number().min(0.01, 'Valor deve ser maior que zero'),
 })
 
 type FormAddValue = z.infer<typeof addValueSchema>
@@ -28,27 +30,20 @@ type Props = {
   open: boolean
   setOpen: (open: boolean) => void
   goal: Goal
-  onAddValue: (goalId: string, amount: number) => Promise<void>
 }
 
-export function AddValueDialog({ open, setOpen, goal, onAddValue }: Props) {
+export function AddValueDialog({ open, setOpen, goal }: Props) {
   const addValueMutation = useAddValueToGoal()
-
   const form = useForm<FormAddValue>({
     resolver: zodResolver(addValueSchema),
-    defaultValues: {
-      amount: '',
-    },
   })
 
   const onSubmit = async (data: FormAddValue) => {
     try {
-      const amount = Number(data.amount.replace(/\D/g, '')) / 100
-      // Usar tanto o hook personalizado quanto a função onAddValue para compatibilidade
-      await Promise.all([
-        addValueMutation.mutateAsync({ id: goal.id, amount }),
-        onAddValue(goal.id, amount),
-      ])
+      await addValueMutation.mutateAsync({
+        id: goal.id,
+        amount: data.amount,
+      })
       toast.success('Valor adicionado com sucesso!')
       form.reset()
       setOpen(false)
@@ -62,14 +57,17 @@ export function AddValueDialog({ open, setOpen, goal, onAddValue }: Props) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">
-            Adicionar valor para {goal.title}
+            Adicionar valor para {goal.name}
           </DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
             Adicione um valor para seu objetivo financeiro
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="gap-4 space-y-4"
+          >
             <FormInput
               label="Valor"
               name="amount"
@@ -80,11 +78,11 @@ export function AddValueDialog({ open, setOpen, goal, onAddValue }: Props) {
               numeric
             />
             <div className="flex flex-col space-y-2 text-xs text-muted-foreground sm:text-sm">
-              <p>Valor atual: R$ {goal.currentAmount.toFixed(2)}</p>
-              <p>Valor alvo: R$ {goal.targetAmount.toFixed(2)}</p>
+              <p>Valor atual: {formatCurrency(goal.savedValue)}</p>
+              <p>Valor alvo: {formatCurrency(goal.targetValue)}</p>
               <p>
-                Valor restante: R${' '}
-                {(goal.targetAmount - goal.currentAmount).toFixed(2)}
+                Valor restante:{' '}
+                {formatCurrency(goal.targetValue - goal.savedValue)}
               </p>
             </div>
             <DialogFooter className="sm:justify-end">

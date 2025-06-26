@@ -4,30 +4,28 @@ import { toast } from 'sonner'
 
 export interface Goal {
   id: string
-  title: string
-  icon: string
-  description?: string
-  targetAmount: number
-  currentAmount: number
-  deadline?: Date
-  createdAt: Date
-  updatedAt: Date
   userId: string
-  completed: boolean
+  name: string
+  description: string
+  targetValue: number
+  savedValue: number
+  deadline: string
+  createdAt: string
+  updatedAt: string
 }
 
 interface CreateGoalDTO {
-  title: string
+  name: string
   description?: string
-  targetAmount: number
-  deadline?: Date
+  targetValue: number
+  deadline?: string
 }
 
 interface UpdateGoalDTO {
-  title?: string
+  name?: string
   description?: string
-  targetAmount?: number
-  deadline?: Date
+  targetValue?: number
+  deadline?: string
 }
 
 interface AddValueDTO {
@@ -113,14 +111,14 @@ export function useGoals() {
   const useAddValueToGoal = () => {
     return useMutation({
       mutationFn: async ({ id, amount }: AddValueDTO) => {
-        const { data } = await apiWallet.post<{ goal: Goal }>(
-          `/goals/${id}/add-value`,
-          { amount }
-        )
-        return data.goal
+        const { data } = await apiWallet.patch<Goal>(`/goals/${id}/progress`, {
+          amount,
+        })
+        return data
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['goals'] })
+        queryClient.invalidateQueries({ queryKey: ['transactions'] })
         queryClient.invalidateQueries({ queryKey: ['dashboard'] })
         toast.success('Valor adicionado com sucesso!')
       },

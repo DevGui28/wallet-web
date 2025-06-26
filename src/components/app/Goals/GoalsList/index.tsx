@@ -5,9 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus } from '@phosphor-icons/react'
 import { GoalDialog } from '../GoalDialog'
+import { useGoals } from '../../../../hooks/useGoals'
+import { GoalCard } from '../GoalCard'
 
 export default function GoalsList() {
   const [open, setOpen] = useState(false)
+  const { useGetGoals } = useGoals()
+  const { data: goals, isLoading } = useGetGoals()
 
   return (
     <Card className="w-full">
@@ -23,7 +27,7 @@ export default function GoalsList() {
         </Button>
       </CardHeader>
       <CardContent className="p-3 sm:p-6">
-        {/* {isLoading ? (
+        {isLoading ? (
           <div className="col-span-full flex h-40 items-center justify-center text-muted-foreground">
             <p className="text-sm font-medium sm:text-base">
               Carregando objetivos...
@@ -31,12 +35,12 @@ export default function GoalsList() {
           </div>
         ) : (
           <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {goals.map((goal) => (
+            {goals?.map((goal) => (
               <div key={goal.id} className="w-full">
                 <GoalCard goal={goal} />
               </div>
             ))}
-            {goals.length === 0 && (
+            {goals?.length === 0 && (
               <div className="col-span-full flex h-40 items-center justify-center text-muted-foreground">
                 <p className="text-sm font-medium sm:text-base">
                   Nenhum objetivo encontrado
@@ -44,7 +48,7 @@ export default function GoalsList() {
               </div>
             )}
           </div>
-        )} */}
+        )}
       </CardContent>
       <GoalDialog open={open} setOpen={setOpen} />
     </Card>
