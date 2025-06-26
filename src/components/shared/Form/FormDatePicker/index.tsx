@@ -1,12 +1,19 @@
 'use client'
 
 import { CalendarBlank } from '@phosphor-icons/react'
-import { format, getMonth, getYear, setMonth, setYear } from 'date-fns'
+import {
+  format,
+  getMonth,
+  getYear,
+  isValid,
+  parse,
+  setMonth,
+  setYear,
+} from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form'
 import { cn } from '../../../../lib/utils'
-import { Button } from '../../../ui/button'
 import { Calendar } from '../../../ui/calendar'
 import {
   FormControl,
@@ -53,15 +60,38 @@ export default function FormDatePicker<
   modal,
   optional = false,
   future = false,
+  className,
 }: Props<T, K>) {
   const [date, setDate] = useState<Date | undefined>(
     form.getValues(name) as Date | undefined
   )
-
-  const years = Array.from(
-    { length: maxDate.getFullYear() - minDate.getFullYear() + 1 },
-    (_, i) => minDate.getFullYear() + i
+  const [inputValue, setInputValue] = useState<string>(
+    date ? format(date, 'dd/MM/yyyy') : ''
   )
+
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (value[name]) {
+        setDate(value[name] as Date)
+        setInputValue(format(value[name] as Date, 'dd/MM/yyyy'))
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [form, name])
+
+  const handleMonthChange = (month: string) => {
+    if (!date) return
+    const monthIndex = months.findIndex((m) => m === month)
+    const newDate = setMonth(date, monthIndex)
+    setDate(newDate)
+  }
+
+  const handleYearChange = (year: string) => {
+    if (!date) return
+    const newDate = setYear(date, parseInt(year))
+    setDate(newDate)
+  }
 
   const months = [
     'Janeiro',
@@ -78,26 +108,19 @@ export default function FormDatePicker<
     'Dezembro',
   ]
 
-  const handleMonthChange = (month: string) => {
-    if (!date) return
-    const monthIndex = months.findIndex((m) => m === month)
-    const newDate = setMonth(date, monthIndex)
-    setDate(newDate)
-  }
+  const years = Array.from(
+    { length: maxDate.getFullYear() - minDate.getFullYear() + 1 },
+    (_, i) => minDate.getFullYear() + i
+  )
 
-  const handleYearChange = (year: string) => {
-    if (!date) return
-    const newDate = setYear(date, parseInt(year))
-    setDate(newDate)
-  }
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className="mt-[6px] flex flex-col">
+        <FormItem className={cn('flex w-full flex-col', className)}>
           {label && (
-            <FormLabel className="mb-1">
+            <FormLabel className="text-xs font-medium sm:text-sm">
               {label}
               {optional ? ' (opcional)' : ''}
             </FormLabel>
@@ -105,27 +128,45 @@ export default function FormDatePicker<
           <Popover modal={modal}>
             <PopoverTrigger asChild>
               <FormControl>
-                <Button
-                  variant={'outline'}
-                  className={cn(
-                    'w-full pl-3 text-left font-normal',
-                    !field.value && 'text-card-foreground'
-                  )}
-                >
-                  {field.value ? (
-                    format(field.value, 'PPP', { locale: ptBR })
-                  ) : (
-                    <span>{placeholder}</span>
-                  )}
-                  <CalendarBlank
-                    weight="bold"
-                    className="ml-auto h-4 w-4 opacity-50"
+                <div className="relative flex w-full items-center">
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setInputValue(value)
+
+                      if (value.length === 10) {
+                        try {
+                          const parsedDate = parse(
+                            value,
+                            'dd/MM/yyyy',
+                            new Date()
+                          )
+                          if (isValid(parsedDate)) {
+                            setDate(parsedDate)
+                            field.onChange(parsedDate)
+                          }
+                        } catch (error) {
+                          // Ignora erros de parsing
+                        }
+                      }
+                    }}
+                    placeholder={placeholder}
+                    className={cn(
+                      'w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background',
+                      'placeholder:text-muted-foreground',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                      'disabled:cursor-not-allowed disabled:opacity-50'
+                    )}
+                    disabled={form.formState.isSubmitting}
                   />
-                </Button>
+                  <CalendarBlank className="absolute right-3 h-4 w-4 opacity-50" />
+                </div>
               </FormControl>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start" side="bottom">
-              <div className="flex items-center justify-between gap-2 space-x-2 p-3">
+              <div className="flex w-full items-center justify-between gap-2 p-3">
                 <Select
                   value={date ? months[getMonth(date)] : undefined}
                   onValueChange={handleMonthChange}
@@ -165,6 +206,14 @@ export default function FormDatePicker<
                 onSelect={(date) => {
                   field.onChange(date)
                   setDate(date)
+                  if (date) {
+                    setInputValue(format(date, 'dd/MM/yyyy'))
+                  } else {
+                    setInputValue('')
+                  }
+                }}
+                onMonthChange={(newMonth) => {
+                  setDate(newMonth)
                 }}
                 locale={ptBR}
                 disabled={
@@ -177,8 +226,10 @@ export default function FormDatePicker<
               />
             </PopoverContent>
           </Popover>
-          {description && <FormDescription>{description}</FormDescription>}
-          <FormMessage />
+          {description && (
+            <FormDescription className="text-xs">{description}</FormDescription>
+          )}
+          <FormMessage className="text-xs" />
         </FormItem>
       )}
     />
