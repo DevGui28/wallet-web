@@ -67,15 +67,29 @@ export function InvoiceCard({ invoice }: Props) {
       className={cn(
         'overflow-hidden border-2',
         invoice.status === 'paid'
-          ? 'border-success/30 bg-success/5'
-          : 'border-primary/30'
+          ? 'border-emerald-600 bg-emerald-600/5'
+          : 'border-card-foreground/10 bg-card-foreground/5'
       )}
     >
       <CardContent className="p-0">
         <div className="flex flex-col p-3 sm:p-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 sm:h-10 sm:w-10">
-              <CreditCard size={16} className="text-primary sm:size-5" />
+            <div
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 sm:h-10 sm:w-10',
+                {
+                  'bg-purple-700': invoice.cardName.includes('Nubank'),
+                  'bg-orange-500':
+                    invoice.cardName.includes('Inter') ||
+                    invoice.cardName.includes('Itaú'),
+                  'bg-red-600':
+                    invoice.cardName.includes('Santander') ||
+                    invoice.cardName.includes('Bradesco'),
+                  'bg-blue-600': invoice.cardName.includes('Caixa'),
+                }
+              )}
+            >
+              <CreditCard size={16} className="text-foreground sm:size-5" />
             </div>
             <div>
               <h3 className="text-sm font-medium sm:text-base">
@@ -100,8 +114,8 @@ export function InvoiceCard({ invoice }: Props) {
                 <Button
                   onClick={handlePayInvoice}
                   size="sm"
-                  variant="outline"
-                  className="h-8 gap-1 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
+                  variant="default"
+                  className="h-8 gap-1 bg-emerald-600 px-2 text-xs text-gray-50 hover:bg-emerald-700 hover:text-gray-50 sm:h-9 sm:px-3 sm:text-sm"
                   disabled={isPending}
                 >
                   {isPending ? (
@@ -112,7 +126,10 @@ export function InvoiceCard({ invoice }: Props) {
                   Pagar
                 </Button>
               ) : (
-                <Badge variant="outline" className="bg-success/20 text-success">
+                <Badge
+                  variant="outline"
+                  className="bg-success border-success text-gray-50"
+                >
                   Paga
                 </Badge>
               )}

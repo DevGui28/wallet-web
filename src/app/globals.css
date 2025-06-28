@@ -11,6 +11,8 @@
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 98%;
     --card-foreground: 222.2 84% 4.9%;
+    --success: 139, 90%, 33%;
+    --success-foreground: 139, 90%, 85%;
     --popover: 0 0% 98%;
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 210 76.2% 36.3%;
@@ -45,6 +47,8 @@
   .dark {
     --background: 0 0% 4%;
     --foreground: 210 40% 98%;
+    --success: 139, 90%, 33%;
+    --success-foreground: 139, 90%, 85%;
     --card: 0 0% 7%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 20% 4.9%;
