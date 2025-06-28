@@ -7,6 +7,8 @@ import { Check, CreditCard, CaretDown, CaretUp } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
+import { usePayInvoice } from '@/hooks/useInvoices'
+import { Loader2 } from 'lucide-react'
 
 type Invoice = {
   id: string
@@ -32,15 +34,15 @@ type Props = {
 
 export function InvoiceCard({ invoice }: Props) {
   const [expanded, setExpanded] = useState(false)
-  const [status, setStatus] = useState(invoice.status)
+  const { mutate: payInvoice, isPending } = usePayInvoice()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return new Intl.DateTimeFormat('pt-BR').format(date)
   }
 
-  const handleToggleStatus = () => {
-    setStatus(status === 'open' ? 'paid' : 'open')
+  const handlePayInvoice = () => {
+    payInvoice(invoice.id)
   }
 
   const months = [
@@ -64,7 +66,7 @@ export function InvoiceCard({ invoice }: Props) {
     <Card
       className={cn(
         'overflow-hidden border-2',
-        status === 'paid'
+        invoice.status === 'paid'
           ? 'border-success/30 bg-success/5'
           : 'border-primary/30'
       )}
@@ -94,14 +96,19 @@ export function InvoiceCard({ invoice }: Props) {
             </div>
 
             <div className="flex items-center gap-2">
-              {status === 'open' ? (
+              {invoice.status === 'open' ? (
                 <Button
-                  onClick={handleToggleStatus}
+                  onClick={handlePayInvoice}
                   size="sm"
                   variant="outline"
                   className="h-8 gap-1 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
+                  disabled={isPending}
                 >
-                  <Check size={14} className="sm:size-4" />
+                  {isPending ? (
+                    <Loader2 size={14} className="animate-spin sm:size-4" />
+                  ) : (
+                    <Check size={14} className="sm:size-4" />
+                  )}
                   Pagar
                 </Button>
               ) : (

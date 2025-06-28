@@ -1,11 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { InvoiceCard } from '../InvoiceCard'
+import { useInvoices } from '../../../../hooks/useInvoices'
+import { InvoiceResponse } from '../../../../types/invoice.interface'
+import { Loader2 } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '../../../ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../ui/tabs'
 
-type Invoice = {
+type InvoiceCardProps = {
   id: string
   cardName: string
   cardLastDigits: string
@@ -25,204 +28,66 @@ type Invoice = {
 
 export default function InvoicesList() {
   const [activeTab, setActiveTab] = useState('current')
+  const { data: invoices, isLoading } = useInvoices()
 
-  const mockInvoices: Invoice[] = [
-    {
-      id: '1',
-      cardName: 'Nubank',
-      cardLastDigits: '1234',
-      month: '06',
-      year: '2025',
-      dueDate: '2025-06-10',
-      totalAmount: 1250.75,
-      status: 'open',
-      transactions: [
-        {
-          id: '101',
-          description: 'Supermercado Extra',
-          amount: 350.25,
-          date: '2025-05-15',
-        },
-        {
-          id: '102',
-          description: 'Netflix',
-          amount: 39.9,
-          date: '2025-05-20',
-        },
-        {
-          id: '103',
-          description: 'Restaurante Sabor & Arte',
-          amount: 120.5,
-          date: '2025-05-22',
-        },
-        {
-          id: '104',
-          description: 'Amazon',
-          amount: 240.1,
-          date: '2025-05-25',
-          installment: '1/3',
-        },
-        {
-          id: '105',
-          description: 'Farmácia',
-          amount: 85.3,
-          date: '2025-05-28',
-        },
-        {
-          id: '106',
-          description: 'Uber',
-          amount: 45.7,
-          date: '2025-05-30',
-        },
-        {
-          id: '107',
-          description: 'Posto de Gasolina',
-          amount: 200.0,
-          date: '2025-06-01',
-        },
-        {
-          id: '108',
-          description: 'Livraria Cultura',
-          amount: 169.0,
-          date: '2025-06-02',
-        },
-      ],
-    },
-    {
-      id: '2',
-      cardName: 'Itaú',
-      cardLastDigits: '5678',
-      month: '06',
-      year: '2025',
-      dueDate: '2025-06-15',
-      totalAmount: 850.3,
-      status: 'open',
-      transactions: [
-        {
-          id: '201',
-          description: 'Lojas Americanas',
-          amount: 150.25,
-          date: '2025-05-18',
-        },
-        {
-          id: '202',
-          description: 'Spotify',
-          amount: 19.9,
-          date: '2025-05-20',
-        },
-        {
-          id: '203',
-          description: 'Padaria São Paulo',
-          amount: 45.75,
-          date: '2025-05-25',
-        },
-        {
-          id: '204',
-          description: 'Magazine Luiza',
-          amount: 399.9,
-          date: '2025-05-28',
-          installment: '1/5',
-        },
-        {
-          id: '205',
-          description: 'Uber Eats',
-          amount: 65.5,
-          date: '2025-05-30',
-        },
-        {
-          id: '206',
-          description: 'Cinema',
-          amount: 60.0,
-          date: '2025-06-01',
-        },
-        {
-          id: '207',
-          description: 'Estacionamento',
-          amount: 25.0,
-          date: '2025-06-03',
-        },
-        {
-          id: '208',
-          description: 'Petshop',
-          amount: 84.0,
-          date: '2025-06-05',
-        },
-      ],
-    },
-    {
-      id: '3',
-      cardName: 'Santander',
-      cardLastDigits: '9012',
-      month: '05',
-      year: '2025',
-      dueDate: '2025-05-20',
-      totalAmount: 1450.6,
-      status: 'paid',
-      transactions: [
-        {
-          id: '301',
-          description: 'Supermercado Pão de Açúcar',
-          amount: 420.35,
-          date: '2025-04-10',
-        },
-        {
-          id: '302',
-          description: 'Amazon Prime',
-          amount: 14.9,
-          date: '2025-04-15',
-        },
-        {
-          id: '303',
-          description: 'Restaurante Sabor Mineiro',
-          amount: 95.8,
-          date: '2025-04-18',
-        },
-        {
-          id: '304',
-          description: 'Casas Bahia',
-          amount: 599.9,
-          date: '2025-04-20',
-          installment: '2/6',
-        },
-        {
-          id: '305',
-          description: 'Drogaria São Paulo',
-          amount: 120.65,
-          date: '2025-04-22',
-        },
-        {
-          id: '306',
-          description: '99 Táxi',
-          amount: 35.0,
-          date: '2025-04-25',
-        },
-        {
-          id: '307',
-          description: 'Posto Ipiranga',
-          amount: 150.0,
-          date: '2025-04-28',
-        },
-        {
-          id: '308',
-          description: 'Saraiva',
-          amount: 89.9,
-          date: '2025-04-30',
-        },
-      ],
-    },
-  ]
+  const currentInvoices = invoices?.filter((invoice) => !invoice.isPaid) || []
+  const paidInvoices = invoices?.filter((invoice) => invoice.isPaid) || []
 
-  const currentInvoices = mockInvoices.filter(
-    (invoice) => invoice.status === 'open'
-  )
-  const paidInvoices = mockInvoices.filter(
-    (invoice) => invoice.status === 'paid'
-  )
+  const mapInvoiceToCardProps = (
+    invoice: InvoiceResponse
+  ): InvoiceCardProps => ({
+    id: invoice.id,
+    cardName: invoice.creditCard.cardName,
+    cardLastDigits: invoice.creditCard.lastDigits.toString(),
+    month: invoice.month.toString(),
+    year: invoice.year.toString(),
+    dueDate: invoice.dueDate,
+    totalAmount: Number(invoice.totalAmount),
+    status: invoice.isPaid ? 'paid' : 'open',
+    transactions: invoice.transactions.map((transaction) => ({
+      id: transaction.id,
+      description: transaction.name,
+      amount: Number(transaction.totalAmount),
+      date: transaction.date as string,
+      installment: transaction.installmentNumber
+        ? `${transaction.installmentNumber}/${transaction.totalInstallments}`
+        : undefined,
+    })),
+  })
+
+  const renderContent = (invoices: InvoiceResponse[], emptyMessage: string) => {
+    if (isLoading) {
+      return (
+        <div className="flex h-40 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      )
+    }
+
+    if (invoices.length === 0) {
+      return (
+        <div className="flex h-40 flex-col items-center justify-center gap-2 text-center">
+          <p className="text-muted-foreground">{emptyMessage}</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="space-y-4">
+        {invoices.map((invoice) => (
+          <InvoiceCard
+            key={invoice.id}
+            invoice={mapInvoiceToCardProps(invoice)}
+          />
+        ))}
+      </div>
+    )
+  }
 
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-xl">Faturas</CardTitle>
+      <CardHeader className="flex flex-col space-y-1.5 pb-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <CardTitle className="text-lg sm:text-xl">Faturas</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs
@@ -239,36 +104,10 @@ export default function InvoicesList() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="current">
-            <div className="grid gap-4">
-              {currentInvoices.map((invoice) => (
-                <div key={invoice.id} className="w-full">
-                  <InvoiceCard invoice={invoice} />
-                </div>
-              ))}
-              {currentInvoices.length === 0 && (
-                <div className="flex h-40 items-center justify-center text-muted-foreground">
-                  <p className="text-base font-medium">
-                    Nenhuma fatura aberta encontrada
-                  </p>
-                </div>
-              )}
-            </div>
+            {renderContent(currentInvoices, 'Nenhuma fatura em aberto')}
           </TabsContent>
           <TabsContent value="paid">
-            <div className="grid gap-4">
-              {paidInvoices.map((invoice) => (
-                <div key={invoice.id} className="w-full">
-                  <InvoiceCard invoice={invoice} />
-                </div>
-              ))}
-              {paidInvoices.length === 0 && (
-                <div className="flex h-40 items-center justify-center text-muted-foreground">
-                  <p className="text-base font-medium">
-                    Nenhuma fatura paga encontrada
-                  </p>
-                </div>
-              )}
-            </div>
+            {renderContent(paidInvoices, 'Nenhuma fatura paga')}
           </TabsContent>
         </Tabs>
       </CardContent>
