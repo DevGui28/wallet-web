@@ -116,7 +116,8 @@ export function CreateGoalDialog({ open, setOpen }: CreateGoalDialogProps) {
               <FormInput
                 form={form}
                 name="savedValue"
-                label="Valor já guardado"
+                label="Valor inicial"
+                description="Será criado uma transação para esse valor inicial, caso deseje não contabilizar, deixe em branco"
                 placeholder="R$ 0,00"
                 prefix="R$ "
                 numeric
