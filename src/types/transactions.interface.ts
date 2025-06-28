@@ -1,5 +1,5 @@
 import { CreditCardResponse } from './credit-card.interface'
-import { InvoiceResponse } from './invoice.interface'
+import { Invoice } from './invoice.interface'
 import { RecurringBillResponse } from './recurring-bill.interface'
 
 export enum PaymentMethod {
@@ -86,7 +86,7 @@ export type TransactionResponse = {
   }
   creditCard?: CreditCardResponse
   recurringBill?: RecurringBillResponse
-  invoice?: InvoiceResponse
+  invoice?: Invoice
 }
 
 export interface TransactionFilters {

@@ -1,7 +1,7 @@
 import { CreditCardResponse } from './credit-card.interface'
 import { TransactionResponse } from './transactions.interface'
 
-export type InvoiceResponse = {
+export type Invoice = {
   id: string
   userId: string
   creditCardId: string
@@ -16,4 +16,9 @@ export type InvoiceResponse = {
   updatedAt: string
   creditCard: CreditCardResponse
   transactions: TransactionResponse[]
+}
+
+export type InvoiceResponse = {
+  paid: Invoice[]
+  pending: Invoice[]
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { InvoiceCard } from '../InvoiceCard'
 import { useInvoices } from '../../../../hooks/useInvoices'
-import { InvoiceResponse } from '../../../../types/invoice.interface'
+import { Invoice } from '../../../../types/invoice.interface'
 import { Loader2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../../ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../ui/tabs'
@@ -15,6 +15,7 @@ type InvoiceCardProps = {
   month: string
   year: string
   dueDate: string
+  paidAt: string | null
   totalAmount: number
   status: 'open' | 'paid'
   transactions: {
@@ -30,18 +31,17 @@ export default function InvoicesList() {
   const [activeTab, setActiveTab] = useState('current')
   const { data: invoices, isLoading } = useInvoices()
 
-  const currentInvoices = invoices?.filter((invoice) => !invoice.isPaid) || []
-  const paidInvoices = invoices?.filter((invoice) => invoice.isPaid) || []
+  const currentInvoices = invoices?.pending || []
+  const paidInvoices = invoices?.paid || []
 
-  const mapInvoiceToCardProps = (
-    invoice: InvoiceResponse
-  ): InvoiceCardProps => ({
+  const mapInvoiceToCardProps = (invoice: Invoice): InvoiceCardProps => ({
     id: invoice.id,
     cardName: invoice.creditCard.cardName,
     cardLastDigits: invoice.creditCard.lastDigits.toString(),
     month: invoice.month.toString(),
     year: invoice.year.toString(),
     dueDate: invoice.dueDate,
+    paidAt: invoice.paidAt,
     totalAmount: Number(invoice.totalAmount),
     status: invoice.isPaid ? 'paid' : 'open',
     transactions: invoice.transactions.map((transaction) => ({
@@ -55,7 +55,7 @@ export default function InvoicesList() {
     })),
   })
 
-  const renderContent = (invoices: InvoiceResponse[], emptyMessage: string) => {
+  const renderContent = (invoices: Invoice[], emptyMessage: string) => {
     if (isLoading) {
       return (
         <div className="flex h-40 items-center justify-center">

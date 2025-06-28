@@ -258,6 +258,6 @@ export const handleLogout = withErrorHandling(async () => {
 
 // Função para buscar todas as faturas
 export const handleGetInvoices = withErrorHandling(async () => {
-  const { data } = await apiWallet.get<InvoiceResponse[]>('/invoices')
+  const { data } = await apiWallet.get<InvoiceResponse>('/invoices')
   return data
 })
