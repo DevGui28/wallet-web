@@ -93,6 +93,8 @@ export default function TransactionsList() {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       queryClient.invalidateQueries({ queryKey: ['bills'] })
       queryClient.invalidateQueries({ queryKey: ['installments'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
+      queryClient.invalidateQueries({ queryKey: ['invoices'] })
       toast.success('Transação adicionada com sucesso!')
     },
     onError: (error) => {

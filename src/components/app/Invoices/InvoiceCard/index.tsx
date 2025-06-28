@@ -151,7 +151,7 @@ export function InvoiceCard({ invoice }: Props) {
         </div>
 
         {expanded && (
-          <div className="border-t px-3 py-2 sm:px-4 sm:py-3">
+          <div className="border-t border-card-foreground/10 px-3 py-2 sm:px-4 sm:py-3">
             <h4 className="mb-2 text-sm font-medium sm:text-base">
               Transações
             </h4>
