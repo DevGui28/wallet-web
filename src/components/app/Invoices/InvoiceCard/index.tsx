@@ -151,7 +151,7 @@ export function InvoiceCard({ invoice }: Props) {
               ) : (
                 <Badge
                   variant="outline"
-                  className="bg-success border-success text-gray-50"
+                  className="border-success bg-success text-gray-50"
                 >
                   Paga
                 </Badge>
