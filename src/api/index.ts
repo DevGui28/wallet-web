@@ -28,6 +28,7 @@ import {
   RecurringBill,
   UpdateRecurringBillDTO,
 } from '../types/recurring-bills.interface'
+import { InvoiceResponse } from '../types/invoice.interface'
 
 export const apiWallet = new Axios({
   baseURL: urls.walletApi,
@@ -253,4 +254,10 @@ export const handlePayInvoice = withErrorHandling(async (id: string) => {
 export const handleLogout = withErrorHandling(async () => {
   const response = await fetch('/api/logout')
   return response.json()
+})
+
+// Função para buscar todas as faturas
+export const handleGetInvoices = withErrorHandling(async () => {
+  const { data } = await apiWallet.get<InvoiceResponse[]>('/invoices')
+  return data
 })

@@ -2,7 +2,6 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { z } from 'zod'
 import { Goal } from '../../../../hooks/useGoals'
 
@@ -44,7 +43,6 @@ export function AddValueDialog({ open, setOpen, goal }: Props) {
         id: goal.id,
         amount: data.amount,
       })
-      toast.success('Valor adicionado com sucesso!')
       form.reset()
       setOpen(false)
     } catch (error) {
