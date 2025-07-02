@@ -9,6 +9,7 @@ import {
   CreateCreditCard,
   UpdateCreditCard,
 } from '../types/credit-card.interface'
+import { toast } from 'sonner'
 
 interface UseCreditCardsOptions {
   enabled?: boolean
@@ -60,6 +61,8 @@ export function useDeleteCreditCard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
+      toast.success('Cartão excluído com sucesso')
     },
   })
 }

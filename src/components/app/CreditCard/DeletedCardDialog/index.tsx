@@ -1,7 +1,4 @@
 import { redirect } from 'next/navigation'
-import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { handleDeleteCreditCard } from '../../../../api'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,19 +11,17 @@ import {
   AlertDialogTrigger,
 } from '../../../ui/alert-dialog'
 import { Button } from '../../../ui/button'
+import { useDeleteCreditCard } from '../../../../hooks/useCreditCards'
 
 type DeletedCardDialogProps = {
   id: string
 }
 
 export default function DeletedCardDialog({ id }: DeletedCardDialogProps) {
-  const queryClient = useQueryClient()
+  const deleteCreditCardMutation = useDeleteCreditCard()
   const handleDelete = async () => {
     try {
-      await handleDeleteCreditCard(id)
-      toast.success('Cartão excluído com sucesso')
-      queryClient.invalidateQueries({ queryKey: ['credit-cards'] })
-      queryClient.invalidateQueries({ queryKey: ['credit-cards-detail'] })
+      await deleteCreditCardMutation.mutateAsync(id)
       redirect('/credit-card')
     } catch (error) {
       console.error(error)

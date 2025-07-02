@@ -60,10 +60,10 @@ export function AddCreditCardDialog({ open, setOpen, onAddCreditCard }: Props) {
     const { cardName, limit, closingDay, dueDay, lastDigits } = data
     const payload = {
       cardName,
-      limit: Number(limit?.replace(/\D/g, '')) || null,
       closingDay: Number(closingDay),
       dueDay: Number(dueDay),
       ...(lastDigits && { lastDigits: Number(lastDigits) }),
+      ...(limit && { limit: Number(limit) }),
     }
 
     if (
