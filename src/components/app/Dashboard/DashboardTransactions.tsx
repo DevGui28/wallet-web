@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
-import { formatCurrency } from '../../../lib/utils'
+import { cn, formatCurrency } from '../../../lib/utils'
 import { format } from 'date-fns'
 import DashboardButtomSeeMore from './DashboardButtomSeeMore'
 import { RecentTransaction } from '../../../types/dashboard.interface'
@@ -28,25 +28,26 @@ export default function DashboardTransactions({
                   className="flex items-center justify-between"
                 >
                   <div className="flex flex-col">
-                    <span className="font-medium">{transaction.name}</span>
+                    <span className="text-sm font-medium">
+                      {transaction.name}
+                    </span>
                     <div className="flex gap-2">
                       <span className="text-xs text-muted-foreground">
-                        {format(new Date(transaction.date), 'dd/MM/yyyy')}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {transaction.category}{' '}
-                        {transaction.description
-                          ? ` - ${transaction.description}`
-                          : ''}
+                        {`${format(new Date(transaction.date), 'dd/MM/yyyy')} - ${transaction.category} ${
+                          transaction.description
+                            ? ` - ${transaction.description}`
+                            : ''
+                        }`}
                       </span>
                     </div>
                   </div>
                   <span
-                    className={
+                    className={cn(
+                      'whitespace-nowrap text-sm font-medium',
                       transaction.type === 'INCOME'
                         ? 'text-green-500'
                         : 'text-destructive'
-                    }
+                    )}
                   >
                     {transaction.type === 'INCOME' ? '+' : '-'}{' '}
                     {formatCurrency(transaction.amount)}

@@ -17,8 +17,6 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const name = payload.user.name
 
-  console.log({ name })
-
   return (
     <div className="flex items-center overflow-hidden">
       <SideNav className="hidden md:flex" />
