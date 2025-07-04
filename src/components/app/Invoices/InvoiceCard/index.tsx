@@ -3,7 +3,12 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Check, CreditCard, CaretDown, CaretUp } from '@phosphor-icons/react'
+import {
+  Check,
+  CreditCard as CreditCardIcon,
+  CaretDown,
+  CaretUp,
+} from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
@@ -91,7 +96,10 @@ export function InvoiceCard({ invoice }: Props) {
                   }
                 )}
               >
-                <CreditCard size={14} className="text-foreground sm:size-5" />
+                <CreditCardIcon
+                  size={14}
+                  className="text-foreground sm:size-5"
+                />
               </div>
               <div>
                 <h3 className="text-xs font-medium sm:text-base">
