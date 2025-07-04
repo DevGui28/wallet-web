@@ -133,7 +133,7 @@ export function InvoiceCard({ invoice }: Props) {
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
             <div>
               <p className="text-sm font-medium sm:text-base">
-                R$ {invoice.totalAmount.toFixed(2)}
+                R$ {(invoice.totalAmount || 0).toFixed(2)}
               </p>
               {invoice.paidAt && (
                 <p className="text-xs text-muted-foreground sm:text-sm">
@@ -179,26 +179,32 @@ export function InvoiceCard({ invoice }: Props) {
               Transações
             </h4>
             <div className="max-h-[250px] space-y-2 overflow-y-auto pr-1">
-              {invoice.transactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex items-start justify-between gap-2 py-1"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-medium sm:text-sm">
-                      {transaction.description}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground sm:text-xs">
-                      {formatDate(transaction.date)}
-                      {transaction.installment &&
-                        ` • Parcela ${transaction.installment}`}
+              {invoice.transactions && invoice.transactions.length > 0 ? (
+                invoice.transactions.map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className="flex items-start justify-between gap-2 py-1"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-medium sm:text-sm">
+                        {transaction?.description || 'Sem descrição'}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground sm:text-xs">
+                        {formatDate(transaction?.date)}
+                        {transaction?.installment &&
+                          ` • Parcela ${transaction.installment}`}
+                      </p>
+                    </div>
+                    <p className="whitespace-nowrap pl-2 text-xs font-medium sm:text-sm">
+                      R$ {(transaction?.amount || 0).toFixed(2)}
                     </p>
                   </div>
-                  <p className="whitespace-nowrap pl-2 text-xs font-medium sm:text-sm">
-                    R$ {transaction.amount.toFixed(2)}
-                  </p>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Nenhuma transação encontrada
+                </p>
+              )}
             </div>
 
             <Separator className="my-2 sm:my-3" />
