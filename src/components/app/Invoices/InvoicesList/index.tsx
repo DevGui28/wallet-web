@@ -36,23 +36,24 @@ export default function InvoicesList() {
 
   const mapInvoiceToCardProps = (invoice: Invoice): InvoiceCardProps => ({
     id: invoice.id,
-    cardName: invoice.creditCard.cardName,
-    cardLastDigits: invoice.creditCard.lastDigits.toString(),
-    month: invoice.month.toString(),
-    year: invoice.year.toString(),
-    dueDate: invoice.dueDate,
+    cardName: invoice.creditCard?.cardName || 'Cartão',
+    cardLastDigits: invoice.creditCard?.lastDigits?.toString() || '****',
+    month: invoice.month?.toString() || '',
+    year: invoice.year?.toString() || '',
+    dueDate: invoice.dueDate || '',
     paidAt: invoice.paidAt,
-    totalAmount: Number(invoice.totalAmount),
+    totalAmount: Number(invoice.totalAmount || 0),
     status: invoice.isPaid ? 'paid' : 'open',
-    transactions: invoice.transactions.map((transaction) => ({
-      id: transaction.id,
-      description: transaction.name,
-      amount: Number(transaction.totalAmount),
-      date: transaction.date as string,
-      installment: transaction.installmentNumber
-        ? `${transaction.installmentNumber}/${transaction.totalInstallments}`
-        : undefined,
-    })),
+    transactions:
+      invoice.transactions?.map((transaction) => ({
+        id: transaction.id || '',
+        description: transaction.name || 'Sem descrição',
+        amount: Number(transaction.totalAmount || 0),
+        date: (transaction.date as string) || '',
+        installment: transaction.installmentNumber
+          ? `${transaction.installmentNumber}/${transaction.totalInstallments}`
+          : undefined,
+      })) || [],
   })
 
   const renderContent = (invoices: Invoice[], emptyMessage: string) => {
