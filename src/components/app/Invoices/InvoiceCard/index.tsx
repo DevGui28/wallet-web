@@ -42,9 +42,14 @@ export function InvoiceCard({ invoice }: Props) {
   const [expanded, setExpanded] = useState(false)
   const { mutate: payInvoice, isPending } = usePayInvoice()
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat('pt-BR').format(date)
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return ''
+    try {
+      const date = new Date(dateString)
+      return new Intl.DateTimeFormat('pt-BR').format(date)
+    } catch (error) {
+      return ''
+    }
   }
 
   const handlePayInvoice = () => {
