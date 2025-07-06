@@ -100,9 +100,6 @@ function RecurringBillFormModal({
       })
     } else if (mode === 'edit' && bill) {
       const updatedBill: UpdateRecurringBillDTO = {
-        id: bill.id,
-        name: bill.name,
-        description: bill.description || '',
         amount: data.amount,
         recurrenceDay: data.recurrenceDay,
       }

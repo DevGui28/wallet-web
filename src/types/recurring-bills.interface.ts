@@ -17,9 +17,6 @@ export interface CreateRecurringBillDTO {
 }
 
 export interface UpdateRecurringBillDTO {
-  id: string
-  name?: string
-  description?: string
   amount?: number
   recurrenceDay?: number
 }

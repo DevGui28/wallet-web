@@ -230,7 +230,7 @@ export const handleCreateRecurringBill = withErrorHandling(
 
 export const handleUpdateRecurringBill = withErrorHandling(
   async (id: string, recurringBill: UpdateRecurringBillDTO) => {
-    const { data } = await apiWallet.put<RecurringBill>(
+    const { data } = await apiWallet.patch<RecurringBill>(
       `/recurring-bills/${id}`,
       recurringBill
     )
