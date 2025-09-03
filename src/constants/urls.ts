@@ -1,5 +1,5 @@
 export const walletApi = {
-  production: 'https://wallet-api-six.vercel.app/api',
+  production: 'https://wallet-kltuqnk1k-guidev28.vercel.app/api',
   development: 'http://localhost:3001/api',
   test: 'http://localhost:3001/api',
 }
