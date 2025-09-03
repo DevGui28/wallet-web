@@ -5,7 +5,7 @@ export const walletApi = {
 }
 
 export const walletWeb = {
-  production: 'https://wallet-web-six.vercel.app',
+  production: 'https://wallet-75zt6zaxf-guidev28.vercel.app/',
   development: 'http://localhost:3000',
   test: 'http://localhost:3000',
 }
