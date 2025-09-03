@@ -1,11 +1,11 @@
 export const walletApi = {
-  production: 'https://wallet-kltuqnk1k-guidev28.vercel.app/api',
+  production: 'https://wallet-api-tau.vercel.app/api',
   development: 'http://localhost:3001/api',
   test: 'http://localhost:3001/api',
 }
 
 export const walletWeb = {
-  production: 'https://wallet-75zt6zaxf-guidev28.vercel.app/',
+  production: 'https://wallet-web-delta.vercel.app',
   development: 'http://localhost:3000',
   test: 'http://localhost:3000',
 }
